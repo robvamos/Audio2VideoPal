@@ -1,11 +1,6 @@
 import { useEffect, useState } from "react";
 import type { Plugin, ScanDetails } from "../types";
-import {
-  deepScanPlugin,
-  getPluginDeepScan,
-  loadPlugins,
-  scanPlugins,
-} from "../services/tauriApi";
+import { pluginEngine } from "../engines/pluginEngine";
 
 interface PluginManagerProps {
   onMessage: (value: string) => void;
@@ -19,7 +14,7 @@ export default function PluginManager({ onMessage }: PluginManagerProps) {
 
   async function refreshPlugins() {
     try {
-      const pluginList = await loadPlugins();
+      const pluginList = await pluginEngine.loadPlugins();
       setPlugins(pluginList);
       if (selectedPlugin) {
         const reselected = pluginList.find((item) => item.id === selectedPlugin.id);
@@ -34,7 +29,7 @@ export default function PluginManager({ onMessage }: PluginManagerProps) {
     try {
       setIsScanning(true);
       onMessage("Scanning plugins in the local plugins folder...");
-      const result = await scanPlugins();
+      const result = await pluginEngine.scanPlugins();
       onMessage(result);
       await refreshPlugins();
     } catch (error) {
@@ -48,9 +43,9 @@ export default function PluginManager({ onMessage }: PluginManagerProps) {
     try {
       setIsScanning(true);
       onMessage(`Scanning ${plugin.file_name}...`);
-      const result = await deepScanPlugin(plugin.file_path);
+      const result = await pluginEngine.deepScanPlugin(plugin.file_path);
       onMessage(result);
-      const details = await getPluginDeepScan(plugin.id);
+      const details = await pluginEngine.getPluginDeepScan(plugin.id);
       setScanDetails(details);
       await refreshPlugins();
     } catch (error) {

@@ -1,0 +1,815 @@
+{
+  "generated_at": "2026-05-07T17:24:31",
+  "winamp_root": "F:\\WinampPortable",
+  "winamp_plugins_dir": "F:\\WinampPortable\\App\\Winamp\\Plugins",
+  "process_detection": "Get-CimInstance Win32_Process | Where-Object { $_.Name -match 'winamp' }",
+  "summary_by_role": {
+    "dsp": {
+      "count": 1,
+      "bytes": 98600,
+      "items": [
+        "dsp_sps.dll"
+      ]
+    },
+    "encoding": {
+      "count": 5,
+      "bytes": 1190344,
+      "items": [
+        "enc_flac.dll",
+        "enc_lame.dll",
+        "enc_vorbis.dll",
+        "enc_wav.dll",
+        "enc_wma.dll"
+      ]
+    },
+    "general": {
+      "count": 5,
+      "bytes": 2531784,
+      "items": [
+        "gen_crasher.dll",
+        "gen_ff.dll",
+        "gen_hotkeys.dll",
+        "gen_ml.dll",
+        "gen_tray.dll"
+      ]
+    },
+    "input": {
+      "count": 16,
+      "bytes": 5286528,
+      "items": [
+        "in_avi.dll",
+        "in_cdda.dll",
+        "in_dshow.dll",
+        "in_flac.dll",
+        "in_flv.dll",
+        "in_linein.dll",
+        "in_midi.dll",
+        "in_mkv.dll",
+        "in_mod.dll",
+        "in_mp3.dll",
+        "in_mp4.dll",
+        "in_nsv.dll",
+        "in_swf.dll",
+        "in_vorbis.dll",
+        "in_wave.dll",
+        "in_wm.dll"
+      ]
+    },
+    "media-library": {
+      "count": 16,
+      "bytes": 2474112,
+      "items": [
+        "ml_bookmarks.dll",
+        "ml_devices.dll",
+        "ml_disc.dll",
+        "ml_downloads.dll",
+        "ml_fanzone.dll",
+        "ml_history.dll",
+        "ml_hotmixradio.dll",
+        "ml_impex.dll",
+        "ml_local.dll",
+        "ml_nft.dll",
+        "ml_online.dll",
+        "ml_playlists.dll",
+        "ml_pmp.dll",
+        "ml_rg.dll",
+        "ml_transcode.dll",
+        "ml_wire.dll"
+      ]
+    },
+    "video-decoder": {
+      "count": 1,
+      "bytes": 164136,
+      "items": [
+        "nsvdec_vp5.dll"
+      ]
+    },
+    "output": {
+      "count": 4,
+      "bytes": 182944,
+      "items": [
+        "out_disk.dll",
+        "out_ds.dll",
+        "out_wasapi.dll",
+        "out_wave.dll"
+      ]
+    },
+    "portable-media": {
+      "count": 7,
+      "bytes": 878104,
+      "items": [
+        "pmp_activesync.dll",
+        "pmp_android.dll",
+        "pmp_ipod.dll",
+        "pmp_njb.dll",
+        "pmp_p4s.dll",
+        "pmp_usb.dll",
+        "pmp_wifi.dll"
+      ]
+    },
+    "visualization": {
+      "count": 3,
+      "bytes": 898645,
+      "items": [
+        "vis_avs.dat",
+        "vis_avs.dll",
+        "vis_milk2.dll"
+      ]
+    },
+    "support": {
+      "count": 1,
+      "bytes": 36782,
+      "items": [
+        "winampFLV.swf"
+      ]
+    }
+  },
+  "folders": [
+    {
+      "name": "AVS",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\AVS",
+      "file_count": 183,
+      "bytes": 1735352,
+      "likely_association": "vis_avs.dll presets/config/resources"
+    },
+    {
+      "name": "DSP_SPS",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\DSP_SPS",
+      "file_count": 17,
+      "bytes": 24479,
+      "likely_association": "dsp_sps.dll presets/config/resources"
+    },
+    {
+      "name": "freeform",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\freeform",
+      "file_count": 108,
+      "bytes": 1332870,
+      "likely_association": "gen_ff.dll skin/layout resources"
+    },
+    {
+      "name": "Milkdrop2",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\Milkdrop2",
+      "file_count": 587,
+      "bytes": 5661362,
+      "likely_association": "vis_milk2.dll presets/config/textures"
+    },
+    {
+      "name": "ml",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\ml",
+      "file_count": 0,
+      "bytes": 0,
+      "likely_association": "media library support data folder"
+    }
+  ],
+  "files": [
+    {
+      "name": "dsp_sps.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\dsp_sps.dll",
+      "extension": ".dll",
+      "prefix": "dsp",
+      "role": "dsp",
+      "role_description": "signal processing effects",
+      "bytes": 98600,
+      "sha256": "90daa28ca5bf679bdb573aed7ad56fa6a804cf69bf2e0f17d9029f0d8418d6f7",
+      "last_write_time": "2023-04-26T13:17:24"
+    },
+    {
+      "name": "enc_flac.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\enc_flac.dll",
+      "extension": ".dll",
+      "prefix": "enc",
+      "role": "encoding",
+      "role_description": "encoders and transcoders",
+      "bytes": 191784,
+      "sha256": "bf4496939f7bcaa7f3b27543cdd09f5057f78da3de722093e5d59008b7607342",
+      "last_write_time": "2023-04-26T13:17:24"
+    },
+    {
+      "name": "enc_lame.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\enc_lame.dll",
+      "extension": ".dll",
+      "prefix": "enc",
+      "role": "encoding",
+      "role_description": "encoders and transcoders",
+      "bytes": 249640,
+      "sha256": "8816d4f6d95abd3726ecebff252e8fabc195eeb510c5ed61c9a18589ac93f8ba",
+      "last_write_time": "2023-04-26T13:17:24"
+    },
+    {
+      "name": "enc_vorbis.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\enc_vorbis.dll",
+      "extension": ".dll",
+      "prefix": "enc",
+      "role": "encoding",
+      "role_description": "encoders and transcoders",
+      "bytes": 678696,
+      "sha256": "2027c12c7470b7b5696247a834eb4037a648dc320842240c5700ae0439ea71d4",
+      "last_write_time": "2023-04-26T13:17:26"
+    },
+    {
+      "name": "enc_wav.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\enc_wav.dll",
+      "extension": ".dll",
+      "prefix": "enc",
+      "role": "encoding",
+      "role_description": "encoders and transcoders",
+      "bytes": 32040,
+      "sha256": "ea52412bcb51f753b18121eaacee079846eef11298795939e4b62fd784a3d128",
+      "last_write_time": "2023-04-26T13:17:26"
+    },
+    {
+      "name": "enc_wma.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\enc_wma.dll",
+      "extension": ".dll",
+      "prefix": "enc",
+      "role": "encoding",
+      "role_description": "encoders and transcoders",
+      "bytes": 38184,
+      "sha256": "3c735927ae6f76241a70800750874c2b828f7a2eb2c89105da1ece06069de278",
+      "last_write_time": "2023-04-26T13:17:26"
+    },
+    {
+      "name": "gen_crasher.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\gen_crasher.dll",
+      "extension": ".dll",
+      "prefix": "gen",
+      "role": "general",
+      "role_description": "general runtime and UI extensions",
+      "bytes": 58664,
+      "sha256": "7c2d2c9db724b7ac4fa17b871c741182be0dab51f89b75a8d114d9d6d95b09fc",
+      "last_write_time": "2023-04-26T13:17:26"
+    },
+    {
+      "name": "gen_ff.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\gen_ff.dll",
+      "extension": ".dll",
+      "prefix": "gen",
+      "role": "general",
+      "role_description": "general runtime and UI extensions",
+      "bytes": 1871656,
+      "sha256": "d09c416932daae865d73ea2f05ce42b175f04832e3de64a185b4588ab41d0ce9",
+      "last_write_time": "2023-04-26T13:17:26"
+    },
+    {
+      "name": "gen_hotkeys.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\gen_hotkeys.dll",
+      "extension": ".dll",
+      "prefix": "gen",
+      "role": "general",
+      "role_description": "general runtime and UI extensions",
+      "bytes": 50984,
+      "sha256": "2b1994145d3d16cb30f7bc813ca5382f1e87b07ab150bd78c65cbb56827f4661",
+      "last_write_time": "2023-04-26T13:17:26"
+    },
+    {
+      "name": "gen_ml.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\gen_ml.dll",
+      "extension": ".dll",
+      "prefix": "gen",
+      "role": "general",
+      "role_description": "general runtime and UI extensions",
+      "bytes": 506664,
+      "sha256": "d031086db827105958f87b4df01a198ebb5530e54e9b781684f97f021387ba5e",
+      "last_write_time": "2023-04-26T13:17:28"
+    },
+    {
+      "name": "gen_tray.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\gen_tray.dll",
+      "extension": ".dll",
+      "prefix": "gen",
+      "role": "general",
+      "role_description": "general runtime and UI extensions",
+      "bytes": 43816,
+      "sha256": "d71748abf95d811437e1e74df6cbe8ab096bd31a64a26fcd37563012d16ed1f7",
+      "last_write_time": "2023-04-26T13:17:28"
+    },
+    {
+      "name": "in_avi.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\in_avi.dll",
+      "extension": ".dll",
+      "prefix": "in",
+      "role": "input",
+      "role_description": "decoders, capture sources, media readers",
+      "bytes": 90408,
+      "sha256": "30e0e072b61abefb39227dde9526bbca4142bd5b5788b8eba32bb6646e4d543c",
+      "last_write_time": "2023-04-26T13:17:28"
+    },
+    {
+      "name": "in_cdda.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\in_cdda.dll",
+      "extension": ".dll",
+      "prefix": "in",
+      "role": "input",
+      "role_description": "decoders, capture sources, media readers",
+      "bytes": 83752,
+      "sha256": "ecf31be1b47d2830c91c4dedc4339b796f3eb2b710a7f30b70804e5837aa0bf8",
+      "last_write_time": "2023-04-26T13:17:28"
+    },
+    {
+      "name": "in_dshow.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\in_dshow.dll",
+      "extension": ".dll",
+      "prefix": "in",
+      "role": "input",
+      "role_description": "decoders, capture sources, media readers",
+      "bytes": 113448,
+      "sha256": "ddc4227f4a5af555b3d9cb870bff00f5dd0817490470acac7b59649e1ea2ef6e",
+      "last_write_time": "2023-04-26T13:17:28"
+    },
+    {
+      "name": "in_flac.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\in_flac.dll",
+      "extension": ".dll",
+      "prefix": "in",
+      "role": "input",
+      "role_description": "decoders, capture sources, media readers",
+      "bytes": 145192,
+      "sha256": "a1d9a6317cdf6b98d3704741d918140da9683913986b199590bb113dc5d1f68f",
+      "last_write_time": "2023-04-26T13:18:34"
+    },
+    {
+      "name": "in_flv.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\in_flv.dll",
+      "extension": ".dll",
+      "prefix": "in",
+      "role": "input",
+      "role_description": "decoders, capture sources, media readers",
+      "bytes": 63784,
+      "sha256": "5d5bba5448e5e9a38beca887cd0eefd4a620f1a9c9c16355e48ca41cef2bdfd8",
+      "last_write_time": "2023-04-26T13:18:34"
+    },
+    {
+      "name": "in_linein.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\in_linein.dll",
+      "extension": ".dll",
+      "prefix": "in",
+      "role": "input",
+      "role_description": "decoders, capture sources, media readers",
+      "bytes": 27432,
+      "sha256": "f419e617c72267e1a3c998aab3634f46242b8f8ee5d70ae2535065e61e5a5d4b",
+      "last_write_time": "2023-04-26T13:18:36"
+    },
+    {
+      "name": "in_midi.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\in_midi.dll",
+      "extension": ".dll",
+      "prefix": "in",
+      "role": "input",
+      "role_description": "decoders, capture sources, media readers",
+      "bytes": 190248,
+      "sha256": "95f675f3c0630d5ac8197f37bc7f1b88edadf419f3c738d5ad1308b19ba630ea",
+      "last_write_time": "2023-04-26T13:18:36"
+    },
+    {
+      "name": "in_mkv.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\in_mkv.dll",
+      "extension": ".dll",
+      "prefix": "in",
+      "role": "input",
+      "role_description": "decoders, capture sources, media readers",
+      "bytes": 59688,
+      "sha256": "e79a0906274c9a13842ae8a1a2638deebdfc0c4fba9ffa0ad11a1947684bf6f3",
+      "last_write_time": "2023-04-26T13:18:36"
+    },
+    {
+      "name": "in_mod.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\in_mod.dll",
+      "extension": ".dll",
+      "prefix": "in",
+      "role": "input",
+      "role_description": "decoders, capture sources, media readers",
+      "bytes": 1667880,
+      "sha256": "1e1abc6f83503a75b76f0b8dd056a1b9a0df645cc9beb60b5101e81b4792f6a7",
+      "last_write_time": "2023-04-26T13:18:36"
+    },
+    {
+      "name": "in_mp3.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\in_mp3.dll",
+      "extension": ".dll",
+      "prefix": "in",
+      "role": "input",
+      "role_description": "decoders, capture sources, media readers",
+      "bytes": 204584,
+      "sha256": "fdcefb76e65e47b56e9ee8c2369292146aeabf50b77c0c6166c89beea7fe360a",
+      "last_write_time": "2023-04-26T13:18:36"
+    },
+    {
+      "name": "in_mp4.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\in_mp4.dll",
+      "extension": ".dll",
+      "prefix": "in",
+      "role": "input",
+      "role_description": "decoders, capture sources, media readers",
+      "bytes": 71464,
+      "sha256": "edff4eadd05c0ee30342186d6376f9098d3b2438c533c2f9a8b86bc79c5379bb",
+      "last_write_time": "2023-04-26T13:18:36"
+    },
+    {
+      "name": "in_nsv.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\in_nsv.dll",
+      "extension": ".dll",
+      "prefix": "in",
+      "role": "input",
+      "role_description": "decoders, capture sources, media readers",
+      "bytes": 91944,
+      "sha256": "0f08cfabd51389ef186d2a0fff3b008233b1bca78df4f015611b74da448c9246",
+      "last_write_time": "2023-04-26T13:18:38"
+    },
+    {
+      "name": "in_swf.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\in_swf.dll",
+      "extension": ".dll",
+      "prefix": "in",
+      "role": "input",
+      "role_description": "decoders, capture sources, media readers",
+      "bytes": 40232,
+      "sha256": "08375c4f457511abcb1b2d7ce6e4f6e0549ff16a11516ed540d36ba0521b9180",
+      "last_write_time": "2023-04-26T13:18:38"
+    },
+    {
+      "name": "in_vorbis.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\in_vorbis.dll",
+      "extension": ".dll",
+      "prefix": "in",
+      "role": "input",
+      "role_description": "decoders, capture sources, media readers",
+      "bytes": 288040,
+      "sha256": "e48baa2a7c59bbdcd69e59482fa9337fb8d363060dba53639a3d20ceb537dd79",
+      "last_write_time": "2023-04-26T13:18:38"
+    },
+    {
+      "name": "in_wave.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\in_wave.dll",
+      "extension": ".dll",
+      "prefix": "in",
+      "role": "input",
+      "role_description": "decoders, capture sources, media readers",
+      "bytes": 2027816,
+      "sha256": "e94be148fcca37b2b2c3e9a6e59bc3e36b0881e8ba9244d6772b899e460f3948",
+      "last_write_time": "2023-04-26T13:18:38"
+    },
+    {
+      "name": "in_wm.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\in_wm.dll",
+      "extension": ".dll",
+      "prefix": "in",
+      "role": "input",
+      "role_description": "decoders, capture sources, media readers",
+      "bytes": 120616,
+      "sha256": "3ad5bbb197d5bcf789f89158c99287dac94f95feafe100d689a78d3f1db0cb79",
+      "last_write_time": "2023-04-26T13:18:38"
+    },
+    {
+      "name": "ml_bookmarks.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\ml_bookmarks.dll",
+      "extension": ".dll",
+      "prefix": "ml",
+      "role": "media-library",
+      "role_description": "library/catalog/playlists/history/transcoding helpers",
+      "bytes": 51496,
+      "sha256": "a99f13f9e2e91f929505f8298f05771d91183acf6cf8ef6f6aae4cda41ef7b7b",
+      "last_write_time": "2023-04-26T13:20:00"
+    },
+    {
+      "name": "ml_devices.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\ml_devices.dll",
+      "extension": ".dll",
+      "prefix": "ml",
+      "role": "media-library",
+      "role_description": "library/catalog/playlists/history/transcoding helpers",
+      "bytes": 264488,
+      "sha256": "fb309a5b5161c1326e959c0368146b5d4d2991d7590319ec449b2f448f0f80a6",
+      "last_write_time": "2023-04-26T13:20:00"
+    },
+    {
+      "name": "ml_disc.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\ml_disc.dll",
+      "extension": ".dll",
+      "prefix": "ml",
+      "role": "media-library",
+      "role_description": "library/catalog/playlists/history/transcoding helpers",
+      "bytes": 192296,
+      "sha256": "735937df3ce3a12afb50e16f55289fa574cd9c6cdb599ffcb8f53e50ade008a3",
+      "last_write_time": "2023-04-26T13:20:00"
+    },
+    {
+      "name": "ml_downloads.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\ml_downloads.dll",
+      "extension": ".dll",
+      "prefix": "ml",
+      "role": "media-library",
+      "role_description": "library/catalog/playlists/history/transcoding helpers",
+      "bytes": 78120,
+      "sha256": "8101d4d7759364b8635cbbcda22b78130c4703c0767ec32399e0aa9e5957f8e8",
+      "last_write_time": "2023-04-26T13:20:00"
+    },
+    {
+      "name": "ml_fanzone.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\ml_fanzone.dll",
+      "extension": ".dll",
+      "prefix": "ml",
+      "role": "media-library",
+      "role_description": "library/catalog/playlists/history/transcoding helpers",
+      "bytes": 80168,
+      "sha256": "b1cbe3e6108c7961d0dd208129b01add34130df6097f0553569871b35a0d2707",
+      "last_write_time": "2023-04-26T13:20:00"
+    },
+    {
+      "name": "ml_history.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\ml_history.dll",
+      "extension": ".dll",
+      "prefix": "ml",
+      "role": "media-library",
+      "role_description": "library/catalog/playlists/history/transcoding helpers",
+      "bytes": 80680,
+      "sha256": "9776ae8352debed7c629c96040b7ffa02cbbc78119feb71cdb3eb778c0224e9c",
+      "last_write_time": "2023-04-26T13:20:00"
+    },
+    {
+      "name": "ml_hotmixradio.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\ml_hotmixradio.dll",
+      "extension": ".dll",
+      "prefix": "ml",
+      "role": "media-library",
+      "role_description": "library/catalog/playlists/history/transcoding helpers",
+      "bytes": 31528,
+      "sha256": "85ed81b36b8f20aada3db6747420c93482524caa484f9d7c65904185962c8c38",
+      "last_write_time": "2023-04-26T13:20:02"
+    },
+    {
+      "name": "ml_impex.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\ml_impex.dll",
+      "extension": ".dll",
+      "prefix": "ml",
+      "role": "media-library",
+      "role_description": "library/catalog/playlists/history/transcoding helpers",
+      "bytes": 80168,
+      "sha256": "182e6339e53a590211ee80bb1679f19f2124237b387c0fc8cfaba6f19c92f566",
+      "last_write_time": "2023-04-26T13:20:02"
+    },
+    {
+      "name": "ml_local.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\ml_local.dll",
+      "extension": ".dll",
+      "prefix": "ml",
+      "role": "media-library",
+      "role_description": "library/catalog/playlists/history/transcoding helpers",
+      "bytes": 527656,
+      "sha256": "dcd121579a236ba705927e1eb375580ee48a2e9ed7def9e36f2f0d51b7376e82",
+      "last_write_time": "2023-04-26T13:20:02"
+    },
+    {
+      "name": "ml_nft.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\ml_nft.dll",
+      "extension": ".dll",
+      "prefix": "ml",
+      "role": "media-library",
+      "role_description": "library/catalog/playlists/history/transcoding helpers",
+      "bytes": 31016,
+      "sha256": "0c188b4cf442ecbfb4de2e61498d313afd4b820f98c001a8255cf1ec2f6611fd",
+      "last_write_time": "2023-04-26T13:20:02"
+    },
+    {
+      "name": "ml_online.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\ml_online.dll",
+      "extension": ".dll",
+      "prefix": "ml",
+      "role": "media-library",
+      "role_description": "library/catalog/playlists/history/transcoding helpers",
+      "bytes": 169768,
+      "sha256": "7acfa22399d5d79176ab372c2af2d118cb280195b146d026838370cb60eeea5f",
+      "last_write_time": "2023-04-26T13:20:24"
+    },
+    {
+      "name": "ml_playlists.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\ml_playlists.dll",
+      "extension": ".dll",
+      "prefix": "ml",
+      "role": "media-library",
+      "role_description": "library/catalog/playlists/history/transcoding helpers",
+      "bytes": 301864,
+      "sha256": "11e342c1e8b384ff8b2c50baea5bb6ac4bdedb6768e90d0839e5ac1d5df39610",
+      "last_write_time": "2023-04-26T13:20:24"
+    },
+    {
+      "name": "ml_pmp.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\ml_pmp.dll",
+      "extension": ".dll",
+      "prefix": "ml",
+      "role": "media-library",
+      "role_description": "library/catalog/playlists/history/transcoding helpers",
+      "bytes": 330024,
+      "sha256": "d00a648557f9218049a751b6f23d83e3671c9e0ea91f9370e47967bc7cc58e87",
+      "last_write_time": "2023-04-26T13:20:24"
+    },
+    {
+      "name": "ml_rg.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\ml_rg.dll",
+      "extension": ".dll",
+      "prefix": "ml",
+      "role": "media-library",
+      "role_description": "library/catalog/playlists/history/transcoding helpers",
+      "bytes": 48936,
+      "sha256": "b91898457790c0eea4aeec8c3fffa4be897c1a2f94318fdf135f247297ac4c99",
+      "last_write_time": "2023-04-26T13:20:24"
+    },
+    {
+      "name": "ml_transcode.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\ml_transcode.dll",
+      "extension": ".dll",
+      "prefix": "ml",
+      "role": "media-library",
+      "role_description": "library/catalog/playlists/history/transcoding helpers",
+      "bytes": 52520,
+      "sha256": "3421388957bdeb302a671260dc37cc93fd2e046594c099e4b0ec9eb1dd5bc1b6",
+      "last_write_time": "2023-04-26T13:20:26"
+    },
+    {
+      "name": "ml_wire.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\ml_wire.dll",
+      "extension": ".dll",
+      "prefix": "ml",
+      "role": "media-library",
+      "role_description": "library/catalog/playlists/history/transcoding helpers",
+      "bytes": 153384,
+      "sha256": "22866e085dc741cc3a9aff6e9026b01cff6079e194d4b5320204b8b47d0c9b40",
+      "last_write_time": "2023-04-26T13:20:26"
+    },
+    {
+      "name": "nsvdec_vp5.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\nsvdec_vp5.dll",
+      "extension": ".dll",
+      "prefix": "nsvdec",
+      "role": "video-decoder",
+      "role_description": "Nullsoft video decoder components",
+      "bytes": 164136,
+      "sha256": "9c2a7874f06a72176110bbb8892f1658fbcb45a1ccb4bc18e0db72266911bb56",
+      "last_write_time": "2023-04-26T13:20:26"
+    },
+    {
+      "name": "out_disk.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\out_disk.dll",
+      "extension": ".dll",
+      "prefix": "out",
+      "role": "output",
+      "role_description": "audio/device/disk output sinks",
+      "bytes": 40744,
+      "sha256": "27b24da2d5c752248aed9e4530e84ac4c034e9628c5ecf9ffd5d0d156c3a0b44",
+      "last_write_time": "2023-04-26T13:20:26"
+    },
+    {
+      "name": "out_ds.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\out_ds.dll",
+      "extension": ".dll",
+      "prefix": "out",
+      "role": "output",
+      "role_description": "audio/device/disk output sinks",
+      "bytes": 76072,
+      "sha256": "7d4b35d890cb77e5caa7f98e36b98af8d22c4b0606f8fb84e214ddd4eea2fdd1",
+      "last_write_time": "2023-04-26T13:20:26"
+    },
+    {
+      "name": "out_wasapi.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\out_wasapi.dll",
+      "extension": ".dll",
+      "prefix": "out",
+      "role": "output",
+      "role_description": "audio/device/disk output sinks",
+      "bytes": 25896,
+      "sha256": "82c61da7a923eff2f598ac73fc82938608da90e83aeb7a60c33065a1e55010eb",
+      "last_write_time": "2023-04-26T13:20:26"
+    },
+    {
+      "name": "out_wave.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\out_wave.dll",
+      "extension": ".dll",
+      "prefix": "out",
+      "role": "output",
+      "role_description": "audio/device/disk output sinks",
+      "bytes": 40232,
+      "sha256": "efb452e27d0832b3d63dce69ca04f3da598af5955904e2f0222b056404d72de3",
+      "last_write_time": "2023-04-26T13:20:46"
+    },
+    {
+      "name": "pmp_activesync.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\pmp_activesync.dll",
+      "extension": ".dll",
+      "prefix": "pmp",
+      "role": "portable-media",
+      "role_description": "portable device sync modules",
+      "bytes": 160552,
+      "sha256": "3a7f3e3ee017ed3e931e8aa17dcbf22ede8220ffa4084c828c3fd09aecdf4cd3",
+      "last_write_time": "2023-04-26T13:20:46"
+    },
+    {
+      "name": "pmp_android.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\pmp_android.dll",
+      "extension": ".dll",
+      "prefix": "pmp",
+      "role": "portable-media",
+      "role_description": "portable device sync modules",
+      "bytes": 75560,
+      "sha256": "d09d680139149c4b7f559497c49af3780f8aa9974ccef14c530406b2cefe490d",
+      "last_write_time": "2023-04-26T13:20:46"
+    },
+    {
+      "name": "pmp_ipod.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\pmp_ipod.dll",
+      "extension": ".dll",
+      "prefix": "pmp",
+      "role": "portable-media",
+      "role_description": "portable device sync modules",
+      "bytes": 178984,
+      "sha256": "94564e2a43197ef61f5a4535e5f150eac10e87efb4284b858c2b24a667b98631",
+      "last_write_time": "2023-04-26T13:20:48"
+    },
+    {
+      "name": "pmp_njb.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\pmp_njb.dll",
+      "extension": ".dll",
+      "prefix": "pmp",
+      "role": "portable-media",
+      "role_description": "portable device sync modules",
+      "bytes": 37672,
+      "sha256": "b10942382fa36bcb5564bc8b5dafdda120b89ab9e5d83480c788dc75e49a54cb",
+      "last_write_time": "2023-04-26T13:20:48"
+    },
+    {
+      "name": "pmp_p4s.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\pmp_p4s.dll",
+      "extension": ".dll",
+      "prefix": "pmp",
+      "role": "portable-media",
+      "role_description": "portable device sync modules",
+      "bytes": 254248,
+      "sha256": "149f37ad5e70cfe6b89ab8d50e248e56a0a91550faefe3b823dd8114191e4be6",
+      "last_write_time": "2023-04-26T13:20:48"
+    },
+    {
+      "name": "pmp_usb.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\pmp_usb.dll",
+      "extension": ".dll",
+      "prefix": "pmp",
+      "role": "portable-media",
+      "role_description": "portable device sync modules",
+      "bytes": 73000,
+      "sha256": "58f83492fb7659d609703ec9c75ec98ffa2ac30e5d9b70d39d8a21deaa3e4ebd",
+      "last_write_time": "2023-04-26T13:20:48"
+    },
+    {
+      "name": "pmp_wifi.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\pmp_wifi.dll",
+      "extension": ".dll",
+      "prefix": "pmp",
+      "role": "portable-media",
+      "role_description": "portable device sync modules",
+      "bytes": 98088,
+      "sha256": "1dc437cfe17c1747ae1700aa6d21f5c81b141b99bf9de0e7cc6c7eb2914ad40f",
+      "last_write_time": "2023-04-26T13:20:48"
+    },
+    {
+      "name": "vis_avs.dat",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\vis_avs.dat",
+      "extension": ".dat",
+      "prefix": "vis",
+      "role": "visualization",
+      "role_description": "visualization backends and presets",
+      "bytes": 1029,
+      "sha256": "0b627f8870d9b5fa7d9a3d326a6ed4c44b0297966152a6ddab15f30f56f0eb5a",
+      "last_write_time": "2022-11-30T23:06:34"
+    },
+    {
+      "name": "vis_avs.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\vis_avs.dll",
+      "extension": ".dll",
+      "prefix": "vis",
+      "role": "visualization",
+      "role_description": "visualization backends and presets",
+      "bytes": 414504,
+      "sha256": "668389434e49ceddb5c2db8670f8100ed9213e1e1b88bd95c9080bbd3d2a69c5",
+      "last_write_time": "2023-04-26T13:20:48"
+    },
+    {
+      "name": "vis_milk2.dll",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\vis_milk2.dll",
+      "extension": ".dll",
+      "prefix": "vis",
+      "role": "visualization",
+      "role_description": "visualization backends and presets",
+      "bytes": 483112,
+      "sha256": "0e936a8be8ab64f23314b1395a435d6123847f76c75f6c12eb4e16efdad2afcc",
+      "last_write_time": "2023-04-26T13:20:50"
+    },
+    {
+      "name": "winampFLV.swf",
+      "path": "F:\\WinampPortable\\App\\Winamp\\Plugins\\winampFLV.swf",
+      "extension": ".swf",
+      "prefix": "",
+      "role": "support",
+      "role_description": "support file or uncategorized asset",
+      "bytes": 36782,
+      "sha256": "962b8c80ddbd7e2f4831953db053f0e3fe5f1dfa7015de793b9ebd621d184eaf",
+      "last_write_time": "2022-11-30T23:06:34"
+    }
+  ]
+}

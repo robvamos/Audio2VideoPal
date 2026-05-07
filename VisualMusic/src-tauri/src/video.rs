@@ -1,24 +1,5 @@
 use crate::db::log_event;
 
-#[derive(Debug, Clone)]
-pub struct VideoRuntimeState {
-    pub active: bool,
-    pub width: u32,
-    pub height: u32,
-    pub fps: u32,
-}
-
-impl Default for VideoRuntimeState {
-    fn default() -> Self {
-        Self {
-            active: false,
-            width: 1920,
-            height: 1080,
-            fps: 60,
-        }
-    }
-}
-
 #[tauri::command]
 pub fn start_video_render() -> Result<String, String> {
     log_event(

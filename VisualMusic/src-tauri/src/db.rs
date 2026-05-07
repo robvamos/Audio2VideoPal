@@ -10,13 +10,14 @@ pub fn ensure_data_dir() -> Result<(), String> {
 
 pub fn open_db() -> Result<Connection, String> {
     ensure_data_dir()?;
-    Connection::open(DB_PATH).map_err(|e| e.to_string())
+    let conn = Connection::open(DB_PATH).map_err(|e| e.to_string())?;
+    conn.execute_batch(SCHEMA).map_err(|e| e.to_string())?;
+    Ok(conn)
 }
 
 #[tauri::command]
 pub fn init_db() -> Result<String, String> {
-    let conn = open_db()?;
-    conn.execute_batch(SCHEMA).map_err(|e| e.to_string())?;
+    open_db()?;
     Ok("Database initialized".to_string())
 }
 

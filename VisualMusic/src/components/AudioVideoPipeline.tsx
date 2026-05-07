@@ -1,10 +1,5 @@
 import { useState } from "react";
-import {
-  startAudioStream,
-  stopAudioStream,
-  startVideoRender,
-  stopVideoRender,
-} from "../services/tauriApi";
+import { pipelineEngine } from "../engines/pipelineEngine";
 
 interface AudioVideoPipelineProps {
   onMessage: (value: string) => void;
@@ -18,7 +13,7 @@ export default function AudioVideoPipeline({ onMessage }: AudioVideoPipelineProp
   async function toggleAudio() {
     try {
       setIsBusy(true);
-      const result = audioActive ? await stopAudioStream() : await startAudioStream();
+      const result = audioActive ? await pipelineEngine.input.stop() : await pipelineEngine.input.start();
       setAudioActive(!audioActive);
       onMessage(result);
     } catch (error) {
@@ -31,7 +26,7 @@ export default function AudioVideoPipeline({ onMessage }: AudioVideoPipelineProp
   async function toggleVideo() {
     try {
       setIsBusy(true);
-      const result = videoActive ? await stopVideoRender() : await startVideoRender();
+      const result = videoActive ? await pipelineEngine.output.stop() : await pipelineEngine.output.start();
       setVideoActive(!videoActive);
       onMessage(result);
     } catch (error) {

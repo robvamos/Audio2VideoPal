@@ -17,6 +17,10 @@ export async function scanPlugins(): Promise<string> {
   return await invoke<string>("scan_plugins");
 }
 
+export async function scanPluginsInDirectory(directoryPath: string): Promise<string> {
+  return await invoke<string>("scan_plugins_in_directory", { directoryPath });
+}
+
 export async function loadPlugins(): Promise<Plugin[]> {
   const result = await invoke<string>("get_plugins_list");
   return JSON.parse(result);

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { batchRenderTest, detectFfmpeg, initDb } from "../services/tauriApi";
+import { systemEngine } from "../engines/systemEngine";
 
 interface HomePanelProps {
   setMessage: (value: string) => void;
@@ -23,13 +23,13 @@ export default function HomePanel({ setMessage }: HomePanelProps) {
   return (
     <div className="tab-content">
       <div className="row">
-        <button onClick={() => handleAction(initDb)} disabled={isBusy}>
+        <button onClick={() => handleAction(systemEngine.initDb)} disabled={isBusy}>
           Initialize Database
         </button>
-        <button onClick={() => handleAction(detectFfmpeg)} disabled={isBusy}>
+        <button onClick={() => handleAction(systemEngine.detectFfmpeg)} disabled={isBusy}>
           Detect FFmpeg
         </button>
-        <button onClick={() => handleAction(batchRenderTest)} disabled={isBusy}>
+        <button onClick={() => handleAction(systemEngine.batchRenderTest)} disabled={isBusy}>
           Batch Render Test
         </button>
       </div>

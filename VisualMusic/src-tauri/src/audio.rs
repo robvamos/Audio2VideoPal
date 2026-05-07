@@ -1,22 +1,5 @@
 use crate::db::log_event;
 
-#[derive(Debug, Clone)]
-pub struct AudioRuntimeState {
-    pub active: bool,
-    pub sample_rate: u32,
-    pub channels: u16,
-}
-
-impl Default for AudioRuntimeState {
-    fn default() -> Self {
-        Self {
-            active: false,
-            sample_rate: 48000,
-            channels: 2,
-        }
-    }
-}
-
 #[tauri::command]
 pub fn start_audio_stream() -> Result<String, String> {
     log_event(

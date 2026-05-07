@@ -21,3 +21,11 @@ export interface PipelineState {
   audioActive: boolean;
   videoActive: boolean;
 }
+
+export interface PlaylistTrack {
+  id: string;
+  name: string;
+  path: string;
+  file: File;
+  url: string;
+}
