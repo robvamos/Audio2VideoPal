@@ -18,6 +18,10 @@
             "approve": true,
             "matchCommandLine": true
         },
-        "mkdir": true
+        "mkdir": true,
+        "/^cd /workspaces/Audio2VideoPal && git commit -m \"Initial Visual Music App setup with plugin scanning\"$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
     }
 }

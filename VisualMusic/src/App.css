@@ -316,6 +316,37 @@ dd.hash {
   overflow-y: auto;
 }
 
+.pipeline-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(240px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.pipeline-panel {
+  padding: 18px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pipeline-panel h2 {
+  margin: 0;
+  color: #396cd8;
+}
+
+.pipeline-panel button {
+  width: fit-content;
+}
+
+.pipeline-panel p {
+  margin: 0;
+  color: #444;
+}
+
 .message {
   padding: 12px;
   background-color: #e3f2fd;

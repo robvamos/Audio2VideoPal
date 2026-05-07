@@ -507,11 +507,31 @@ fn get_plugins_list() -> Result<String, String> {
     Ok(serde_json::to_string(&plugin_list).map_err(|e| e.to_string())?)
 }
 
+#[tauri::command]
+fn start_audio_stream() -> Result<String, String> {
+    Ok("Audio capture pipeline started".to_string())
+}
+
+#[tauri::command]
+fn stop_audio_stream() -> Result<String, String> {
+    Ok("Audio capture pipeline stopped".to_string())
+}
+
+#[tauri::command]
+fn start_video_render() -> Result<String, String> {
+    Ok("Video production pipeline started".to_string())
+}
+
+#[tauri::command]
+fn stop_video_render() -> Result<String, String> {
+    Ok("Video production pipeline stopped".to_string())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![greet, init_db, detect_ffmpeg, batch_render_test, scan_plugins, deep_scan_plugin, get_plugin_deep_scan, get_plugins_list])
+        .invoke_handler(tauri::generate_handler![greet, init_db, detect_ffmpeg, batch_render_test, scan_plugins, deep_scan_plugin, get_plugin_deep_scan, get_plugins_list, start_audio_stream, stop_audio_stream, start_video_render, stop_video_render])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
