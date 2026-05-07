@@ -2,13 +2,8 @@
 use rusqlite::Connection;
 use std::fs;
 use std::process::Command;
-use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
-use rustfft::{FftPlanner, num_complex::Complex};
-use std::sync::Arc;
-use tokio::sync::Mutex;
-use pelite::PeFile;
+use pelite::{PeFile, Wrap};
 use sha2::{Sha256, Digest};
-use std::path::Path;
 
 const SCHEMA: &str = r#"
 -- Visual Music App - SQLite schema draft
@@ -352,8 +347,12 @@ fn scan_plugins() -> Result<String, String> {
             let sha256 = format!("{:x}", hasher.finalize());
             
             // Determine architecture using pelite
-            let pe_file = PeFile::from_bytes(&fs::read(&path).map_err(|e| e.to_string())?).map_err(|e| e.to_string())?;
-            let architecture = if pe_file.is_64_bit() { "x64" } else { "x86" };
+            let pe_bytes = fs::read(&path).map_err(|e| e.to_string())?;
+            let pe_file = PeFile::from_bytes(&pe_bytes).map_err(|e| e.to_string())?;
+            let architecture = match pe_file {
+                Wrap::T32(_) => "x86",
+                Wrap::T64(_) => "x64",
+            };
             
             // Insert into DB
             conn.execute(
