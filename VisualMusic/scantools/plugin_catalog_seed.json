@@ -1,0 +1,63 @@
+[
+  {
+    "plugin_id": "avs",
+    "display_name": "Advanced Visualization Studio",
+    "short_name": "AVS",
+    "expected_dll_names": ["vis_avs.dll"],
+    "developer": "Nullsoft",
+    "first_release": "2000-03-03",
+    "latest_known_version": "2.93",
+    "license": "BSD-style / open sourced legacy component; verify bundled binary license before redistribution",
+    "platform": "Windows / Winamp",
+    "graphics_api": ["Win32", "GDI", "legacy effects pipeline"],
+    "capability_expectation": "B_or_C_window_bound",
+    "winamp_entrypoint": "winampVisGetHeader",
+    "notes": "Historically bundled with Winamp. Prefer local user-provided DLL from a trusted Winamp installation. Do not download vis_avs.dll from generic DLL sites.",
+    "trusted_sources": [
+      "https://en.wikipedia.org/wiki/Advanced_Visualization_Studio"
+    ],
+    "download_policy": "manual_user_supplied_or_build_from_source_only"
+  },
+  {
+    "plugin_id": "milkdrop2",
+    "display_name": "MilkDrop 2",
+    "short_name": "MilkDrop",
+    "expected_dll_names": ["vis_milk2.dll"],
+    "developer": "Ryan Geiss / Nullsoft community",
+    "latest_known_version": "2.25c",
+    "license": "BSD license for released source code",
+    "platform": "Windows / Winamp",
+    "graphics_api": ["DirectX 9", "Shader Model 3", "GPU accelerated"],
+    "capability_expectation": "B_window_bound_resizable_or_projectm_A",
+    "winamp_entrypoint": "winampVisGetHeader",
+    "notes": "SourceForge source package builds Winamp DLL vis_milk2.dll. projectM is recommended as modern compatible engine for native/headless rendering.",
+    "trusted_sources": [
+      "https://sourceforge.net/projects/milkdrop2/files/",
+      "https://sourceforge.net/projects/milkdrop2/",
+      "https://github.com/projectM-visualizer/projectm",
+      "https://projectm-visualizer.org/"
+    ],
+    "download_policy": "source_or_projectm_preferred; DLL only if built locally or from trusted installation"
+  },
+  {
+    "plugin_id": "goom2k4",
+    "display_name": "Goom 2k4",
+    "short_name": "Goom",
+    "expected_dll_names": ["vis_goom.dll", "visualization.goom.dll", "foo_vis_goom.dll"],
+    "developer": "Goom project / Kodi and foobar2000 ports",
+    "latest_known_version": "2k4 / Kodi 19.0.2 / foobar2000 port 0.0.10-beta0",
+    "license": "GPL-2.0-or-later for Kodi add-on; verify exact port license before linking/distribution",
+    "platform": "Cross-platform; Windows ports exist for Kodi/foobar2000, not necessarily Winamp ABI",
+    "graphics_api": ["OpenGL", "software pixel buffer depending on port"],
+    "capability_expectation": "A_if_integrated_as_library_or_B_if_plugin_window",
+    "winamp_entrypoint": "unknown; many Goom ports are not Winamp ABI DLLs",
+    "notes": "Treat Goom as an engine/port candidate, not guaranteed Winamp visualization DLL. Kodi and foobar2000 ports are useful references for Windows 11 rendering.",
+    "trusted_sources": [
+      "https://sourceforge.net/projects/goom/files/goom2k4/",
+      "https://github.com/xbmc/visualization.goom",
+      "https://kodi.wiki/view/Add-on:Goom",
+      "https://www.foobar2000.org/components/view/foo_vis_goom"
+    ],
+    "download_policy": "source_or_port_reference_only; do not assume Winamp-compatible DLL"
+  }
+]
