@@ -1,0 +1,23 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "unzip": true,
+        "npx create-tauri-app@latest": true,
+        "/^cd /workspaces/Audio2VideoPal/VisualMusic && npm install$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^source ~/\\.cargo/env && cd /workspaces/Audio2VideoPal/VisualMusic && apt update && apt install -y libwebkit2gtk-4\\.1-dev libappindicator3-dev librsvg2-dev patchelf$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^source ~/\\.cargo/env && cd /workspaces/Audio2VideoPal/VisualMusic && cargo build$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^source ~/\\.cargo/env && cd /workspaces/Audio2VideoPal/VisualMusic/src-tauri && cargo build$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "mkdir": true
+    }
+}

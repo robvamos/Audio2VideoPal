@@ -1,0 +1,103 @@
+{
+  "app": {
+    "name": "Visual Music",
+    "target_os": "Windows 11",
+    "database": "SQLite"
+  },
+  "recommended_stack": {
+    "ui": [
+      "Tauri",
+      "React",
+      "TypeScript",
+      "Tailwind",
+      "Framer Motion"
+    ],
+    "core": [
+      "Rust"
+    ],
+    "multimedia": [
+      "FFmpeg",
+      "ffprobe"
+    ],
+    "optional_multimedia": [
+      "GStreamer",
+      "Windows Media Foundation",
+      "libobs"
+    ],
+    "rendering": [
+      "projectM",
+      "native GPU visualizers"
+    ],
+    "legacy_plugins": [
+      "Winamp visualization DLL via x86 helper"
+    ]
+  },
+  "export_rule": {
+    "must_enable_before_start": true,
+    "settings_locked_during_session": true,
+    "no_mid_session_recording_enable": true
+  },
+  "video_codecs": [
+    "H.264",
+    "H.265/HEVC",
+    "VP8",
+    "VP9",
+    "AV1",
+    "Theora",
+    "ProRes",
+    "DNxHD/DNxHR",
+    "MPEG-4 Part 2"
+  ],
+  "audio_codecs": [
+    "PCM",
+    "MP3",
+    "AAC",
+    "Vorbis",
+    "Opus",
+    "FLAC",
+    "ALAC"
+  ],
+  "containers": [
+    "MP4",
+    "MKV",
+    "WebM",
+    "MOV",
+    "OGV/OGG"
+  ],
+  "hardware_encoders": [
+    "NVIDIA NVENC",
+    "Intel QSV",
+    "AMD AMF"
+  ],
+  "known_visualizers": {
+    "priority": [
+      "MilkDrop",
+      "MilkDrop 2",
+      "Advanced Visualization Studio / AVS",
+      "Geiss",
+      "Geiss 2",
+      "Goom",
+      "G-Force",
+      "WhiteCap"
+    ],
+    "verify": [
+      "Tripex",
+      "Tripex 3",
+      "R4",
+      "Climax",
+      "TwistedPixel",
+      "SoundGraffiti",
+      "Synesthesia",
+      "Nullsoft Tiny Fullscreen",
+      "Monkey",
+      "Jet"
+    ],
+    "modern": [
+      "MilkDrop 3",
+      "BeatDrop",
+      "BeatDrop2077",
+      "projectM",
+      "Butterchurn"
+    ]
+  }
+}
