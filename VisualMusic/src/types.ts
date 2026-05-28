@@ -17,11 +17,6 @@ export interface ScanDetails {
   raw_scan: unknown;
 }
 
-export interface PipelineState {
-  audioActive: boolean;
-  videoActive: boolean;
-}
-
 export interface TimingState {
   sync_state: string;
   bpm: number | null;

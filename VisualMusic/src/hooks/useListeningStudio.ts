@@ -23,6 +23,13 @@ export function useListeningStudio({ onMessage }: UseListeningStudioOptions) {
     });
   }
 
+  function clearSnapshot() {
+    applySnapshot({
+      timingState: null,
+      telemetry: null,
+    });
+  }
+
   async function refreshListeningState() {
     try {
       const [latestTimingState, latestTelemetry] = await Promise.all([
@@ -57,6 +64,8 @@ export function useListeningStudio({ onMessage }: UseListeningStudioOptions) {
       setIsBusy(true);
       const result = await pipelineEngine.listening.stop();
       setAudioActive(false);
+      setVideoActive(false);
+      clearSnapshot();
       onMessage(result);
     } catch (error) {
       onMessage(`Error: ${error}`);
@@ -88,7 +97,7 @@ export function useListeningStudio({ onMessage }: UseListeningStudioOptions) {
     try {
       setIsBusy(true);
       const result = videoActive ? await pipelineEngine.output.stop() : await pipelineEngine.output.start();
-      setVideoActive(!videoActive);
+      setVideoActive((currentValue) => !currentValue);
       onMessage(result);
     } catch (error) {
       onMessage(`Error: ${error}`);
