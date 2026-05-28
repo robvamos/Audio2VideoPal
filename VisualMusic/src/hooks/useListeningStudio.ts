@@ -140,6 +140,23 @@ export function useListeningStudio({ onMessage }: UseListeningStudioOptions) {
     }
   }
 
+  async function saveFilterSetupEvaluation(setupId: string, rating: string, note: string) {
+    try {
+      setIsBusy(true);
+      const updatedTelemetry = await pipelineEngine.listening.saveFilterSetupEvaluation(setupId, rating, note);
+      if (updatedTelemetry) {
+        startTransition(() => {
+          setTelemetry(updatedTelemetry);
+        });
+      }
+      onMessage(`Setup evaluation saved: ${rating}`);
+    } catch (error) {
+      onMessage(`Could not save setup evaluation: ${error}`);
+    } finally {
+      setIsBusy(false);
+    }
+  }
+
   useEffect(() => {
     if (!isDesktopRuntimeAvailable()) {
       onMessage(BROWSER_PREVIEW_MESSAGE);
@@ -164,5 +181,6 @@ export function useListeningStudio({ onMessage }: UseListeningStudioOptions) {
     toggleVideo,
     adjustStructureLearning,
     saveLearningEvaluation,
+    saveFilterSetupEvaluation,
   };
 }

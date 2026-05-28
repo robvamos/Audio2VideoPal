@@ -86,12 +86,32 @@ pub struct LearningEvaluationEntry {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct FilterSetupDefinition {
+    pub id: String,
+    pub name: String,
+    pub description: String,
+    pub goal: String,
+    pub modules: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct FilterSetupEvaluationEntry {
+    pub timestamp: String,
+    pub setup_id: String,
+    pub rating: String,
+    pub note: String,
+    pub goal: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct LearningTelemetry {
     pub current_stage: String,
     pub rating_scale: Vec<String>,
     pub test_songs: Vec<TestSongDefinition>,
+    pub filter_setups: Vec<FilterSetupDefinition>,
     pub structure_comparison: StructureComparison,
     pub evaluation_history: Vec<LearningEvaluationEntry>,
+    pub setup_evaluation_history: Vec<FilterSetupEvaluationEntry>,
     pub next_milestones: Vec<String>,
 }
 

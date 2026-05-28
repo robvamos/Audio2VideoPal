@@ -97,6 +97,29 @@ function createPreviewRunResult(profile: string, source: string): ListeningRunRe
           expected_outcome: "Controlled relock after tempo transitions.",
         },
       ],
+      filter_setups: [
+        {
+          id: "reference_subtractive_gate",
+          name: "Reference Subtractive Gate",
+          description: "Prioritize self-output subtraction before envelope extraction.",
+          goal: "reduce_self_bleed",
+          modules: ["self_output_reference", "self_output_subtractor", "normalizer"],
+        },
+        {
+          id: "tempo_stability_merge",
+          name: "Tempo Stability Merge",
+          description: "Favor stable tempo windows before fusion and grid tracking.",
+          goal: "improve_relock",
+          modules: ["tempo_autocorrelation", "window_stability_merge", "weighted_tempo_fusion"],
+        },
+        {
+          id: "phase_grid_focus",
+          name: "Phase Grid Focus",
+          description: "Bias the path toward phase and beat-1 reconstruction fidelity.",
+          goal: "tighten_beat_1",
+          modules: ["learning_grid", "beat_grid_tracker", "simple_downbeat_scorer"],
+        },
+      ],
       structure_comparison: {
         target_label: "grid16_phrase_map",
         average_error_ratio: 0.06,
@@ -124,6 +147,15 @@ function createPreviewRunResult(profile: string, source: string): ListeningRunRe
           average_error_ratio: 0.06,
           segment_offset_ratio: -0.03,
           segment_scale_ratio: 1.08,
+        },
+      ],
+      setup_evaluation_history: [
+        {
+          timestamp: "preview",
+          setup_id: "reference_subtractive_gate",
+          rating: "buono",
+          note: "Preview setup reduces self-output bleed without destabilizing lock.",
+          goal: "reduce_self_bleed",
         },
       ],
       next_milestones: [
@@ -410,6 +442,34 @@ export async function saveLearningEvaluation(songId: string, rating: string, not
           segment_scale_ratio: previewTelemetry.learning.structure_comparison.segment_scale_ratio,
         },
         ...previewTelemetry.learning.evaluation_history,
+      ].slice(0, 12);
+
+      return JSON.stringify(previewTelemetry);
+    },
+  );
+  return JSON.parse(result);
+}
+
+export async function saveFilterSetupEvaluation(setupId: string, rating: string, note: string): Promise<ListeningTelemetry | null> {
+  const result = await invokeDesktop<string>(
+    "save_filter_setup_evaluation",
+    { setupId, rating, note },
+    async () => {
+      ensurePreviewState();
+      if (!previewTelemetry) {
+        return "null";
+      }
+
+      const setup = previewTelemetry.learning.filter_setups.find((item) => item.id === setupId);
+      previewTelemetry.learning.setup_evaluation_history = [
+        {
+          timestamp: new Date().toISOString(),
+          setup_id: setupId,
+          rating,
+          note,
+          goal: setup?.goal ?? "unknown",
+        },
+        ...previewTelemetry.learning.setup_evaluation_history,
       ].slice(0, 12);
 
       return JSON.stringify(previewTelemetry);

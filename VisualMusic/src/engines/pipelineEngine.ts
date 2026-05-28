@@ -3,6 +3,7 @@ import {
   getLatestTelemetry,
   getLatestTimingState,
   runListeningTest,
+  saveFilterSetupEvaluation,
   saveLearningEvaluation,
   startAudioStream,
   startListeningPipeline,
@@ -25,6 +26,7 @@ export const pipelineEngine = {
     getLatestTelemetry,
     adjustStructureLearning,
     saveLearningEvaluation,
+    saveFilterSetupEvaluation,
   },
   output: {
     start: startVideoRender,

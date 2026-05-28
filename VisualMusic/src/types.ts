@@ -84,12 +84,30 @@ export interface LearningEvaluationEntry {
   segment_scale_ratio: number;
 }
 
+export interface FilterSetupDefinition {
+  id: string;
+  name: string;
+  description: string;
+  goal: string;
+  modules: string[];
+}
+
+export interface FilterSetupEvaluationEntry {
+  timestamp: string;
+  setup_id: string;
+  rating: string;
+  note: string;
+  goal: string;
+}
+
 export interface LearningTelemetry {
   current_stage: string;
   rating_scale: string[];
   test_songs: TestSongDefinition[];
+  filter_setups: FilterSetupDefinition[];
   structure_comparison: StructureComparison;
   evaluation_history: LearningEvaluationEntry[];
+  setup_evaluation_history: FilterSetupEvaluationEntry[];
   next_milestones: string[];
 }
 

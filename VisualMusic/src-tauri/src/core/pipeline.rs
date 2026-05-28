@@ -1,7 +1,8 @@
 use crate::core::runtime_state::{
-    LearningEvaluationEntry, LearningTelemetry, ListeningRunResult, ListeningTelemetry,
-    OneBarGridResult, PipelineContext, PreprocessingTelemetry, StructureComparison,
-    StructureSegment, TestSongDefinition, TimingState, WiringDescription,
+    FilterSetupDefinition, FilterSetupEvaluationEntry, LearningEvaluationEntry, LearningTelemetry,
+    ListeningRunResult, ListeningTelemetry, OneBarGridResult, PipelineContext,
+    PreprocessingTelemetry, StructureComparison, StructureSegment, TestSongDefinition,
+    TimingState, WiringDescription,
 };
 use crate::core::telemetry::write_telemetry;
 use crate::sources::synthetic_source::SyntheticPatternSource;
@@ -106,6 +107,44 @@ fn learning_telemetry() -> LearningTelemetry {
                     .to_string(),
             },
         ],
+        filter_setups: vec![
+            FilterSetupDefinition {
+                id: "reference_subtractive_gate".to_string(),
+                name: "Reference Subtractive Gate".to_string(),
+                description: "Prioritize self-output subtraction before envelope extraction."
+                    .to_string(),
+                goal: "reduce_self_bleed".to_string(),
+                modules: vec![
+                    "self_output_reference".to_string(),
+                    "self_output_subtractor".to_string(),
+                    "normalizer".to_string(),
+                ],
+            },
+            FilterSetupDefinition {
+                id: "tempo_stability_merge".to_string(),
+                name: "Tempo Stability Merge".to_string(),
+                description: "Favor stable tempo windows before fusion and grid tracking."
+                    .to_string(),
+                goal: "improve_relock".to_string(),
+                modules: vec![
+                    "tempo_autocorrelation".to_string(),
+                    "window_stability_merge".to_string(),
+                    "weighted_tempo_fusion".to_string(),
+                ],
+            },
+            FilterSetupDefinition {
+                id: "phase_grid_focus".to_string(),
+                name: "Phase Grid Focus".to_string(),
+                description: "Bias the path toward phase and beat-1 reconstruction fidelity."
+                    .to_string(),
+                goal: "tighten_beat_1".to_string(),
+                modules: vec![
+                    "learning_grid".to_string(),
+                    "beat_grid_tracker".to_string(),
+                    "simple_downbeat_scorer".to_string(),
+                ],
+            },
+        ],
         structure_comparison: StructureComparison {
             target_label: "grid16_phrase_map".to_string(),
             average_error_ratio: 0.06,
@@ -164,6 +203,13 @@ fn learning_telemetry() -> LearningTelemetry {
             average_error_ratio: 0.06,
             segment_offset_ratio: -0.03,
             segment_scale_ratio: 1.08,
+        }],
+        setup_evaluation_history: vec![FilterSetupEvaluationEntry {
+            timestamp: "seed".to_string(),
+            setup_id: "reference_subtractive_gate".to_string(),
+            rating: "buono".to_string(),
+            note: "Baseline setup helps keep self-output residue under control.".to_string(),
+            goal: "reduce_self_bleed".to_string(),
         }],
         next_milestones: vec![
             "Add file and player-backed reference inputs.".to_string(),

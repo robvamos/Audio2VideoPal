@@ -7,6 +7,7 @@ interface LearningLabPanelProps {
   onAdjustStructureLearning: (action: string) => Promise<void>;
   onRerunListeningTest: () => Promise<void>;
   onSaveLearningEvaluation: (songId: string, rating: string, note: string) => Promise<void>;
+  onSaveFilterSetupEvaluation: (setupId: string, rating: string, note: string) => Promise<void>;
 }
 
 const CONVERGENCE_STAGES = [
@@ -46,24 +47,36 @@ export default function LearningLabPanel({
   onAdjustStructureLearning,
   onRerunListeningTest,
   onSaveLearningEvaluation,
+  onSaveFilterSetupEvaluation,
 }: LearningLabPanelProps) {
   const learning = telemetry?.learning;
   const comparison = learning?.structure_comparison;
   const [activeStep, setActiveStep] = useState<FlowStep>("choose");
   const [selectedSongId, setSelectedSongId] = useState("");
+  const [selectedSetupId, setSelectedSetupId] = useState("");
   const [selectedRating, setSelectedRating] = useState("");
   const [note, setNote] = useState("");
+  const [setupRating, setSetupRating] = useState("");
+  const [setupNote, setSetupNote] = useState("");
 
   useEffect(() => {
     if (!selectedSongId && learning?.test_songs[0]) {
       setSelectedSongId(learning.test_songs[0].id);
     }
+    if (!selectedSetupId && learning?.filter_setups[0]) {
+      setSelectedSetupId(learning.filter_setups[0].id);
+    }
     if (!selectedRating && learning?.rating_scale[0]) {
       setSelectedRating(learning.rating_scale[0]);
     }
-  }, [learning, selectedRating, selectedSongId]);
+    if (!setupRating && learning?.rating_scale[0]) {
+      setSetupRating(learning.rating_scale[0]);
+    }
+  }, [learning, selectedRating, selectedSetupId, selectedSongId, setupRating]);
 
   const selectedSong = learning?.test_songs.find((song) => song.id === selectedSongId) ?? learning?.test_songs[0] ?? null;
+  const selectedSetup =
+    learning?.filter_setups.find((setup) => setup.id === selectedSetupId) ?? learning?.filter_setups[0] ?? null;
 
   async function handleSaveEvaluation() {
     if (!selectedSongId || !selectedRating) {
@@ -71,6 +84,14 @@ export default function LearningLabPanel({
     }
     await onSaveLearningEvaluation(selectedSongId, selectedRating, note);
     setNote("");
+  }
+
+  async function handleSaveSetupEvaluation() {
+    if (!selectedSetupId || !setupRating) {
+      return;
+    }
+    await onSaveFilterSetupEvaluation(selectedSetupId, setupRating, setupNote);
+    setSetupNote("");
   }
 
   return (
@@ -142,24 +163,51 @@ export default function LearningLabPanel({
 
       {activeStep === "choose" && (
         <section className="studio-panel">
-          <h3>Choose benchmark</h3>
-          <div className="benchmark-grid">
-            {learning?.test_songs.length ? (
-              learning.test_songs.map((song) => (
-                <button
-                  key={song.id}
-                  type="button"
-                  className={`benchmark-card benchmark-button ${selectedSongId === song.id ? "is-current" : ""}`}
-                  onClick={() => setSelectedSongId(song.id)}
-                >
-                  <span className="stage-index">{song.id}</span>
-                  <h4>{song.focus}</h4>
-                  <p>{song.expected_outcome}</p>
-                </button>
-              ))
-            ) : (
-              <p>No benchmark song library yet.</p>
-            )}
+          <h3>Choose benchmark and setup</h3>
+          <div className="evaluation-layout">
+            <div>
+              <h4>Benchmark songs</h4>
+              <div className="benchmark-grid">
+                {learning?.test_songs.length ? (
+                  learning.test_songs.map((song) => (
+                    <button
+                      key={song.id}
+                      type="button"
+                      className={`benchmark-card benchmark-button ${selectedSongId === song.id ? "is-current" : ""}`}
+                      onClick={() => setSelectedSongId(song.id)}
+                    >
+                      <span className="stage-index">{song.id}</span>
+                      <h4>{song.focus}</h4>
+                      <p>{song.expected_outcome}</p>
+                    </button>
+                  ))
+                ) : (
+                  <p>No benchmark song library yet.</p>
+                )}
+              </div>
+            </div>
+
+            <div>
+              <h4>Filter setups</h4>
+              <div className="benchmark-grid">
+                {learning?.filter_setups.length ? (
+                  learning.filter_setups.map((setup) => (
+                    <button
+                      key={setup.id}
+                      type="button"
+                      className={`benchmark-card benchmark-button ${selectedSetupId === setup.id ? "is-current" : ""}`}
+                      onClick={() => setSelectedSetupId(setup.id)}
+                    >
+                      <span className="stage-index">{setup.id}</span>
+                      <h4>{setup.name}</h4>
+                      <p>{setup.description}</p>
+                    </button>
+                  ))
+                ) : (
+                  <p>No filter setup catalog yet.</p>
+                )}
+              </div>
+            </div>
           </div>
         </section>
       )}
@@ -315,6 +363,74 @@ export default function LearningLabPanel({
                   ))
                 ) : (
                   <p>No evaluations recorded yet.</p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="evaluation-layout">
+            <div className="evaluation-form">
+              <div className="readiness-row">
+                <span>Filter setup</span>
+                <strong>{selectedSetup?.name ?? "--"}</strong>
+              </div>
+              <div className="readiness-row">
+                <span>Goal</span>
+                <strong>{selectedSetup?.goal ?? "--"}</strong>
+              </div>
+              <div className="module-list">
+                {selectedSetup?.modules.map((moduleName) => (
+                  <span key={moduleName} className="module-pill active">
+                    {moduleName}
+                  </span>
+                ))}
+              </div>
+              <div className="rating-row">
+                {learning?.rating_scale.map((rating) => (
+                  <button
+                    key={`setup-${rating}`}
+                    type="button"
+                    className={`rating-pill ${setupRating === rating ? "active" : ""}`}
+                    onClick={() => setSetupRating(rating)}
+                    disabled={isBusy}
+                  >
+                    {rating}
+                  </button>
+                ))}
+              </div>
+              <label className="pipeline-control">
+                <span>Setup note</span>
+                <textarea
+                  className="learning-note"
+                  value={setupNote}
+                  onChange={(event) => setSetupNote(event.target.value)}
+                  placeholder="How did this setup behave on its own?"
+                />
+              </label>
+              <div className="pipeline-actions">
+                <button
+                  onClick={() => void handleSaveSetupEvaluation()}
+                  disabled={isBusy || !selectedSetupId || !setupRating}
+                >
+                  Register Setup Evaluation
+                </button>
+              </div>
+            </div>
+
+            <div className="evaluation-history">
+              <h4>Recent setup evaluations</h4>
+              <div className="recommendation-list">
+                {learning?.setup_evaluation_history.length ? (
+                  learning.setup_evaluation_history.map((entry) => (
+                    <div key={`${entry.timestamp}-${entry.setup_id}`} className="history-card">
+                      <strong>{entry.setup_id}</strong>
+                      <span>{entry.rating}</span>
+                      <small>{entry.goal}</small>
+                      <p>{entry.note || "No note recorded."}</p>
+                    </div>
+                  ))
+                ) : (
+                  <p>No setup evaluations recorded yet.</p>
                 )}
               </div>
             </div>

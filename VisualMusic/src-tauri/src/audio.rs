@@ -1,6 +1,7 @@
 use crate::core::pipeline::run_minimal_pipeline;
 use crate::core::runtime_state::{
-    LearningEvaluationEntry, ListeningRunResult, ListeningTelemetry, StructureSegment, TimingState,
+    FilterSetupEvaluationEntry, LearningEvaluationEntry, ListeningRunResult, ListeningTelemetry,
+    StructureSegment, TimingState,
 };
 use crate::db::{ensure_data_dir, open_db};
 use crate::db::log_event;
@@ -170,6 +171,42 @@ fn load_learning_evaluations() -> Vec<LearningEvaluationEntry> {
     rows.filter_map(Result::ok).collect()
 }
 
+fn load_filter_setup_evaluations() -> Vec<FilterSetupEvaluationEntry> {
+    if import_legacy_learning_evaluations_if_needed().is_err() {
+        return Vec::new();
+    }
+
+    let Ok(conn) = open_db() else {
+        return Vec::new();
+    };
+
+    let mut statement = match conn.prepare(
+        "SELECT created_at, entity_key, rating, note, behavior_key
+         FROM learning_evaluations
+         WHERE entity_type = 'filter_setup'
+         ORDER BY created_at DESC
+         LIMIT 50",
+    ) {
+        Ok(statement) => statement,
+        Err(_) => return Vec::new(),
+    };
+
+    let rows = match statement.query_map([], |row| {
+        Ok(FilterSetupEvaluationEntry {
+            timestamp: row.get(0)?,
+            setup_id: row.get(1)?,
+            rating: row.get(2)?,
+            note: row.get(3)?,
+            goal: row.get(4)?,
+        })
+    }) {
+        Ok(rows) => rows,
+        Err(_) => return Vec::new(),
+    };
+
+    rows.filter_map(Result::ok).collect()
+}
+
 fn save_learning_evaluation_entry(entry: &LearningEvaluationEntry) -> Result<(), String> {
     let conn = open_db()?;
     let metrics_json = serde_json::json!({
@@ -192,6 +229,28 @@ fn save_learning_evaluation_entry(entry: &LearningEvaluationEntry) -> Result<(),
             entry.rating,
             entry.note,
             metrics_json,
+        ],
+    )
+    .map_err(|error| error.to_string())?;
+
+    Ok(())
+}
+
+fn save_filter_setup_evaluation_entry(entry: &FilterSetupEvaluationEntry) -> Result<(), String> {
+    let conn = open_db()?;
+    conn.execute(
+        "INSERT INTO learning_evaluations
+        (created_at, entity_type, entity_key, behavior_key, configuration_key, rating, note, metrics_json)
+        VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)",
+        params![
+            entry.timestamp,
+            "filter_setup",
+            entry.setup_id,
+            entry.goal,
+            "learning_lab",
+            entry.rating,
+            entry.note,
+            "{}",
         ],
     )
     .map_err(|error| error.to_string())?;
@@ -248,6 +307,10 @@ fn inject_learning_history(telemetry: &mut ListeningTelemetry) {
     let mut history = load_learning_evaluations();
     history.sort_by(|left, right| right.timestamp.cmp(&left.timestamp));
     telemetry.learning.evaluation_history = history.into_iter().take(12).collect();
+
+    let mut setup_history = load_filter_setup_evaluations();
+    setup_history.sort_by(|left, right| right.timestamp.cmp(&left.timestamp));
+    telemetry.learning.setup_evaluation_history = setup_history.into_iter().take(12).collect();
 }
 
 fn update_runtime_from_result(profile: &str, source: &str, result: &ListeningRunResult) {
@@ -429,6 +492,55 @@ pub fn save_learning_evaluation(song_id: String, rating: String, note: String) -
                 "rating": rating,
                 "note": note,
                 "average_error_ratio": comparison.average_error_ratio,
+            })
+            .to_string(),
+        ),
+    );
+
+    serde_json::to_string(telemetry).map_err(|error| error.to_string())
+}
+
+#[tauri::command]
+pub fn save_filter_setup_evaluation(setup_id: String, rating: String, note: String) -> Result<String, String> {
+    let mut runtime = runtime_store()
+        .lock()
+        .map_err(|_| "Listening runtime is unavailable".to_string())?;
+
+    let telemetry = runtime
+        .latest_telemetry
+        .as_mut()
+        .ok_or_else(|| "Run the listening pipeline before saving a setup evaluation".to_string())?;
+
+    let goal = telemetry
+        .learning
+        .filter_setups
+        .iter()
+        .find(|setup| setup.id == setup_id)
+        .map(|setup| setup.goal.clone())
+        .unwrap_or_else(|| "unknown".to_string());
+
+    let entry = FilterSetupEvaluationEntry {
+        timestamp: Local::now().to_rfc3339(),
+        setup_id: setup_id.clone(),
+        rating: rating.clone(),
+        note: note.clone(),
+        goal: goal.clone(),
+    };
+
+    save_filter_setup_evaluation_entry(&entry)?;
+    inject_learning_history(telemetry);
+
+    log_event(
+        "INFO",
+        "learning_lab",
+        "FILTER_SETUP_EVALUATION_SAVE",
+        "Saved filter setup evaluation",
+        Some(
+            &serde_json::json!({
+                "setup_id": setup_id,
+                "goal": goal,
+                "rating": rating,
+                "note": note,
             })
             .to_string(),
         ),

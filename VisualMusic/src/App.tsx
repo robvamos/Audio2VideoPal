@@ -133,6 +133,7 @@ function App() {
           onAdjustStructureLearning={listeningStudio.adjustStructureLearning}
           onRerunListeningTest={listeningStudio.runListeningTest}
           onSaveLearningEvaluation={listeningStudio.saveLearningEvaluation}
+          onSaveFilterSetupEvaluation={listeningStudio.saveFilterSetupEvaluation}
         />
       )}
 
