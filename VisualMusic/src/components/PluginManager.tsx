@@ -61,6 +61,12 @@ export default function PluginManager({ onMessage }: PluginManagerProps) {
 
   return (
     <div className="tab-content">
+      <section className="overview-banner">
+        <div>
+          <p className="eyebrow">Plugin Room</p>
+          <h2>Keep discovery, inspection and deep scan separate from the listening pipeline so compatibility work stays traceable.</h2>
+        </div>
+      </section>
       <div className="plugins-container">
         <div className="plugins-list">
           <div className="plugin-list-header">

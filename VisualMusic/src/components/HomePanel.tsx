@@ -22,6 +22,12 @@ export default function HomePanel({ setMessage }: HomePanelProps) {
 
   return (
     <div className="tab-content">
+      <section className="overview-banner">
+        <div>
+          <p className="eyebrow">System Room</p>
+          <h2>Keep environment setup and runtime diagnostics separate from the musical logic panels.</h2>
+        </div>
+      </section>
       <div className="row">
         <button onClick={() => handleAction(systemEngine.initDb)} disabled={isBusy}>
           Initialize Database
@@ -33,9 +39,7 @@ export default function HomePanel({ setMessage }: HomePanelProps) {
           Batch Render Test
         </button>
       </div>
-      <p>
-        This panel keeps system initialization and runtime diagnostics separate from plugin management and media pipelines.
-      </p>
+      <p>This room is for environment readiness, not for timing or wiring decisions.</p>
     </div>
   );
 }

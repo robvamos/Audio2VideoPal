@@ -72,6 +72,11 @@ export interface ListeningRunResult {
   telemetry: ListeningTelemetry;
 }
 
+export interface ListeningTimingSnapshot {
+  timingState: TimingState | null;
+  telemetry: ListeningTelemetry | null;
+}
+
 export interface PlaylistTrack {
   id: string;
   name: string;
