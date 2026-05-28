@@ -837,6 +837,10 @@ dd.hash {
   background-color: var(--panel-muted);
 }
 
+.structure-track-card.compact {
+  padding: 12px;
+}
+
 .structure-track-label {
   display: block;
   margin-bottom: 10px;
@@ -944,6 +948,112 @@ dd.hash {
 
 .history-card p {
   margin: 0;
+}
+
+.chain-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.chain-node {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 84px;
+  padding: 14px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--panel-strong) 70%, transparent), var(--panel-bg));
+}
+
+.chain-node.active {
+  border-color: var(--accent-2);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--accent-2) 16%, var(--panel-bg)), var(--panel-bg));
+}
+
+.chain-node.disabled {
+  opacity: 0.6;
+}
+
+.chain-index {
+  color: var(--text-soft);
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.diagnostic-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.diagnostic-card {
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background-color: var(--panel-muted);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.diagnostic-card span {
+  color: var(--text-soft);
+}
+
+.diagnostic-card.good {
+  border-color: color-mix(in srgb, var(--success) 55%, var(--border));
+}
+
+.diagnostic-card.warning {
+  border-color: color-mix(in srgb, var(--warning) 60%, var(--border));
+}
+
+.diagnostic-card.danger {
+  border-color: color-mix(in srgb, var(--danger) 60%, var(--border));
+}
+
+.edge-ledger {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.edge-ledger-row {
+  display: grid;
+  grid-template-columns: 1fr 36px 1fr;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background-color: var(--panel-muted);
+}
+
+.edge-ledger-row.active {
+  border-color: color-mix(in srgb, var(--accent-2) 55%, var(--border));
+}
+
+.edge-ledger-row.blocked {
+  border-color: color-mix(in srgb, var(--danger) 40%, var(--border));
+}
+
+.map-puzzle-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.map-puzzle-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--text-soft);
 }
 
 .readiness-list,

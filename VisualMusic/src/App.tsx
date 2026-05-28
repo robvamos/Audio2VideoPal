@@ -10,6 +10,7 @@ import ListeningWiringPanel from "./components/ListeningWiringPanel";
 import PluginManager from "./components/PluginManager";
 import Mp3Player from "./components/Mp3Player";
 import SkinSelector from "./components/SkinSelector";
+import TechnicalMapPanel from "./components/TechnicalMapPanel";
 import { useListeningStudio } from "./hooks/useListeningStudio";
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
     | "control-room"
     | "pipeline"
     | "wiring"
+    | "map-lab"
     | "telemetry"
     | "learning"
   >("overview");
@@ -81,6 +83,12 @@ function App() {
           Wiring
         </button>
         <button
+          className={`tab-button ${activeTab === "map-lab" ? "active" : ""}`}
+          onClick={() => setActiveTab("map-lab")}
+        >
+          Map Lab
+        </button>
+        <button
           className={`tab-button ${activeTab === "telemetry" ? "active" : ""}`}
           onClick={() => setActiveTab("telemetry")}
         >
@@ -125,6 +133,7 @@ function App() {
         />
       )}
       {activeTab === "wiring" && <ListeningWiringPanel telemetry={listeningStudio.telemetry} />}
+      {activeTab === "map-lab" && <TechnicalMapPanel telemetry={listeningStudio.telemetry} />}
       {activeTab === "telemetry" && <ListeningTelemetryPanel telemetry={listeningStudio.telemetry} />}
       {activeTab === "learning" && (
         <LearningLabPanel
