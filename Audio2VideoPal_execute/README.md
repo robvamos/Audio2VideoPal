@@ -2,6 +2,8 @@
 
 Questa cartella raccoglie in forma eseguibile e leggibile le intenzioni del modulo audio per il "musicista improvvisatore" di `Audio2VideoPal`.
 
+Questa documentazione va letta come autonoma: non dipende dal progetto `DDassistant`, da `Doomsday` o da logiche specifiche di automazione gioco. Qui dentro il focus e' solo su audio, preprocessing, BPM, fase, learning e convergenza musicale.
+
 L'obiettivo non e' solo riconoscere il tempo, ma costruire una pipeline che:
 - ascolta in modo non invasivo
 - si allinea rapidamente al ritmo

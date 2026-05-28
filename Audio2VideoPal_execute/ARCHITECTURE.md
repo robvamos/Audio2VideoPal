@@ -8,6 +8,8 @@ Il modulo audio deve comportarsi come un improvvisatore assistito:
 - si allinea senza essere invasivo
 - poi, solo quando e' sufficientemente sicuro, aumenta presenza, componenti ed effetti
 
+Questo schema e' pensato come modulo indipendente di `Audio2VideoPal` e non richiede il contesto del progetto `Doomsday` o di pipeline orientate al gioco.
+
 ## Pipeline ipotizzata
 
 ```text
