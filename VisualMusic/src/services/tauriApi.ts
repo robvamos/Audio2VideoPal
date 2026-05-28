@@ -118,6 +118,12 @@ function createPreviewRunResult(profile: string, source: string): ListeningRunRe
   };
 }
 
+function ensurePreviewState(profile = "minimal_one_bar_grid", source = "synthetic_pattern") {
+  if (!previewTimingState || !previewTelemetry) {
+    createPreviewRunResult(profile, source);
+  }
+}
+
 export { BROWSER_PREVIEW_MESSAGE, isDesktopRuntimeAvailable };
 
 export async function initDb(): Promise<string> {
@@ -209,7 +215,10 @@ export async function getLatestTimingState(): Promise<TimingState | null> {
   const result = await invokeDesktop<string>(
     "get_latest_timing_state",
     undefined,
-    async () => JSON.stringify(previewTimingState),
+    async () => {
+      ensurePreviewState();
+      return JSON.stringify(previewTimingState);
+    },
   );
   return JSON.parse(result);
 }
@@ -218,7 +227,10 @@ export async function getLatestTelemetry(): Promise<ListeningTelemetry | null> {
   const result = await invokeDesktop<string>(
     "get_latest_telemetry",
     undefined,
-    async () => JSON.stringify(previewTelemetry),
+    async () => {
+      ensurePreviewState();
+      return JSON.stringify(previewTelemetry);
+    },
   );
   return JSON.parse(result);
 }
