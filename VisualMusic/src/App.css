@@ -884,6 +884,25 @@ dd.hash {
   flex-wrap: wrap;
 }
 
+.technical-toolbar-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+}
+
+.technical-control-block {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.technical-label {
+  color: var(--text-soft);
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
 .compact-selector-summary {
   display: flex;
   align-items: center;
@@ -953,6 +972,10 @@ dd.hash {
   overflow: hidden;
 }
 
+.structure-track.overlay {
+  min-height: 92px;
+}
+
 .structure-segment {
   position: absolute;
   top: 10px;
@@ -983,6 +1006,18 @@ dd.hash {
   background: linear-gradient(90deg, color-mix(in srgb, var(--accent-2) 78%, #d7f5ea), var(--accent-2));
   color: #0d1512;
   border: 2px solid color-mix(in srgb, var(--accent-2) 60%, #fff);
+}
+
+.structure-segment.overlay.reference {
+  top: 10px;
+  bottom: auto;
+  height: 28px;
+}
+
+.structure-segment.overlay.reconstructed {
+  top: auto;
+  bottom: 10px;
+  height: 28px;
 }
 
 .evaluation-layout {
@@ -1073,6 +1108,11 @@ dd.hash {
   opacity: 0.6;
 }
 
+.chain-node.focused {
+  border-color: color-mix(in srgb, var(--accent) 65%, var(--border));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 50%, transparent);
+}
+
 .chain-index {
   color: var(--text-soft);
   font-size: 0.82rem;
@@ -1098,6 +1138,11 @@ dd.hash {
 
 .diagnostic-card span {
   color: var(--text-soft);
+}
+
+.diagnostic-card p {
+  margin: 0;
+  color: var(--text-muted);
 }
 
 .diagnostic-card.good {
@@ -1135,6 +1180,10 @@ dd.hash {
 
 .edge-ledger-row.blocked {
   border-color: color-mix(in srgb, var(--danger) 40%, var(--border));
+}
+
+.edge-ledger-row.focused {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 45%, transparent);
 }
 
 .map-puzzle-panel {

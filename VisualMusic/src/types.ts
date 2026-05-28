@@ -162,6 +162,15 @@ export interface AppStateSummary {
   states: AppStateItem[];
 }
 
+export interface MapPuzzleViewState {
+  selectedSongId: string;
+  selectedSetupId: string;
+  edgeFilter: "all" | "active" | "blocked";
+  compareMode: "split" | "overlay";
+  diagnosticsLens: "timing" | "reference" | "learning";
+  memoryNote: string;
+}
+
 export interface PlaylistTrack {
   id: string;
   name: string;

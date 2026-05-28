@@ -2,6 +2,7 @@ import { invoke } from "@tauri-apps/api/core";
 import type {
   ListeningRunResult,
   ListeningTelemetry,
+  MapPuzzleViewState,
   Plugin,
   ScanDetails,
   TimingState,
@@ -12,6 +13,16 @@ const BROWSER_PREVIEW_MESSAGE =
 
 let previewTimingState: TimingState | null = null;
 let previewTelemetry: ListeningTelemetry | null = null;
+const MAP_PUZZLE_STATE_KEY = "visualmusic.mapPuzzleState";
+
+const DEFAULT_MAP_PUZZLE_STATE: MapPuzzleViewState = {
+  selectedSongId: "grid16_phrase_map",
+  selectedSetupId: "phase_grid_focus",
+  edgeFilter: "all",
+  compareMode: "split",
+  diagnosticsLens: "timing",
+  memoryNote: "",
+};
 
 function isDesktopRuntimeAvailable(): boolean {
   if (typeof window === "undefined") {
@@ -269,6 +280,38 @@ function rebuildPreviewStructureComparison(
 }
 
 export { BROWSER_PREVIEW_MESSAGE, isDesktopRuntimeAvailable };
+
+export async function loadMapPuzzleState(): Promise<MapPuzzleViewState> {
+  const result = await invokeDesktop<string>(
+    "load_map_puzzle_state",
+    undefined,
+    async () => {
+      if (typeof window === "undefined") {
+        return JSON.stringify(DEFAULT_MAP_PUZZLE_STATE);
+      }
+
+      return window.localStorage.getItem(MAP_PUZZLE_STATE_KEY) ?? JSON.stringify(DEFAULT_MAP_PUZZLE_STATE);
+    },
+  );
+
+  return {
+    ...DEFAULT_MAP_PUZZLE_STATE,
+    ...JSON.parse(result),
+  };
+}
+
+export async function saveMapPuzzleState(state: MapPuzzleViewState): Promise<void> {
+  await invokeDesktop<string>(
+    "save_map_puzzle_state",
+    { stateJson: JSON.stringify(state) },
+    async () => {
+      if (typeof window !== "undefined") {
+        window.localStorage.setItem(MAP_PUZZLE_STATE_KEY, JSON.stringify(state));
+      }
+      return "ok";
+    },
+  );
+}
 
 export async function initDb(): Promise<string> {
   return await invokeDesktop<string>("init_db", undefined, async () => BROWSER_PREVIEW_MESSAGE);

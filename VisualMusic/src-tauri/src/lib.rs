@@ -29,6 +29,8 @@ pub fn run() {
             audio::adjust_structure_learning,
             audio::save_learning_evaluation,
             audio::save_filter_setup_evaluation,
+            audio::load_map_puzzle_state,
+            audio::save_map_puzzle_state,
             video::start_video_render,
             video::stop_video_render
         ])

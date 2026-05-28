@@ -26,6 +26,16 @@ struct StructureLearningTuning {
     segment_scale_ratio: f64,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct MapPuzzleViewState {
+    selected_song_id: String,
+    selected_setup_id: String,
+    edge_filter: String,
+    compare_mode: String,
+    diagnostics_lens: String,
+    memory_note: String,
+}
+
 impl Default for StructureLearningTuning {
     fn default() -> Self {
         Self {
@@ -35,8 +45,22 @@ impl Default for StructureLearningTuning {
     }
 }
 
+impl Default for MapPuzzleViewState {
+    fn default() -> Self {
+        Self {
+            selected_song_id: "grid16_phrase_map".to_string(),
+            selected_setup_id: "phase_grid_focus".to_string(),
+            edge_filter: "all".to_string(),
+            compare_mode: "split".to_string(),
+            diagnostics_lens: "timing".to_string(),
+            memory_note: String::new(),
+        }
+    }
+}
+
 const STRUCTURE_TUNING_PATH: &str = "data/learning_structure_tuning.json";
 const LEARNING_EVALUATIONS_PATH: &str = "data/learning_evaluations.json";
+const MAP_PUZZLE_STATE_PATH: &str = "data/map_puzzle_state.json";
 
 fn runtime_store() -> &'static Mutex<ListeningRuntimeStore> {
     static STORE: OnceLock<Mutex<ListeningRuntimeStore>> = OnceLock::new();
@@ -70,6 +94,25 @@ fn load_legacy_learning_evaluations() -> Vec<LearningEvaluationEntry> {
     }
 
     Vec::new()
+}
+
+fn load_map_puzzle_state_file() -> MapPuzzleViewState {
+    if let Ok(content) = fs::read_to_string(MAP_PUZZLE_STATE_PATH) {
+        if let Ok(state) = serde_json::from_str::<MapPuzzleViewState>(&content) {
+            return state;
+        }
+    }
+
+    MapPuzzleViewState::default()
+}
+
+fn save_map_puzzle_state_file(state: &MapPuzzleViewState) -> Result<(), String> {
+    ensure_data_dir()?;
+    fs::write(
+        MAP_PUZZLE_STATE_PATH,
+        serde_json::to_string_pretty(state).map_err(|error| error.to_string())?,
+    )
+    .map_err(|error| error.to_string())
 }
 
 fn import_legacy_learning_evaluations_if_needed() -> Result<(), String> {
@@ -547,6 +590,28 @@ pub fn save_filter_setup_evaluation(setup_id: String, rating: String, note: Stri
     );
 
     serde_json::to_string(telemetry).map_err(|error| error.to_string())
+}
+
+#[tauri::command]
+pub fn load_map_puzzle_state() -> Result<String, String> {
+    serde_json::to_string(&load_map_puzzle_state_file()).map_err(|error| error.to_string())
+}
+
+#[tauri::command]
+pub fn save_map_puzzle_state(state_json: String) -> Result<String, String> {
+    let state: MapPuzzleViewState =
+        serde_json::from_str(&state_json).map_err(|error| error.to_string())?;
+    save_map_puzzle_state_file(&state)?;
+
+    log_event(
+        "INFO",
+        "map_puzzle",
+        "MAP_PUZZLE_STATE_SAVE",
+        "Saved map puzzle view state",
+        Some(&state_json),
+    );
+
+    Ok("ok".to_string())
 }
 
 #[tauri::command]
