@@ -59,7 +59,11 @@ fn load_pipeline_config(profile: &str) -> Result<PipelineConfig, String> {
     serde_json::from_str(&config_content).map_err(|error| error.to_string())
 }
 
-pub fn run_minimal_pipeline(profile: &str, source: &str) -> Result<ListeningRunResult, String> {
+fn run_minimal_pipeline_in_dir(
+    profile: &str,
+    source: &str,
+    telemetry_base_dir: &Path,
+) -> Result<ListeningRunResult, String> {
     let config = load_pipeline_config(profile)?;
     if source != "synthetic_pattern" {
         return Err(format!(
@@ -165,21 +169,33 @@ pub fn run_minimal_pipeline(profile: &str, source: &str) -> Result<ListeningRunR
         telemetry: initial_telemetry,
     };
 
-    let telemetry = write_telemetry(&visual_music_root(), &run_result)?;
+    let telemetry = write_telemetry(telemetry_base_dir, &run_result)?;
     Ok(ListeningRunResult {
         telemetry,
         ..run_result
     })
 }
 
+pub fn run_minimal_pipeline(profile: &str, source: &str) -> Result<ListeningRunResult, String> {
+    run_minimal_pipeline_in_dir(profile, source, &visual_music_root())
+}
+
 #[cfg(test)]
 mod tests {
-    use super::run_minimal_pipeline;
+    use super::run_minimal_pipeline_in_dir;
+    use std::fs;
 
     #[test]
     fn run_minimal_pipeline_produces_locked_grid() {
-        let result = run_minimal_pipeline("minimal_one_bar_grid", "synthetic_pattern")
-            .expect("pipeline should run on synthetic source");
+        let test_dir = std::env::temp_dir().join(format!(
+            "visualmusic-pipeline-test-{}",
+            std::process::id()
+        ));
+        let _ = fs::remove_dir_all(&test_dir);
+
+        let result =
+            run_minimal_pipeline_in_dir("minimal_one_bar_grid", "synthetic_pattern", &test_dir)
+                .expect("pipeline should run on synthetic source");
 
         assert_eq!(result.timing_state.sync_state, "LOCKED");
         assert_eq!(result.timing_state.bpm, Some(112.0));
@@ -187,5 +203,7 @@ mod tests {
         assert!(result.one_bar_grid.one_bar_grid_score >= 1.0);
         assert!(!result.telemetry.telemetry_json_path.is_empty());
         assert!(!result.telemetry.telemetry_summary_path.is_empty());
+
+        let _ = fs::remove_dir_all(&test_dir);
     }
 }
