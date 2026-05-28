@@ -44,6 +44,28 @@ export default function ListeningTelemetryPanel({ telemetry }: ListeningTelemetr
             <p>{telemetry?.telemetry_summary_path ?? "No telemetry summary yet."}</p>
           </div>
         </section>
+
+        <section className="studio-panel">
+          <h3>Preprocessing</h3>
+          <div className="readiness-list">
+            <div className="readiness-row">
+              <span>Self reference</span>
+              <strong>{telemetry ? (telemetry.preprocessing.self_reference_enabled ? "enabled" : "disabled") : "--"}</strong>
+            </div>
+            <div className="readiness-row">
+              <span>Residual ratio</span>
+              <strong>{telemetry ? telemetry.preprocessing.residual_energy_ratio.toFixed(2) : "--"}</strong>
+            </div>
+            <div className="readiness-row">
+              <span>Cancellation</span>
+              <strong>{telemetry ? `${telemetry.preprocessing.cancellation_db.toFixed(1)} dB` : "--"}</strong>
+            </div>
+            <div className="readiness-row">
+              <span>Latency align</span>
+              <strong>{telemetry ? `${telemetry.preprocessing.latency_alignment_ms.toFixed(1)} ms` : "--"}</strong>
+            </div>
+          </div>
+        </section>
       </div>
 
       <section className="studio-panel">

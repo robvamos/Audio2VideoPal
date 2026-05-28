@@ -28,6 +28,8 @@ pub fn write_telemetry(
         "sync_state": run_result.telemetry.sync_state,
         "downbeat_confidence": run_result.telemetry.downbeat_confidence,
         "one_bar_grid_score": run_result.telemetry.one_bar_grid_score,
+        "preprocessing": run_result.telemetry.preprocessing,
+        "learning": run_result.telemetry.learning,
         "timing_state": run_result.timing_state,
         "one_bar_grid": run_result.one_bar_grid,
         "wiring": run_result.telemetry.wiring,
@@ -52,6 +54,17 @@ Status: `{}`\n\n\
 - Downbeat confidence: `{:.2}`\n\
 - Current beat: `{}`\n\
 - One-bar grid score: `{:.2}`\n\n\
+## Preprocessing\n\
+- Self reference enabled: `{}`\n\
+- Reference mix ratio: `{:.2}`\n\
+- Residual energy ratio: `{:.2}`\n\
+- Cancellation: `{:.1} dB`\n\
+- Latency alignment: `{:.1} ms`\n\n\
+## Learning\n\
+- Current stage: `{}`\n\
+- Rating scale: {}\n\
+- Test songs: {}\n\
+- Next milestones: {}\n\n\
 ## Wiring\n\
 - Active modules: {}\n\
 - Disabled modules: {}\n\n\
@@ -66,6 +79,22 @@ Status: `{}`\n\n\
         run_result.telemetry.downbeat_confidence,
         run_result.one_bar_grid.current_beat,
         run_result.telemetry.one_bar_grid_score,
+        run_result.telemetry.preprocessing.self_reference_enabled,
+        run_result.telemetry.preprocessing.reference_mix_ratio,
+        run_result.telemetry.preprocessing.residual_energy_ratio,
+        run_result.telemetry.preprocessing.cancellation_db,
+        run_result.telemetry.preprocessing.latency_alignment_ms,
+        run_result.telemetry.learning.current_stage,
+        run_result.telemetry.learning.rating_scale.join(", "),
+        run_result
+            .telemetry
+            .learning
+            .test_songs
+            .iter()
+            .map(|song| format!("{} ({})", song.id, song.focus))
+            .collect::<Vec<_>>()
+            .join(", "),
+        run_result.telemetry.learning.next_milestones.join(", "),
         run_result.telemetry.wiring.active_modules.join(", "),
         run_result.telemetry.wiring.disabled_modules.join(", "),
         run_result

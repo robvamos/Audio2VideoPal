@@ -46,6 +46,10 @@ export default function ListeningOverviewPanel({ timingState, telemetry }: Liste
           <h3>Pipeline / Wiring / Telemetry</h3>
           <p>Inspect the flow as distinct lenses instead of packing every concern into a single mixed panel.</p>
         </section>
+        <section className="overview-card">
+          <h3>Learning Lab</h3>
+          <p>Track benchmark songs, rating scale and the next milestones before the system becomes musically assertive.</p>
+        </section>
       </div>
 
       <section className="studio-panel">
@@ -62,6 +66,10 @@ export default function ListeningOverviewPanel({ timingState, telemetry }: Liste
           <div>
             <span>Source</span>
             <strong>{telemetry?.source ?? "--"}</strong>
+          </div>
+          <div>
+            <span>Learning stage</span>
+            <strong>{telemetry?.learning.current_stage ?? "--"}</strong>
           </div>
         </div>
       </section>

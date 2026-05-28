@@ -1,6 +1,6 @@
 use crate::core::runtime_state::{
-    ListeningRunResult, ListeningTelemetry, OneBarGridResult, PipelineContext, TimingState,
-    WiringDescription,
+    LearningTelemetry, ListeningRunResult, ListeningTelemetry, OneBarGridResult, PipelineContext,
+    PreprocessingTelemetry, TestSongDefinition, TimingState, WiringDescription,
 };
 use crate::core::telemetry::write_telemetry;
 use crate::sources::synthetic_source::SyntheticPatternSource;
@@ -33,11 +33,84 @@ struct PipelineThresholds {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+struct PreprocessingReferenceConfig {
+    enabled: bool,
+    mix_ratio: f64,
+    latency_alignment_ms: f64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct PreprocessingConfig {
+    self_output_reference: PreprocessingReferenceConfig,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct PipelineConfig {
     profile: String,
     source: PipelineSourceConfig,
+    preprocessing: PreprocessingConfig,
     modules: Vec<PipelineModuleConfig>,
     thresholds: PipelineThresholds,
+}
+
+fn calculate_preprocessing_telemetry(config: &PipelineConfig) -> PreprocessingTelemetry {
+    let reference = &config.preprocessing.self_output_reference;
+    let residual_energy_ratio = (1.0 - (reference.mix_ratio * 0.78)).clamp(0.08, 1.0);
+    let cancellation_db = 20.0 * (1.0 / residual_energy_ratio).log10();
+
+    PreprocessingTelemetry {
+        self_reference_enabled: reference.enabled,
+        reference_mix_ratio: reference.mix_ratio,
+        residual_energy_ratio,
+        cancellation_db,
+        latency_alignment_ms: reference.latency_alignment_ms,
+    }
+}
+
+fn learning_telemetry() -> LearningTelemetry {
+    LearningTelemetry {
+        current_stage: "listening".to_string(),
+        rating_scale: vec![
+            "scarso".to_string(),
+            "debole".to_string(),
+            "buono".to_string(),
+            "ottimo".to_string(),
+        ],
+        test_songs: vec![
+            TestSongDefinition {
+                id: "phase_alignment_drill".to_string(),
+                focus: "beat_1_and_phase".to_string(),
+                expected_outcome: "Fast phase lock with clean quarter ordering.".to_string(),
+            },
+            TestSongDefinition {
+                id: "grid16_phrase_map".to_string(),
+                focus: "long_phrase_tracking".to_string(),
+                expected_outcome: "Stable 4-bar and 16-grid phrase awareness.".to_string(),
+            },
+            TestSongDefinition {
+                id: "tempo_transition_stress".to_string(),
+                focus: "relock_and_resync".to_string(),
+                expected_outcome: "Controlled relock after tempo transitions.".to_string(),
+            },
+            TestSongDefinition {
+                id: "generic_reference_sample".to_string(),
+                focus: "reference_subtraction".to_string(),
+                expected_outcome: "Residual self-output energy remains low after preprocessing."
+                    .to_string(),
+            },
+            TestSongDefinition {
+                id: "reference_live_calibration".to_string(),
+                focus: "latency_alignment".to_string(),
+                expected_outcome: "Reference alignment stays usable under live routing latency."
+                    .to_string(),
+            },
+        ],
+        next_milestones: vec![
+            "Add file and player-backed reference inputs.".to_string(),
+            "Score relock speed on song benchmarks with known ground truth.".to_string(),
+            "Persist rating and user notes for configuration evaluation.".to_string(),
+        ],
+    }
 }
 
 fn visual_music_root() -> PathBuf {
@@ -132,6 +205,8 @@ fn run_minimal_pipeline_in_dir(
         .windows(2)
         .map(|pair| [pair[0].clone(), pair[1].clone()])
         .collect::<Vec<_>>();
+    let preprocessing = calculate_preprocessing_telemetry(&config);
+    let learning = learning_telemetry();
 
     let initial_telemetry = ListeningTelemetry {
         run_id: run_id.clone(),
@@ -147,6 +222,8 @@ fn run_minimal_pipeline_in_dir(
         sync_state: timing_state.sync_state.clone(),
         downbeat_confidence: timing_state.downbeat_confidence,
         one_bar_grid_score: one_bar_grid.one_bar_grid_score,
+        preprocessing,
+        learning,
         wiring: WiringDescription {
             profile: config.profile,
             active_modules,
@@ -155,8 +232,9 @@ fn run_minimal_pipeline_in_dir(
         },
         recommendations: vec![
             "Keep synthetic_pattern as the baseline fixture while wiring real sources.".to_string(),
-            "Add reference-aware comparison before enabling microphone mode.".to_string(),
-            "Promote module-specific telemetry once real feature extractors are connected."
+            "Route self-output reference through preprocessing before any higher-level timing inference."
+                .to_string(),
+            "Add benchmark songs with known beat-1 markers before enabling adaptive musical response."
                 .to_string(),
         ],
         telemetry_json_path: String::new(),
@@ -201,6 +279,9 @@ mod tests {
         assert_eq!(result.timing_state.bpm, Some(112.0));
         assert_eq!(result.one_bar_grid.current_beat, 1);
         assert!(result.one_bar_grid.one_bar_grid_score >= 1.0);
+        assert!(result.telemetry.preprocessing.self_reference_enabled);
+        assert!(result.telemetry.preprocessing.cancellation_db > 0.0);
+        assert_eq!(result.telemetry.learning.current_stage, "listening");
         assert!(!result.telemetry.telemetry_json_path.is_empty());
         assert!(!result.telemetry.telemetry_summary_path.is_empty());
 

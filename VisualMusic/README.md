@@ -12,8 +12,10 @@ L'app include oggi:
 - `Pipeline` per la vista a stadi della listening pipeline
 - `Wiring` per moduli attivi, disattivi ed edge
 - `Telemetry` per run id, artifact path e raccomandazioni
+- `Learning Lab` per benchmark songs, rating scale e milestone di convergenza
 
 La listening pipeline minima usa il profilo `minimal_one_bar_grid` con sorgente `synthetic_pattern` a 112 BPM.
+La roadmap tecnica derivata dai nuovi modelli GitHub e' in [F:\_CODEX\Audio2VideoPal\VisualMusic\docs\listening-evolution-roadmap.md](F:/_CODEX/Audio2VideoPal/VisualMusic/docs/listening-evolution-roadmap.md).
 
 ## Sviluppo
 

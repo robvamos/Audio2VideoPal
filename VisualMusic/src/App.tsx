@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "./App.css";
 import HomePanel from "./components/HomePanel";
+import LearningLabPanel from "./components/LearningLabPanel";
 import ListeningControlRoom from "./components/ListeningControlRoom";
 import ListeningOverviewPanel from "./components/ListeningOverviewPanel";
 import ListeningPipelinePanel from "./components/ListeningPipelinePanel";
@@ -13,7 +14,15 @@ import { useListeningStudio } from "./hooks/useListeningStudio";
 
 function App() {
   const [activeTab, setActiveTab] = useState<
-    "overview" | "player" | "system" | "plugins" | "control-room" | "pipeline" | "wiring" | "telemetry"
+    | "overview"
+    | "player"
+    | "system"
+    | "plugins"
+    | "control-room"
+    | "pipeline"
+    | "wiring"
+    | "telemetry"
+    | "learning"
   >("overview");
   const [message, setMessage] = useState("");
   const listeningStudio = useListeningStudio({ onMessage: setMessage });
@@ -77,6 +86,12 @@ function App() {
         >
           Telemetry
         </button>
+        <button
+          className={`tab-button ${activeTab === "learning" ? "active" : ""}`}
+          onClick={() => setActiveTab("learning")}
+        >
+          Learning Lab
+        </button>
       </div>
 
       {activeTab === "overview" && (
@@ -111,6 +126,7 @@ function App() {
       )}
       {activeTab === "wiring" && <ListeningWiringPanel telemetry={listeningStudio.telemetry} />}
       {activeTab === "telemetry" && <ListeningTelemetryPanel telemetry={listeningStudio.telemetry} />}
+      {activeTab === "learning" && <LearningLabPanel telemetry={listeningStudio.telemetry} />}
 
       {message && <p className="message">{message}</p>}
     </main>

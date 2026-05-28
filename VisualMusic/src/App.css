@@ -699,6 +699,35 @@ dd.hash {
   gap: 6px;
 }
 
+.benchmark-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.benchmark-card {
+  padding: 16px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--accent-2) 8%, var(--panel-bg)), var(--panel-bg));
+  box-shadow: var(--shadow);
+}
+
+.benchmark-card h4 {
+  margin: 10px 0 8px 0;
+}
+
+.benchmark-card p {
+  margin: 0;
+}
+
+.benchmark-card.is-current {
+  border-color: var(--accent);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--accent) 14%, var(--panel-bg)), var(--panel-bg));
+}
+
 .readiness-list,
 .path-list,
 .timing-readout,
@@ -939,6 +968,7 @@ dd.hash {
   .studio-grid,
   .wiring-grid,
   .stage-list,
+  .benchmark-grid,
   .player-shell,
   .pipeline-grid {
     grid-template-columns: 1fr;

@@ -45,6 +45,27 @@ export interface WiringDescription {
   module_edges: [string, string][];
 }
 
+export interface PreprocessingTelemetry {
+  self_reference_enabled: boolean;
+  reference_mix_ratio: number;
+  residual_energy_ratio: number;
+  cancellation_db: number;
+  latency_alignment_ms: number;
+}
+
+export interface TestSongDefinition {
+  id: string;
+  focus: string;
+  expected_outcome: string;
+}
+
+export interface LearningTelemetry {
+  current_stage: string;
+  rating_scale: string[];
+  test_songs: TestSongDefinition[];
+  next_milestones: string[];
+}
+
 export interface ListeningTelemetry {
   run_id: string;
   profile: string;
@@ -55,6 +76,8 @@ export interface ListeningTelemetry {
   sync_state: string;
   downbeat_confidence: number;
   one_bar_grid_score: number;
+  preprocessing: PreprocessingTelemetry;
+  learning: LearningTelemetry;
   wiring: WiringDescription;
   recommendations: string[];
   telemetry_json_path: string;

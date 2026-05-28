@@ -6,11 +6,22 @@
     "meter": "4/4",
     "duration_sec": 16.0
   },
+  "preprocessing": {
+    "self_output_reference": {
+      "enabled": true,
+      "mix_ratio": 0.72,
+      "latency_alignment_ms": 12.0
+    }
+  },
   "modules": [
+    { "name": "self_output_reference", "enabled": true },
+    { "name": "self_output_subtractor", "enabled": true },
     { "name": "normalizer", "enabled": true },
     { "name": "onset_strength", "enabled": true },
     { "name": "low_band_pulse", "enabled": true },
     { "name": "tempo_autocorrelation", "enabled": true },
+    { "name": "window_stability_merge", "enabled": true },
+    { "name": "learning_grid", "enabled": true },
     { "name": "weighted_tempo_fusion", "enabled": true },
     { "name": "beat_grid_tracker", "enabled": true },
     { "name": "simple_downbeat_scorer", "enabled": true },

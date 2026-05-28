@@ -42,6 +42,30 @@ pub struct WiringDescription {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct PreprocessingTelemetry {
+    pub self_reference_enabled: bool,
+    pub reference_mix_ratio: f64,
+    pub residual_energy_ratio: f64,
+    pub cancellation_db: f64,
+    pub latency_alignment_ms: f64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct TestSongDefinition {
+    pub id: String,
+    pub focus: String,
+    pub expected_outcome: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct LearningTelemetry {
+    pub current_stage: String,
+    pub rating_scale: Vec<String>,
+    pub test_songs: Vec<TestSongDefinition>,
+    pub next_milestones: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ListeningTelemetry {
     pub run_id: String,
     pub profile: String,
@@ -52,6 +76,8 @@ pub struct ListeningTelemetry {
     pub sync_state: String,
     pub downbeat_confidence: f64,
     pub one_bar_grid_score: f64,
+    pub preprocessing: PreprocessingTelemetry,
+    pub learning: LearningTelemetry,
     pub wiring: WiringDescription,
     pub recommendations: Vec<String>,
     pub telemetry_json_path: String,

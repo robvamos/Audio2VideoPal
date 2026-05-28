@@ -12,9 +12,9 @@ const STAGES = [
     modules: ["synthetic_pattern"],
   },
   {
-    title: "Preprocessing",
-    description: "Prepare the signal path before timing inference.",
-    modules: ["normalizer"],
+    title: "Reference / Preprocessing",
+    description: "Subtract the system's own output before higher-level timing inference.",
+    modules: ["self_output_reference", "self_output_subtractor", "normalizer"],
   },
   {
     title: "Feature Extraction",
@@ -24,7 +24,14 @@ const STAGES = [
   {
     title: "Timing Analysis",
     description: "Estimate tempo, phase and downbeat candidates.",
-    modules: ["tempo_autocorrelation", "weighted_tempo_fusion", "beat_grid_tracker", "simple_downbeat_scorer"],
+    modules: [
+      "tempo_autocorrelation",
+      "window_stability_merge",
+      "learning_grid",
+      "weighted_tempo_fusion",
+      "beat_grid_tracker",
+      "simple_downbeat_scorer",
+    ],
   },
   {
     title: "Evaluation",
