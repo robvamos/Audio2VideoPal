@@ -5,3 +5,4 @@ target/
 .env
 .env.*
 VisualMusic/src-tauri/data/
+VisualMusic/runtime/ui-refactor-check.png
