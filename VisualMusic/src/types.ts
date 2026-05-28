@@ -59,10 +59,24 @@ export interface TestSongDefinition {
   expected_outcome: string;
 }
 
+export interface StructureSegment {
+  label: string;
+  start_ratio: number;
+  end_ratio: number;
+}
+
+export interface StructureComparison {
+  target_label: string;
+  average_error_ratio: number;
+  reference_segments: StructureSegment[];
+  reconstructed_segments: StructureSegment[];
+}
+
 export interface LearningTelemetry {
   current_stage: string;
   rating_scale: string[];
   test_songs: TestSongDefinition[];
+  structure_comparison: StructureComparison;
   next_milestones: string[];
 }
 

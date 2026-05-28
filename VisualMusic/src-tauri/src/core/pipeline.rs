@@ -1,6 +1,7 @@
 use crate::core::runtime_state::{
     LearningTelemetry, ListeningRunResult, ListeningTelemetry, OneBarGridResult, PipelineContext,
-    PreprocessingTelemetry, TestSongDefinition, TimingState, WiringDescription,
+    PreprocessingTelemetry, StructureComparison, StructureSegment, TestSongDefinition, TimingState,
+    WiringDescription,
 };
 use crate::core::telemetry::write_telemetry;
 use crate::sources::synthetic_source::SyntheticPatternSource;
@@ -105,6 +106,54 @@ fn learning_telemetry() -> LearningTelemetry {
                     .to_string(),
             },
         ],
+        structure_comparison: StructureComparison {
+            target_label: "grid16_phrase_map".to_string(),
+            average_error_ratio: 0.06,
+            reference_segments: vec![
+                StructureSegment {
+                    label: "Intro".to_string(),
+                    start_ratio: 0.0,
+                    end_ratio: 0.22,
+                },
+                StructureSegment {
+                    label: "Phrase A".to_string(),
+                    start_ratio: 0.22,
+                    end_ratio: 0.49,
+                },
+                StructureSegment {
+                    label: "Phrase B".to_string(),
+                    start_ratio: 0.49,
+                    end_ratio: 0.76,
+                },
+                StructureSegment {
+                    label: "Turn".to_string(),
+                    start_ratio: 0.76,
+                    end_ratio: 1.0,
+                },
+            ],
+            reconstructed_segments: vec![
+                StructureSegment {
+                    label: "Intro".to_string(),
+                    start_ratio: 0.0,
+                    end_ratio: 0.19,
+                },
+                StructureSegment {
+                    label: "Phrase A".to_string(),
+                    start_ratio: 0.19,
+                    end_ratio: 0.53,
+                },
+                StructureSegment {
+                    label: "Phrase B".to_string(),
+                    start_ratio: 0.53,
+                    end_ratio: 0.79,
+                },
+                StructureSegment {
+                    label: "Turn".to_string(),
+                    start_ratio: 0.79,
+                    end_ratio: 1.0,
+                },
+            ],
+        },
         next_milestones: vec![
             "Add file and player-backed reference inputs.".to_string(),
             "Score relock speed on song benchmarks with known ground truth.".to_string(),

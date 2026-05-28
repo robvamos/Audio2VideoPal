@@ -95,6 +95,22 @@ function createPreviewRunResult(profile: string, source: string): ListeningRunRe
           expected_outcome: "Controlled relock after tempo transitions.",
         },
       ],
+      structure_comparison: {
+        target_label: "grid16_phrase_map",
+        average_error_ratio: 0.06,
+        reference_segments: [
+          { label: "Intro", start_ratio: 0, end_ratio: 0.22 },
+          { label: "Phrase A", start_ratio: 0.22, end_ratio: 0.49 },
+          { label: "Phrase B", start_ratio: 0.49, end_ratio: 0.76 },
+          { label: "Turn", start_ratio: 0.76, end_ratio: 1 },
+        ],
+        reconstructed_segments: [
+          { label: "Intro", start_ratio: 0, end_ratio: 0.19 },
+          { label: "Phrase A", start_ratio: 0.19, end_ratio: 0.53 },
+          { label: "Phrase B", start_ratio: 0.53, end_ratio: 0.79 },
+          { label: "Turn", start_ratio: 0.79, end_ratio: 1 },
+        ],
+      },
       next_milestones: [
         "Add file and player-backed reference inputs.",
         "Score relock speed on song benchmarks with known ground truth.",

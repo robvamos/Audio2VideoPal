@@ -29,6 +29,7 @@ const CONVERGENCE_STAGES = [
 
 export default function LearningLabPanel({ telemetry }: LearningLabPanelProps) {
   const learning = telemetry?.learning;
+  const comparison = learning?.structure_comparison;
 
   return (
     <div className="studio-layout">
@@ -114,6 +115,71 @@ export default function LearningLabPanel({ telemetry }: LearningLabPanelProps) {
             </article>
           ))}
         </div>
+      </section>
+
+      <section className="studio-panel">
+        <h3>Structure comparison</h3>
+        <p>
+          Keep the reference graphic and the reconstructed segmentation side by side, with thick strokes that make drift
+          obvious at a glance.
+        </p>
+
+        {comparison ? (
+          <div className="structure-compare-layout">
+            <div className="structure-compare-main">
+              <div className="readiness-row">
+                <span>Benchmark</span>
+                <strong>{comparison.target_label}</strong>
+              </div>
+              <div className="readiness-row">
+                <span>Average segment error</span>
+                <strong>{(comparison.average_error_ratio * 100).toFixed(1)}%</strong>
+              </div>
+            </div>
+
+            <aside className="structure-compare-side">
+              <div className="structure-track-card">
+                <span className="structure-track-label">Reference structure</span>
+                <div className="structure-track">
+                  {comparison.reference_segments.map((segment) => (
+                    <div
+                      key={`ref-${segment.label}-${segment.start_ratio}`}
+                      className="structure-segment reference"
+                      style={{
+                        left: `${segment.start_ratio * 100}%`,
+                        width: `${(segment.end_ratio - segment.start_ratio) * 100}%`,
+                      }}
+                      title={`${segment.label}: ${Math.round(segment.start_ratio * 100)}% - ${Math.round(segment.end_ratio * 100)}%`}
+                    >
+                      <span>{segment.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="structure-track-card">
+                <span className="structure-track-label">Reconstructed segments</span>
+                <div className="structure-track">
+                  {comparison.reconstructed_segments.map((segment) => (
+                    <div
+                      key={`recon-${segment.label}-${segment.start_ratio}`}
+                      className="structure-segment reconstructed"
+                      style={{
+                        left: `${segment.start_ratio * 100}%`,
+                        width: `${(segment.end_ratio - segment.start_ratio) * 100}%`,
+                      }}
+                      title={`${segment.label}: ${Math.round(segment.start_ratio * 100)}% - ${Math.round(segment.end_ratio * 100)}%`}
+                    >
+                      <span>{segment.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </aside>
+          </div>
+        ) : (
+          <p>No structure comparison captured yet.</p>
+        )}
       </section>
     </div>
   );

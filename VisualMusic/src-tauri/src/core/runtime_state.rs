@@ -58,10 +58,26 @@ pub struct TestSongDefinition {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct StructureSegment {
+    pub label: String,
+    pub start_ratio: f64,
+    pub end_ratio: f64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct StructureComparison {
+    pub target_label: String,
+    pub average_error_ratio: f64,
+    pub reference_segments: Vec<StructureSegment>,
+    pub reconstructed_segments: Vec<StructureSegment>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct LearningTelemetry {
     pub current_stage: String,
     pub rating_scale: Vec<String>,
     pub test_songs: Vec<TestSongDefinition>,
+    pub structure_comparison: StructureComparison,
     pub next_milestones: Vec<String>,
 }
 
