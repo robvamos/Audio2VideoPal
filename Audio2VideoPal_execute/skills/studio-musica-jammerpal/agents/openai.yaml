@@ -1,0 +1,4 @@
+interface:
+  display_name: "Studio Musica JammerPal"
+  short_description: "Creativita musicale, learning e reazione live"
+  default_prompt: "Usa questa skill per progettare o far evolvere un sistema musicale live orientato ad ascolto, BPM, fase, learning e convergenza adattiva."
