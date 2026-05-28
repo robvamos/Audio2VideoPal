@@ -75,11 +75,23 @@ pub struct StructureComparison {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct LearningEvaluationEntry {
+    pub timestamp: String,
+    pub song_id: String,
+    pub rating: String,
+    pub note: String,
+    pub average_error_ratio: f64,
+    pub segment_offset_ratio: f64,
+    pub segment_scale_ratio: f64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct LearningTelemetry {
     pub current_stage: String,
     pub rating_scale: Vec<String>,
     pub test_songs: Vec<TestSongDefinition>,
     pub structure_comparison: StructureComparison,
+    pub evaluation_history: Vec<LearningEvaluationEntry>,
     pub next_milestones: Vec<String>,
 }
 

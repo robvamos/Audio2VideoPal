@@ -115,6 +115,17 @@ function createPreviewRunResult(profile: string, source: string): ListeningRunRe
           { label: "Turn", start_ratio: 0.79, end_ratio: 1 },
         ],
       },
+      evaluation_history: [
+        {
+          timestamp: "preview",
+          song_id: "phase_alignment_drill",
+          rating: "buono",
+          note: "Preview baseline with visible but contained drift.",
+          average_error_ratio: 0.06,
+          segment_offset_ratio: -0.03,
+          segment_scale_ratio: 1.08,
+        },
+      ],
       next_milestones: [
         "Add file and player-backed reference inputs.",
         "Score relock speed on song benchmarks with known ground truth.",
@@ -371,6 +382,35 @@ export async function adjustStructureLearning(action: string): Promise<Listening
           rebuildPreviewStructureComparison(previewTelemetry, { reset: true });
           break;
       }
+
+      return JSON.stringify(previewTelemetry);
+    },
+  );
+  return JSON.parse(result);
+}
+
+export async function saveLearningEvaluation(songId: string, rating: string, note: string): Promise<ListeningTelemetry | null> {
+  const result = await invokeDesktop<string>(
+    "save_learning_evaluation",
+    { songId, rating, note },
+    async () => {
+      ensurePreviewState();
+      if (!previewTelemetry) {
+        return "null";
+      }
+
+      previewTelemetry.learning.evaluation_history = [
+        {
+          timestamp: new Date().toISOString(),
+          song_id: songId,
+          rating,
+          note,
+          average_error_ratio: previewTelemetry.learning.structure_comparison.average_error_ratio,
+          segment_offset_ratio: previewTelemetry.learning.structure_comparison.segment_offset_ratio,
+          segment_scale_ratio: previewTelemetry.learning.structure_comparison.segment_scale_ratio,
+        },
+        ...previewTelemetry.learning.evaluation_history,
+      ].slice(0, 12);
 
       return JSON.stringify(previewTelemetry);
     },

@@ -1,7 +1,10 @@
 use crate::core::pipeline::run_minimal_pipeline;
-use crate::core::runtime_state::{ListeningRunResult, ListeningTelemetry, StructureSegment, TimingState};
+use crate::core::runtime_state::{
+    LearningEvaluationEntry, ListeningRunResult, ListeningTelemetry, StructureSegment, TimingState,
+};
 use crate::db::ensure_data_dir;
 use crate::db::log_event;
+use chrono::Local;
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::sync::{Mutex, OnceLock};
@@ -31,6 +34,7 @@ impl Default for StructureLearningTuning {
 }
 
 const STRUCTURE_TUNING_PATH: &str = "data/learning_structure_tuning.json";
+const LEARNING_EVALUATIONS_PATH: &str = "data/learning_evaluations.json";
 
 fn runtime_store() -> &'static Mutex<ListeningRuntimeStore> {
     static STORE: OnceLock<Mutex<ListeningRuntimeStore>> = OnceLock::new();
@@ -52,6 +56,25 @@ fn save_structure_learning_tuning(tuning: &StructureLearningTuning) -> Result<()
     fs::write(
         STRUCTURE_TUNING_PATH,
         serde_json::to_string_pretty(tuning).map_err(|error| error.to_string())?,
+    )
+    .map_err(|error| error.to_string())
+}
+
+fn load_learning_evaluations() -> Vec<LearningEvaluationEntry> {
+    if let Ok(content) = fs::read_to_string(LEARNING_EVALUATIONS_PATH) {
+        if let Ok(entries) = serde_json::from_str::<Vec<LearningEvaluationEntry>>(&content) {
+            return entries;
+        }
+    }
+
+    Vec::new()
+}
+
+fn save_learning_evaluations(entries: &[LearningEvaluationEntry]) -> Result<(), String> {
+    ensure_data_dir()?;
+    fs::write(
+        LEARNING_EVALUATIONS_PATH,
+        serde_json::to_string_pretty(entries).map_err(|error| error.to_string())?,
     )
     .map_err(|error| error.to_string())
 }
@@ -101,6 +124,12 @@ fn apply_structure_learning_tuning(telemetry: &mut ListeningTelemetry, tuning: &
     telemetry.learning.structure_comparison.reconstructed_segments = rebuilt_segments;
 }
 
+fn inject_learning_history(telemetry: &mut ListeningTelemetry) {
+    let mut history = load_learning_evaluations();
+    history.sort_by(|left, right| right.timestamp.cmp(&left.timestamp));
+    telemetry.learning.evaluation_history = history.into_iter().take(12).collect();
+}
+
 fn update_runtime_from_result(profile: &str, source: &str, result: &ListeningRunResult) {
     if let Ok(mut runtime) = runtime_store().lock() {
         runtime.active = true;
@@ -115,6 +144,7 @@ fn start_pipeline(profile: &str, source: &str) -> Result<ListeningRunResult, Str
     let mut result = run_minimal_pipeline(profile, source)?;
     let tuning = load_structure_learning_tuning();
     apply_structure_learning_tuning(&mut result.telemetry, &tuning);
+    inject_learning_history(&mut result.telemetry);
     update_runtime_from_result(profile, source, &result);
     Ok(result)
 }
@@ -235,6 +265,52 @@ pub fn adjust_structure_learning(action: String) -> Result<String, String> {
                 "action": action,
                 "segment_offset_ratio": tuning.segment_offset_ratio,
                 "segment_scale_ratio": tuning.segment_scale_ratio,
+            })
+            .to_string(),
+        ),
+    );
+
+    serde_json::to_string(telemetry).map_err(|error| error.to_string())
+}
+
+#[tauri::command]
+pub fn save_learning_evaluation(song_id: String, rating: String, note: String) -> Result<String, String> {
+    let mut runtime = runtime_store()
+        .lock()
+        .map_err(|_| "Listening runtime is unavailable".to_string())?;
+
+    let telemetry = runtime
+        .latest_telemetry
+        .as_mut()
+        .ok_or_else(|| "Run the listening pipeline before saving an evaluation".to_string())?;
+
+    let comparison = telemetry.learning.structure_comparison.clone();
+    let entry = LearningEvaluationEntry {
+        timestamp: Local::now().to_rfc3339(),
+        song_id: song_id.clone(),
+        rating: rating.clone(),
+        note: note.clone(),
+        average_error_ratio: comparison.average_error_ratio,
+        segment_offset_ratio: comparison.segment_offset_ratio,
+        segment_scale_ratio: comparison.segment_scale_ratio,
+    };
+
+    let mut history = load_learning_evaluations();
+    history.insert(0, entry);
+    save_learning_evaluations(&history)?;
+    inject_learning_history(telemetry);
+
+    log_event(
+        "INFO",
+        "learning_lab",
+        "LEARNING_EVALUATION_SAVE",
+        "Saved learning evaluation",
+        Some(
+            &serde_json::json!({
+                "song_id": song_id,
+                "rating": rating,
+                "note": note,
+                "average_error_ratio": comparison.average_error_ratio,
             })
             .to_string(),
         ),

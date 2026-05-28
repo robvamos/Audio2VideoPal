@@ -728,6 +728,29 @@ dd.hash {
     linear-gradient(180deg, color-mix(in srgb, var(--accent) 14%, var(--panel-bg)), var(--panel-bg));
 }
 
+.benchmark-button {
+  text-align: left;
+  width: 100%;
+}
+
+.learning-nav {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.learning-nav-button {
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background-color: var(--panel-bg);
+}
+
+.learning-nav-button.active {
+  border-color: var(--accent);
+  background-color: color-mix(in srgb, var(--accent) 12%, var(--panel-bg));
+  color: var(--text);
+}
+
 .structure-compare-layout {
   display: grid;
   grid-template-columns: minmax(220px, 0.7fr) minmax(380px, 1.3fr);
@@ -796,6 +819,64 @@ dd.hash {
   background: linear-gradient(90deg, color-mix(in srgb, var(--accent-2) 78%, #d7f5ea), var(--accent-2));
   color: #0d1512;
   border: 2px solid color-mix(in srgb, var(--accent-2) 60%, #fff);
+}
+
+.evaluation-layout {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.85fr) minmax(300px, 1.15fr);
+  gap: 18px;
+}
+
+.evaluation-form,
+.evaluation-history {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.rating-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.rating-pill {
+  border-radius: 999px;
+}
+
+.rating-pill.active {
+  border-color: var(--accent-2);
+  background-color: color-mix(in srgb, var(--accent-2) 18%, var(--panel-bg));
+}
+
+.learning-note {
+  min-height: 96px;
+  color: var(--text);
+  background-color: var(--button-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font: inherit;
+  resize: vertical;
+}
+
+.history-card {
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background-color: var(--panel-muted);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.history-card span,
+.history-card small {
+  color: var(--text-soft);
+}
+
+.history-card p {
+  margin: 0;
 }
 
 .readiness-list,
@@ -1040,6 +1121,7 @@ dd.hash {
   .stage-list,
   .benchmark-grid,
   .structure-compare-layout,
+  .evaluation-layout,
   .player-shell,
   .pipeline-grid {
     grid-template-columns: 1fr;

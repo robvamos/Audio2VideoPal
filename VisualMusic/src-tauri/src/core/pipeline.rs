@@ -1,7 +1,7 @@
 use crate::core::runtime_state::{
-    LearningTelemetry, ListeningRunResult, ListeningTelemetry, OneBarGridResult, PipelineContext,
-    PreprocessingTelemetry, StructureComparison, StructureSegment, TestSongDefinition, TimingState,
-    WiringDescription,
+    LearningEvaluationEntry, LearningTelemetry, ListeningRunResult, ListeningTelemetry,
+    OneBarGridResult, PipelineContext, PreprocessingTelemetry, StructureComparison,
+    StructureSegment, TestSongDefinition, TimingState, WiringDescription,
 };
 use crate::core::telemetry::write_telemetry;
 use crate::sources::synthetic_source::SyntheticPatternSource;
@@ -156,6 +156,15 @@ fn learning_telemetry() -> LearningTelemetry {
                 },
             ],
         },
+        evaluation_history: vec![LearningEvaluationEntry {
+            timestamp: "seed".to_string(),
+            song_id: "phase_alignment_drill".to_string(),
+            rating: "buono".to_string(),
+            note: "Baseline synthetic run with small phrase drift.".to_string(),
+            average_error_ratio: 0.06,
+            segment_offset_ratio: -0.03,
+            segment_scale_ratio: 1.08,
+        }],
         next_milestones: vec![
             "Add file and player-backed reference inputs.".to_string(),
             "Score relock speed on song benchmarks with known ground truth.".to_string(),

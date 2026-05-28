@@ -132,6 +132,7 @@ function App() {
           isBusy={listeningStudio.isBusy}
           onAdjustStructureLearning={listeningStudio.adjustStructureLearning}
           onRerunListeningTest={listeningStudio.runListeningTest}
+          onSaveLearningEvaluation={listeningStudio.saveLearningEvaluation}
         />
       )}
 

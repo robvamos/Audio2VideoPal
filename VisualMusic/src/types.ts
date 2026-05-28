@@ -74,11 +74,22 @@ export interface StructureComparison {
   reconstructed_segments: StructureSegment[];
 }
 
+export interface LearningEvaluationEntry {
+  timestamp: string;
+  song_id: string;
+  rating: string;
+  note: string;
+  average_error_ratio: number;
+  segment_offset_ratio: number;
+  segment_scale_ratio: number;
+}
+
 export interface LearningTelemetry {
   current_stage: string;
   rating_scale: string[];
   test_songs: TestSongDefinition[];
   structure_comparison: StructureComparison;
+  evaluation_history: LearningEvaluationEntry[];
   next_milestones: string[];
 }
 

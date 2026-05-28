@@ -123,6 +123,23 @@ export function useListeningStudio({ onMessage }: UseListeningStudioOptions) {
     }
   }
 
+  async function saveLearningEvaluation(songId: string, rating: string, note: string) {
+    try {
+      setIsBusy(true);
+      const updatedTelemetry = await pipelineEngine.listening.saveLearningEvaluation(songId, rating, note);
+      if (updatedTelemetry) {
+        startTransition(() => {
+          setTelemetry(updatedTelemetry);
+        });
+      }
+      onMessage(`Evaluation saved: ${rating}`);
+    } catch (error) {
+      onMessage(`Could not save evaluation: ${error}`);
+    } finally {
+      setIsBusy(false);
+    }
+  }
+
   useEffect(() => {
     if (!isDesktopRuntimeAvailable()) {
       onMessage(BROWSER_PREVIEW_MESSAGE);
@@ -146,5 +163,6 @@ export function useListeningStudio({ onMessage }: UseListeningStudioOptions) {
     runListeningTest,
     toggleVideo,
     adjustStructureLearning,
+    saveLearningEvaluation,
   };
 }
