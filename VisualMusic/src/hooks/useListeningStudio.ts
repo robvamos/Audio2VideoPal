@@ -30,6 +30,25 @@ export function useListeningStudio({ onMessage }: UseListeningStudioOptions) {
     });
   }
 
+  function updateTelemetry(updatedTelemetry: ListeningTelemetry | null) {
+    if (!updatedTelemetry) {
+      return;
+    }
+
+    startTransition(() => {
+      setTelemetry(updatedTelemetry);
+    });
+  }
+
+  async function runBusyAction(action: () => Promise<void>) {
+    try {
+      setIsBusy(true);
+      await action();
+    } finally {
+      setIsBusy(false);
+    }
+  }
+
   async function refreshListeningState() {
     try {
       const [latestTimingState, latestTelemetry] = await Promise.all([
@@ -46,115 +65,96 @@ export function useListeningStudio({ onMessage }: UseListeningStudioOptions) {
   }
 
   async function startListening() {
-    try {
-      setIsBusy(true);
-      const result = await pipelineEngine.listening.start(profile, source);
-      setAudioActive(true);
-      await refreshListeningState();
-      onMessage(result);
-    } catch (error) {
-      onMessage(`Error: ${error}`);
-    } finally {
-      setIsBusy(false);
-    }
+    await runBusyAction(async () => {
+      try {
+        const result = await pipelineEngine.listening.start(profile, source);
+        setAudioActive(true);
+        await refreshListeningState();
+        onMessage(result);
+      } catch (error) {
+        onMessage(`Error: ${error}`);
+      }
+    });
   }
 
   async function stopListening() {
-    try {
-      setIsBusy(true);
-      const result = await pipelineEngine.listening.stop();
-      setAudioActive(false);
-      setVideoActive(false);
-      clearSnapshot();
-      onMessage(result);
-    } catch (error) {
-      onMessage(`Error: ${error}`);
-    } finally {
-      setIsBusy(false);
-    }
+    await runBusyAction(async () => {
+      try {
+        const result = await pipelineEngine.listening.stop();
+        setAudioActive(false);
+        setVideoActive(false);
+        clearSnapshot();
+        onMessage(result);
+      } catch (error) {
+        onMessage(`Error: ${error}`);
+      }
+    });
   }
 
   async function runListeningTest() {
-    try {
-      setIsBusy(true);
-      const result = await pipelineEngine.listening.runTest(profile, source);
-      setAudioActive(true);
-      applySnapshot({
-        timingState: result.timing_state,
-        telemetry: result.telemetry,
-      });
-      onMessage(
-        `Listening test completed: ${result.telemetry.fused_bpm.toFixed(1)} BPM, ${result.telemetry.sync_state}, grid ${result.one_bar_grid.one_bar_grid_score.toFixed(2)}.`,
-      );
-    } catch (error) {
-      onMessage(`Listening test failed: ${error}`);
-    } finally {
-      setIsBusy(false);
-    }
+    await runBusyAction(async () => {
+      try {
+        const result = await pipelineEngine.listening.runTest(profile, source);
+        setAudioActive(true);
+        applySnapshot({
+          timingState: result.timing_state,
+          telemetry: result.telemetry,
+        });
+        onMessage(
+          `Listening test completed: ${result.telemetry.fused_bpm.toFixed(1)} BPM, ${result.telemetry.sync_state}, grid ${result.one_bar_grid.one_bar_grid_score.toFixed(2)}.`,
+        );
+      } catch (error) {
+        onMessage(`Listening test failed: ${error}`);
+      }
+    });
   }
 
   async function toggleVideo() {
-    try {
-      setIsBusy(true);
-      const result = videoActive ? await pipelineEngine.output.stop() : await pipelineEngine.output.start();
-      setVideoActive((currentValue) => !currentValue);
-      onMessage(result);
-    } catch (error) {
-      onMessage(`Error: ${error}`);
-    } finally {
-      setIsBusy(false);
-    }
+    await runBusyAction(async () => {
+      try {
+        const result = videoActive ? await pipelineEngine.output.stop() : await pipelineEngine.output.start();
+        setVideoActive((currentValue) => !currentValue);
+        onMessage(result);
+      } catch (error) {
+        onMessage(`Error: ${error}`);
+      }
+    });
   }
 
   async function adjustStructureLearning(action: string) {
-    try {
-      setIsBusy(true);
-      const updatedTelemetry = await pipelineEngine.listening.adjustStructureLearning(action);
-      if (updatedTelemetry) {
-        startTransition(() => {
-          setTelemetry(updatedTelemetry);
-        });
+    await runBusyAction(async () => {
+      try {
+        const updatedTelemetry = await pipelineEngine.listening.adjustStructureLearning(action);
+        updateTelemetry(updatedTelemetry);
+        onMessage(`Structure learning updated: ${action.split("_").join(" ")}`);
+      } catch (error) {
+        onMessage(`Structure learning update failed: ${error}`);
       }
-      onMessage(`Structure learning updated: ${action.split("_").join(" ")}`);
-    } catch (error) {
-      onMessage(`Structure learning update failed: ${error}`);
-    } finally {
-      setIsBusy(false);
-    }
+    });
   }
 
   async function saveLearningEvaluation(songId: string, rating: string, note: string) {
-    try {
-      setIsBusy(true);
-      const updatedTelemetry = await pipelineEngine.listening.saveLearningEvaluation(songId, rating, note);
-      if (updatedTelemetry) {
-        startTransition(() => {
-          setTelemetry(updatedTelemetry);
-        });
+    await runBusyAction(async () => {
+      try {
+        const updatedTelemetry = await pipelineEngine.listening.saveLearningEvaluation(songId, rating, note);
+        updateTelemetry(updatedTelemetry);
+        onMessage(`Evaluation saved: ${rating}`);
+      } catch (error) {
+        onMessage(`Could not save evaluation: ${error}`);
       }
-      onMessage(`Evaluation saved: ${rating}`);
-    } catch (error) {
-      onMessage(`Could not save evaluation: ${error}`);
-    } finally {
-      setIsBusy(false);
-    }
+    });
   }
 
   async function saveFilterSetupEvaluation(setupId: string, rating: string, note: string) {
-    try {
-      setIsBusy(true);
-      const updatedTelemetry = await pipelineEngine.listening.saveFilterSetupEvaluation(setupId, rating, note);
-      if (updatedTelemetry) {
-        startTransition(() => {
-          setTelemetry(updatedTelemetry);
-        });
+    await runBusyAction(async () => {
+      try {
+        const updatedTelemetry = await pipelineEngine.listening.saveFilterSetupEvaluation(setupId, rating, note);
+        updateTelemetry(updatedTelemetry);
+        onMessage(`Setup evaluation saved: ${rating}`);
+      } catch (error) {
+        onMessage(`Could not save setup evaluation: ${error}`);
       }
-      onMessage(`Setup evaluation saved: ${rating}`);
-    } catch (error) {
-      onMessage(`Could not save setup evaluation: ${error}`);
-    } finally {
-      setIsBusy(false);
-    }
+    });
   }
 
   useEffect(() => {

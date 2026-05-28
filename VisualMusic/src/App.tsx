@@ -13,19 +13,23 @@ import SkinSelector from "./components/SkinSelector";
 import TechnicalMapPanel from "./components/TechnicalMapPanel";
 import { useListeningStudio } from "./hooks/useListeningStudio";
 
+const TABS = [
+  { id: "overview", label: "Overview" },
+  { id: "player", label: "Player" },
+  { id: "system", label: "System" },
+  { id: "plugins", label: "Plugins" },
+  { id: "control-room", label: "Control Room" },
+  { id: "pipeline", label: "Pipeline" },
+  { id: "wiring", label: "Wiring" },
+  { id: "map-lab", label: "Map Lab" },
+  { id: "telemetry", label: "Telemetry" },
+  { id: "learning", label: "Learning Lab" },
+] as const;
+
+type TabId = (typeof TABS)[number]["id"];
+
 function App() {
-  const [activeTab, setActiveTab] = useState<
-    | "overview"
-    | "player"
-    | "system"
-    | "plugins"
-    | "control-room"
-    | "pipeline"
-    | "wiring"
-    | "map-lab"
-    | "telemetry"
-    | "learning"
-  >("overview");
+  const [activeTab, setActiveTab] = useState<TabId>("overview");
   const [message, setMessage] = useState("");
   const listeningStudio = useListeningStudio({ onMessage: setMessage });
 
@@ -40,66 +44,15 @@ function App() {
       </header>
 
       <div className="tabs">
-        <button
-          className={`tab-button ${activeTab === "overview" ? "active" : ""}`}
-          onClick={() => setActiveTab("overview")}
-        >
-          Overview
-        </button>
-        <button
-          className={`tab-button ${activeTab === "player" ? "active" : ""}`}
-          onClick={() => setActiveTab("player")}
-        >
-          Player
-        </button>
-        <button
-          className={`tab-button ${activeTab === "system" ? "active" : ""}`}
-          onClick={() => setActiveTab("system")}
-        >
-          System
-        </button>
-        <button
-          className={`tab-button ${activeTab === "plugins" ? "active" : ""}`}
-          onClick={() => setActiveTab("plugins")}
-        >
-          Plugins
-        </button>
-        <button
-          className={`tab-button ${activeTab === "control-room" ? "active" : ""}`}
-          onClick={() => setActiveTab("control-room")}
-        >
-          Control Room
-        </button>
-        <button
-          className={`tab-button ${activeTab === "pipeline" ? "active" : ""}`}
-          onClick={() => setActiveTab("pipeline")}
-        >
-          Pipeline
-        </button>
-        <button
-          className={`tab-button ${activeTab === "wiring" ? "active" : ""}`}
-          onClick={() => setActiveTab("wiring")}
-        >
-          Wiring
-        </button>
-        <button
-          className={`tab-button ${activeTab === "map-lab" ? "active" : ""}`}
-          onClick={() => setActiveTab("map-lab")}
-        >
-          Map Lab
-        </button>
-        <button
-          className={`tab-button ${activeTab === "telemetry" ? "active" : ""}`}
-          onClick={() => setActiveTab("telemetry")}
-        >
-          Telemetry
-        </button>
-        <button
-          className={`tab-button ${activeTab === "learning" ? "active" : ""}`}
-          onClick={() => setActiveTab("learning")}
-        >
-          Learning Lab
-        </button>
+        {TABS.map((tab) => (
+          <button
+            key={tab.id}
+            className={`tab-button ${activeTab === tab.id ? "active" : ""}`}
+            onClick={() => setActiveTab(tab.id)}
+          >
+            {tab.label}
+          </button>
+        ))}
       </div>
 
       {activeTab === "overview" && (
