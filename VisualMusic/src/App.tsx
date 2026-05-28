@@ -56,7 +56,11 @@ function App() {
       </div>
 
       {activeTab === "overview" && (
-        <ListeningOverviewPanel timingState={listeningStudio.timingState} telemetry={listeningStudio.telemetry} />
+        <ListeningOverviewPanel
+          appState={listeningStudio.appState}
+          timingState={listeningStudio.timingState}
+          telemetry={listeningStudio.telemetry}
+        />
       )}
       {activeTab === "player" && <Mp3Player onMessage={setMessage} />}
       {activeTab === "system" && <HomePanel setMessage={setMessage} />}
@@ -64,6 +68,7 @@ function App() {
       {activeTab === "control-room" && (
         <ListeningControlRoom
           audioActive={listeningStudio.audioActive}
+          appState={listeningStudio.appState}
           videoActive={listeningStudio.videoActive}
           isBusy={listeningStudio.isBusy}
           profile={listeningStudio.profile}

@@ -1,7 +1,8 @@
-import type { ListeningTelemetry, TimingState } from "../types";
+import type { AppStateSummary, ListeningTelemetry, TimingState } from "../types";
 
 interface ListeningControlRoomProps {
   audioActive: boolean;
+  appState: AppStateSummary;
   videoActive: boolean;
   isBusy: boolean;
   profile: string;
@@ -19,6 +20,7 @@ interface ListeningControlRoomProps {
 
 export default function ListeningControlRoom({
   audioActive,
+  appState,
   videoActive,
   isBusy,
   profile,
@@ -38,14 +40,15 @@ export default function ListeningControlRoom({
       <section className="studio-hero">
         <div>
           <p className="eyebrow">Listening Control Room</p>
-          <h2>Run the timing core, inspect lock quality, then decide when the visual side should wake up.</h2>
+          <h2>{appState.headline}</h2>
+          <p>{appState.detail}</p>
         </div>
         <div className="hero-state">
-          <span className={`state-badge ${audioActive ? "is-live" : "is-idle"}`}>
-            {audioActive ? "Listening active" : "Listening idle"}
+          <span className={`state-badge tone-${appState.primaryTone}`}>
+            {appState.primaryBadge}
           </span>
-          <span className={`state-badge ${videoActive ? "is-live" : "is-idle"}`}>
-            {videoActive ? "Video path active" : "Video path idle"}
+          <span className={`state-badge tone-${appState.secondaryTone}`}>
+            {appState.secondaryBadge}
           </span>
         </div>
       </section>
@@ -142,6 +145,19 @@ export default function ListeningControlRoom({
           </button>
         </section>
       </div>
+
+      <section className="studio-panel">
+        <h3>State stack</h3>
+        <div className="app-state-grid compact">
+          {appState.states.map((state) => (
+            <article key={state.id} className={`app-state-card tone-${state.tone} ${state.active ? "is-active" : ""}`}>
+              <span>{state.label}</span>
+              <strong>{state.value}</strong>
+              <p>{state.detail}</p>
+            </article>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }

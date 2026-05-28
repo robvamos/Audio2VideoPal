@@ -1,18 +1,41 @@
-import type { ListeningTelemetry, TimingState } from "../types";
+import type { AppStateSummary, ListeningTelemetry, TimingState } from "../types";
 
 interface ListeningOverviewPanelProps {
+  appState: AppStateSummary;
   timingState: TimingState | null;
   telemetry: ListeningTelemetry | null;
 }
 
-export default function ListeningOverviewPanel({ timingState, telemetry }: ListeningOverviewPanelProps) {
+export default function ListeningOverviewPanel({ appState, timingState, telemetry }: ListeningOverviewPanelProps) {
   return (
     <div className="tab-content">
       <section className="overview-banner">
         <div>
           <p className="eyebrow">Project Overview</p>
-          <h2>Audio2VideoPal now has separate rooms for system setup, listening control, pipeline wiring and telemetry.</h2>
+          <h2>{appState.headline}</h2>
+          <p>{appState.detail}</p>
         </div>
+        <div className="hero-state">
+          <span className={`state-badge tone-${appState.primaryTone}`}>{appState.primaryBadge}</span>
+          <span className={`state-badge tone-${appState.secondaryTone}`}>{appState.secondaryBadge}</span>
+        </div>
+      </section>
+
+      <section className="studio-panel">
+        <h3>State map</h3>
+        <div className="app-state-grid">
+          {appState.states.map((state) => (
+            <article key={state.id} className={`app-state-card tone-${state.tone} ${state.active ? "is-active" : ""}`}>
+              <span>{state.label}</span>
+              <strong>{state.value}</strong>
+              <p>{state.detail}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="studio-panel">
+        <h3>Fast metrics</h3>
         <div className="overview-stats">
           <div>
             <span>Current BPM</span>

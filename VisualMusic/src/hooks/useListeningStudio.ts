@@ -2,6 +2,7 @@ import { startTransition, useEffect, useState } from "react";
 import { pipelineEngine } from "../engines/pipelineEngine";
 import { BROWSER_PREVIEW_MESSAGE, isDesktopRuntimeAvailable } from "../services/tauriApi";
 import type { ListeningTelemetry, ListeningTimingSnapshot, TimingState } from "../types";
+import { deriveAppStateSummary } from "../viewmodels/appState";
 
 interface UseListeningStudioOptions {
   onMessage: (value: string) => void;
@@ -164,8 +165,17 @@ export function useListeningStudio({ onMessage }: UseListeningStudioOptions) {
     refreshListeningState();
   }, []);
 
+  const appState = deriveAppStateSummary({
+    audioActive,
+    videoActive,
+    isBusy,
+    telemetry,
+    timingState,
+  });
+
   return {
     audioActive,
+    appState,
     videoActive,
     isBusy,
     profile,

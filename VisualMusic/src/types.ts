@@ -140,6 +140,28 @@ export interface ListeningTimingSnapshot {
   telemetry: ListeningTelemetry | null;
 }
 
+export type AppStateTone = "neutral" | "good" | "warning" | "danger" | "live";
+
+export interface AppStateItem {
+  id: string;
+  label: string;
+  value: string;
+  detail: string;
+  tone: AppStateTone;
+  active: boolean;
+}
+
+export interface AppStateSummary {
+  mode: string;
+  headline: string;
+  detail: string;
+  primaryBadge: string;
+  primaryTone: AppStateTone;
+  secondaryBadge: string;
+  secondaryTone: AppStateTone;
+  states: AppStateItem[];
+}
+
 export interface PlaylistTrack {
   id: string;
   name: string;

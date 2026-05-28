@@ -232,6 +232,35 @@ h4 {
   background-color: color-mix(in srgb, var(--accent-2) 18%, var(--panel-bg));
 }
 
+.state-badge.tone-neutral {
+  border-color: var(--border);
+  color: var(--text-soft);
+}
+
+.state-badge.tone-good {
+  border-color: color-mix(in srgb, var(--success) 55%, var(--border));
+  background-color: color-mix(in srgb, var(--success) 14%, var(--panel-bg));
+  color: var(--text);
+}
+
+.state-badge.tone-warning {
+  border-color: color-mix(in srgb, var(--warning) 60%, var(--border));
+  background-color: color-mix(in srgb, var(--warning) 14%, var(--panel-bg));
+  color: var(--text);
+}
+
+.state-badge.tone-danger {
+  border-color: color-mix(in srgb, var(--danger) 60%, var(--border));
+  background-color: color-mix(in srgb, var(--danger) 14%, var(--panel-bg));
+  color: var(--text);
+}
+
+.state-badge.tone-live {
+  border-color: color-mix(in srgb, var(--accent-2) 70%, var(--border));
+  background-color: color-mix(in srgb, var(--accent-2) 18%, var(--panel-bg));
+  color: var(--text);
+}
+
 .overview-grid,
 .studio-grid,
 .wiring-grid {
@@ -256,6 +285,72 @@ h4 {
   border: 1px solid var(--border);
   background-color: var(--panel-bg);
   box-shadow: var(--shadow);
+}
+
+.app-state-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+}
+
+.app-state-grid.compact {
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+}
+
+.app-state-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 130px;
+  padding: 14px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background-color: var(--panel-muted);
+}
+
+.app-state-card.is-active {
+  box-shadow: var(--shadow);
+}
+
+.app-state-card span {
+  color: var(--text-soft);
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.app-state-card strong {
+  color: var(--text);
+  font-size: 1.1rem;
+}
+
+.app-state-card p {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.app-state-card.tone-neutral {
+  border-color: var(--border);
+}
+
+.app-state-card.tone-good {
+  border-color: color-mix(in srgb, var(--success) 55%, var(--border));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--success) 10%, var(--panel-bg)), var(--panel-bg));
+}
+
+.app-state-card.tone-warning {
+  border-color: color-mix(in srgb, var(--warning) 60%, var(--border));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--warning) 10%, var(--panel-bg)), var(--panel-bg));
+}
+
+.app-state-card.tone-danger {
+  border-color: color-mix(in srgb, var(--danger) 60%, var(--border));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--danger) 10%, var(--panel-bg)), var(--panel-bg));
+}
+
+.app-state-card.tone-live {
+  border-color: color-mix(in srgb, var(--accent-2) 60%, var(--border));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent-2) 10%, var(--panel-bg)), var(--panel-bg));
 }
 
 .overview-card h3,
