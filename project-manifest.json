@@ -1,0 +1,20 @@
+{
+  "name": "Audio2VideoPal",
+  "slug": "audiovideopal",
+  "path": "F:/_CODEX/Audio2VideoPal",
+  "status": "active",
+  "version": "0.1.0",
+  "summary": "Audio-to-visual and live musical listening workspace focused on preprocessing, BPM, phase, and adaptive response.",
+  "local_agents": "F:/_CODEX/Audio2VideoPal/Audio2VideoPal_execute/skills/studio-musica-jammerpal/SKILL.md",
+  "key_interfaces": [],
+  "reusable_skills": [
+    "attivasviluppo",
+    "sviluppo-conoscenza",
+    "studio-musica-jammerpal"
+  ],
+  "notes": [
+    "Registered in the shared knowledge hub.",
+    "Includes a local execution dossier for the improviser-audio module.",
+    "Carries a local copy of the studio-musica-jammerpal skill bundle."
+  ]
+}
