@@ -270,3 +270,15 @@ CREATE TABLE IF NOT EXISTS app_events (
     message TEXT,
     details_json TEXT
 );
+
+CREATE TABLE IF NOT EXISTS learning_evaluations (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at TEXT NOT NULL,
+    entity_type TEXT NOT NULL,
+    entity_key TEXT NOT NULL,
+    behavior_key TEXT,
+    configuration_key TEXT,
+    rating TEXT NOT NULL,
+    note TEXT,
+    metrics_json TEXT
+);

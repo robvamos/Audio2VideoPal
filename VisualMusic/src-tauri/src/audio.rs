@@ -2,9 +2,10 @@ use crate::core::pipeline::run_minimal_pipeline;
 use crate::core::runtime_state::{
     LearningEvaluationEntry, ListeningRunResult, ListeningTelemetry, StructureSegment, TimingState,
 };
-use crate::db::ensure_data_dir;
+use crate::db::{ensure_data_dir, open_db};
 use crate::db::log_event;
 use chrono::Local;
+use rusqlite::params;
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::sync::{Mutex, OnceLock};
@@ -60,7 +61,7 @@ fn save_structure_learning_tuning(tuning: &StructureLearningTuning) -> Result<()
     .map_err(|error| error.to_string())
 }
 
-fn load_learning_evaluations() -> Vec<LearningEvaluationEntry> {
+fn load_legacy_learning_evaluations() -> Vec<LearningEvaluationEntry> {
     if let Ok(content) = fs::read_to_string(LEARNING_EVALUATIONS_PATH) {
         if let Ok(entries) = serde_json::from_str::<Vec<LearningEvaluationEntry>>(&content) {
             return entries;
@@ -70,13 +71,132 @@ fn load_learning_evaluations() -> Vec<LearningEvaluationEntry> {
     Vec::new()
 }
 
-fn save_learning_evaluations(entries: &[LearningEvaluationEntry]) -> Result<(), String> {
-    ensure_data_dir()?;
-    fs::write(
-        LEARNING_EVALUATIONS_PATH,
-        serde_json::to_string_pretty(entries).map_err(|error| error.to_string())?,
+fn import_legacy_learning_evaluations_if_needed() -> Result<(), String> {
+    let legacy_entries = load_legacy_learning_evaluations();
+    if legacy_entries.is_empty() {
+        return Ok(());
+    }
+
+    let conn = open_db()?;
+    let existing_count: i64 = conn
+        .query_row("SELECT COUNT(*) FROM learning_evaluations", [], |row| row.get(0))
+        .map_err(|error| error.to_string())?;
+
+    if existing_count > 0 {
+        return Ok(());
+    }
+
+    for entry in legacy_entries {
+        let metrics_json = serde_json::json!({
+            "average_error_ratio": entry.average_error_ratio,
+            "segment_offset_ratio": entry.segment_offset_ratio,
+            "segment_scale_ratio": entry.segment_scale_ratio,
+        })
+        .to_string();
+
+        conn.execute(
+            "INSERT INTO learning_evaluations
+            (created_at, entity_type, entity_key, behavior_key, configuration_key, rating, note, metrics_json)
+            VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)",
+            params![
+                entry.timestamp,
+                "song",
+                entry.song_id,
+                "structure_reconstruction",
+                "learning_lab",
+                entry.rating,
+                entry.note,
+                metrics_json,
+            ],
+        )
+        .map_err(|error| error.to_string())?;
+    }
+
+    Ok(())
+}
+
+fn load_learning_evaluations() -> Vec<LearningEvaluationEntry> {
+    if import_legacy_learning_evaluations_if_needed().is_err() {
+        return Vec::new();
+    }
+
+    let Ok(conn) = open_db() else {
+        return Vec::new();
+    };
+
+    let mut statement = match conn.prepare(
+        "SELECT created_at, entity_key, rating, note, metrics_json
+         FROM learning_evaluations
+         WHERE entity_type = 'song' AND behavior_key = 'structure_reconstruction'
+         ORDER BY created_at DESC
+         LIMIT 50",
+    ) {
+        Ok(statement) => statement,
+        Err(_) => return Vec::new(),
+    };
+
+    let rows = match statement.query_map([], |row| {
+        let created_at: String = row.get(0)?;
+        let song_id: String = row.get(1)?;
+        let rating: String = row.get(2)?;
+        let note: String = row.get(3)?;
+        let metrics_json: String = row.get(4)?;
+        let metrics: serde_json::Value =
+            serde_json::from_str(&metrics_json).unwrap_or_else(|_| serde_json::json!({}));
+
+        Ok(LearningEvaluationEntry {
+            timestamp: created_at,
+            song_id,
+            rating,
+            note,
+            average_error_ratio: metrics
+                .get("average_error_ratio")
+                .and_then(|value| value.as_f64())
+                .unwrap_or_default(),
+            segment_offset_ratio: metrics
+                .get("segment_offset_ratio")
+                .and_then(|value| value.as_f64())
+                .unwrap_or_default(),
+            segment_scale_ratio: metrics
+                .get("segment_scale_ratio")
+                .and_then(|value| value.as_f64())
+                .unwrap_or(1.0),
+        })
+    }) {
+        Ok(rows) => rows,
+        Err(_) => return Vec::new(),
+    };
+
+    rows.filter_map(Result::ok).collect()
+}
+
+fn save_learning_evaluation_entry(entry: &LearningEvaluationEntry) -> Result<(), String> {
+    let conn = open_db()?;
+    let metrics_json = serde_json::json!({
+        "average_error_ratio": entry.average_error_ratio,
+        "segment_offset_ratio": entry.segment_offset_ratio,
+        "segment_scale_ratio": entry.segment_scale_ratio,
+    })
+    .to_string();
+
+    conn.execute(
+        "INSERT INTO learning_evaluations
+        (created_at, entity_type, entity_key, behavior_key, configuration_key, rating, note, metrics_json)
+        VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)",
+        params![
+            entry.timestamp,
+            "song",
+            entry.song_id,
+            "structure_reconstruction",
+            "learning_lab",
+            entry.rating,
+            entry.note,
+            metrics_json,
+        ],
     )
-    .map_err(|error| error.to_string())
+    .map_err(|error| error.to_string())?;
+
+    Ok(())
 }
 
 fn rebuild_segments(reference_segments: &[StructureSegment], tuning: &StructureLearningTuning) -> Vec<StructureSegment> {
@@ -295,9 +415,7 @@ pub fn save_learning_evaluation(song_id: String, rating: String, note: String) -
         segment_scale_ratio: comparison.segment_scale_ratio,
     };
 
-    let mut history = load_learning_evaluations();
-    history.insert(0, entry);
-    save_learning_evaluations(&history)?;
+    save_learning_evaluation_entry(&entry)?;
     inject_learning_history(telemetry);
 
     log_event(
