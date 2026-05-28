@@ -68,6 +68,8 @@ pub struct StructureSegment {
 pub struct StructureComparison {
     pub target_label: String,
     pub average_error_ratio: f64,
+    pub segment_offset_ratio: f64,
+    pub segment_scale_ratio: f64,
     pub reference_segments: Vec<StructureSegment>,
     pub reconstructed_segments: Vec<StructureSegment>,
 }

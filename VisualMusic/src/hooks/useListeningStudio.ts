@@ -106,6 +106,23 @@ export function useListeningStudio({ onMessage }: UseListeningStudioOptions) {
     }
   }
 
+  async function adjustStructureLearning(action: string) {
+    try {
+      setIsBusy(true);
+      const updatedTelemetry = await pipelineEngine.listening.adjustStructureLearning(action);
+      if (updatedTelemetry) {
+        startTransition(() => {
+          setTelemetry(updatedTelemetry);
+        });
+      }
+      onMessage(`Structure learning updated: ${action.split("_").join(" ")}`);
+    } catch (error) {
+      onMessage(`Structure learning update failed: ${error}`);
+    } finally {
+      setIsBusy(false);
+    }
+  }
+
   useEffect(() => {
     if (!isDesktopRuntimeAvailable()) {
       onMessage(BROWSER_PREVIEW_MESSAGE);
@@ -128,5 +145,6 @@ export function useListeningStudio({ onMessage }: UseListeningStudioOptions) {
     stopListening,
     runListeningTest,
     toggleVideo,
+    adjustStructureLearning,
   };
 }

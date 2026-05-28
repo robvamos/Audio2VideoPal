@@ -44,6 +44,8 @@ async function invokeDesktop<T>(
 
 function createPreviewRunResult(profile: string, source: string): ListeningRunResult {
   const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+  const currentOffset = previewTelemetry?.learning.structure_comparison.segment_offset_ratio ?? -0.03;
+  const currentScale = previewTelemetry?.learning.structure_comparison.segment_scale_ratio ?? 1.08;
 
   previewTimingState = {
     sync_state: "preview_locked",
@@ -98,6 +100,8 @@ function createPreviewRunResult(profile: string, source: string): ListeningRunRe
       structure_comparison: {
         target_label: "grid16_phrase_map",
         average_error_ratio: 0.06,
+        segment_offset_ratio: currentOffset,
+        segment_scale_ratio: currentScale,
         reference_segments: [
           { label: "Intro", start_ratio: 0, end_ratio: 0.22 },
           { label: "Phrase A", start_ratio: 0.22, end_ratio: 0.49 },
@@ -163,6 +167,8 @@ function createPreviewRunResult(profile: string, source: string): ListeningRunRe
     telemetry_summary_path: "runtime/telemetry/browser-preview.summary.md",
   };
 
+  rebuildPreviewStructureComparison(previewTelemetry);
+
   return {
     timing_state: previewTimingState,
     one_bar_grid: {
@@ -180,6 +186,43 @@ function ensurePreviewState(profile = "minimal_one_bar_grid", source = "syntheti
   if (!previewTimingState || !previewTelemetry) {
     createPreviewRunResult(profile, source);
   }
+}
+
+function rebuildPreviewStructureComparison(
+  telemetry: ListeningTelemetry,
+  options?: { offsetDelta?: number; scaleDelta?: number; reset?: boolean },
+) {
+  const comparison = telemetry.learning.structure_comparison;
+  const baseOffset = options?.reset ? -0.03 : comparison.segment_offset_ratio + (options?.offsetDelta ?? 0);
+  const baseScale = options?.reset ? 1.08 : comparison.segment_scale_ratio + (options?.scaleDelta ?? 0);
+
+  const rebuiltSegments = comparison.reference_segments.map((segment, index) => {
+    const center = (segment.start_ratio + segment.end_ratio) / 2 + baseOffset;
+    const width = (segment.end_ratio - segment.start_ratio) * baseScale;
+    const start = Math.max(0, Math.min(0.95, center - width / 2));
+    const end = Math.max(start + 0.04, Math.min(1, center + width / 2));
+
+    return {
+      label: segment.label,
+      start_ratio: index === 0 ? 0 : Number(start.toFixed(3)),
+      end_ratio: index === comparison.reference_segments.length - 1 ? 1 : Number(end.toFixed(3)),
+    };
+  });
+
+  const averageErrorRatio =
+    rebuiltSegments.reduce((sum, segment, index) => {
+      const reference = comparison.reference_segments[index];
+      return sum + Math.abs(reference.start_ratio - segment.start_ratio) + Math.abs(reference.end_ratio - segment.end_ratio);
+    }, 0) /
+    (rebuiltSegments.length * 2);
+
+  telemetry.learning.structure_comparison = {
+    ...comparison,
+    segment_offset_ratio: Number(baseOffset.toFixed(3)),
+    segment_scale_ratio: Number(baseScale.toFixed(3)),
+    average_error_ratio: Number(averageErrorRatio.toFixed(3)),
+    reconstructed_segments: rebuiltSegments,
+  };
 }
 
 export { BROWSER_PREVIEW_MESSAGE, isDesktopRuntimeAvailable };
@@ -299,4 +342,38 @@ export async function startVideoRender(): Promise<string> {
 
 export async function stopVideoRender(): Promise<string> {
   return await invokeDesktop<string>("stop_video_render", undefined, async () => BROWSER_PREVIEW_MESSAGE);
+}
+
+export async function adjustStructureLearning(action: string): Promise<ListeningTelemetry | null> {
+  const result = await invokeDesktop<string>(
+    "adjust_structure_learning",
+    { action },
+    async () => {
+      ensurePreviewState();
+      if (!previewTelemetry) {
+        return "null";
+      }
+
+      switch (action) {
+        case "shift_left":
+          rebuildPreviewStructureComparison(previewTelemetry, { offsetDelta: -0.01 });
+          break;
+        case "shift_right":
+          rebuildPreviewStructureComparison(previewTelemetry, { offsetDelta: 0.01 });
+          break;
+        case "compress":
+          rebuildPreviewStructureComparison(previewTelemetry, { scaleDelta: -0.04 });
+          break;
+        case "expand":
+          rebuildPreviewStructureComparison(previewTelemetry, { scaleDelta: 0.04 });
+          break;
+        case "reset":
+          rebuildPreviewStructureComparison(previewTelemetry, { reset: true });
+          break;
+      }
+
+      return JSON.stringify(previewTelemetry);
+    },
+  );
+  return JSON.parse(result);
 }

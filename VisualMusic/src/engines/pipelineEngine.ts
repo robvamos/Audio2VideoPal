@@ -1,4 +1,5 @@
 import {
+  adjustStructureLearning,
   getLatestTelemetry,
   getLatestTimingState,
   runListeningTest,
@@ -21,6 +22,7 @@ export const pipelineEngine = {
     runTest: runListeningTest,
     getLatestTimingState,
     getLatestTelemetry,
+    adjustStructureLearning,
   },
   output: {
     start: startVideoRender,

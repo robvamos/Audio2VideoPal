@@ -68,6 +68,8 @@ export interface StructureSegment {
 export interface StructureComparison {
   target_label: string;
   average_error_ratio: number;
+  segment_offset_ratio: number;
+  segment_scale_ratio: number;
   reference_segments: StructureSegment[];
   reconstructed_segments: StructureSegment[];
 }

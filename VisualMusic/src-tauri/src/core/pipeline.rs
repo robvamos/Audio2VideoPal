@@ -109,6 +109,8 @@ fn learning_telemetry() -> LearningTelemetry {
         structure_comparison: StructureComparison {
             target_label: "grid16_phrase_map".to_string(),
             average_error_ratio: 0.06,
+            segment_offset_ratio: -0.03,
+            segment_scale_ratio: 1.08,
             reference_segments: vec![
                 StructureSegment {
                     label: "Intro".to_string(),

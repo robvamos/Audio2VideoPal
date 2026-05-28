@@ -26,6 +26,7 @@ pub fn run() {
             audio::run_listening_test,
             audio::get_latest_timing_state,
             audio::get_latest_telemetry,
+            audio::adjust_structure_learning,
             video::start_video_render,
             video::stop_video_render
         ])

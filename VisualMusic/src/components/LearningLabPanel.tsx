@@ -2,6 +2,9 @@ import type { ListeningTelemetry } from "../types";
 
 interface LearningLabPanelProps {
   telemetry: ListeningTelemetry | null;
+  isBusy: boolean;
+  onAdjustStructureLearning: (action: string) => Promise<void>;
+  onRerunListeningTest: () => Promise<void>;
 }
 
 const CONVERGENCE_STAGES = [
@@ -27,7 +30,12 @@ const CONVERGENCE_STAGES = [
   },
 ];
 
-export default function LearningLabPanel({ telemetry }: LearningLabPanelProps) {
+export default function LearningLabPanel({
+  telemetry,
+  isBusy,
+  onAdjustStructureLearning,
+  onRerunListeningTest,
+}: LearningLabPanelProps) {
   const learning = telemetry?.learning;
   const comparison = learning?.structure_comparison;
 
@@ -134,6 +142,35 @@ export default function LearningLabPanel({ telemetry }: LearningLabPanelProps) {
               <div className="readiness-row">
                 <span>Average segment error</span>
                 <strong>{(comparison.average_error_ratio * 100).toFixed(1)}%</strong>
+              </div>
+              <div className="readiness-row">
+                <span>Offset</span>
+                <strong>{comparison.segment_offset_ratio.toFixed(3)}</strong>
+              </div>
+              <div className="readiness-row">
+                <span>Scale</span>
+                <strong>{comparison.segment_scale_ratio.toFixed(3)}</strong>
+              </div>
+
+              <div className="pipeline-actions">
+                <button onClick={() => void onAdjustStructureLearning("shift_left")} disabled={isBusy}>
+                  Shift Left
+                </button>
+                <button onClick={() => void onAdjustStructureLearning("shift_right")} disabled={isBusy}>
+                  Shift Right
+                </button>
+                <button onClick={() => void onAdjustStructureLearning("compress")} disabled={isBusy}>
+                  Compress
+                </button>
+                <button onClick={() => void onAdjustStructureLearning("expand")} disabled={isBusy}>
+                  Expand
+                </button>
+                <button onClick={() => void onAdjustStructureLearning("reset")} disabled={isBusy}>
+                  Reset
+                </button>
+                <button onClick={() => void onRerunListeningTest()} disabled={isBusy}>
+                  Rebuild Run
+                </button>
               </div>
             </div>
 

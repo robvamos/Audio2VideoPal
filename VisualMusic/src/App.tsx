@@ -126,7 +126,14 @@ function App() {
       )}
       {activeTab === "wiring" && <ListeningWiringPanel telemetry={listeningStudio.telemetry} />}
       {activeTab === "telemetry" && <ListeningTelemetryPanel telemetry={listeningStudio.telemetry} />}
-      {activeTab === "learning" && <LearningLabPanel telemetry={listeningStudio.telemetry} />}
+      {activeTab === "learning" && (
+        <LearningLabPanel
+          telemetry={listeningStudio.telemetry}
+          isBusy={listeningStudio.isBusy}
+          onAdjustStructureLearning={listeningStudio.adjustStructureLearning}
+          onRerunListeningTest={listeningStudio.runListeningTest}
+        />
+      )}
 
       {message && <p className="message">{message}</p>}
     </main>
