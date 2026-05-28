@@ -1,5 +1,11 @@
 import { invoke } from "@tauri-apps/api/core";
-import type { Plugin, ScanDetails } from "../types";
+import type {
+  ListeningRunResult,
+  ListeningTelemetry,
+  Plugin,
+  ScanDetails,
+  TimingState,
+} from "../types";
 
 export async function initDb(): Promise<string> {
   return await invoke<string>("init_db");
@@ -41,6 +47,29 @@ export async function startAudioStream(): Promise<string> {
 
 export async function stopAudioStream(): Promise<string> {
   return await invoke<string>("stop_audio_stream");
+}
+
+export async function startListeningPipeline(profile: string, source: string): Promise<string> {
+  return await invoke<string>("start_listening_pipeline", { profile, source });
+}
+
+export async function stopListeningPipeline(): Promise<string> {
+  return await invoke<string>("stop_listening_pipeline");
+}
+
+export async function runListeningTest(profile: string, source: string): Promise<ListeningRunResult> {
+  const result = await invoke<string>("run_listening_test", { profile, source });
+  return JSON.parse(result);
+}
+
+export async function getLatestTimingState(): Promise<TimingState | null> {
+  const result = await invoke<string>("get_latest_timing_state");
+  return JSON.parse(result);
+}
+
+export async function getLatestTelemetry(): Promise<ListeningTelemetry | null> {
+  const result = await invoke<string>("get_latest_telemetry");
+  return JSON.parse(result);
 }
 
 export async function startVideoRender(): Promise<string> {

@@ -1,0 +1,29 @@
+{
+  "profile": "minimal_one_bar_grid",
+  "source": {
+    "type": "synthetic_pattern",
+    "bpm": 112.0,
+    "meter": "4/4",
+    "duration_sec": 16.0
+  },
+  "modules": [
+    { "name": "normalizer", "enabled": true },
+    { "name": "onset_strength", "enabled": true },
+    { "name": "low_band_pulse", "enabled": true },
+    { "name": "tempo_autocorrelation", "enabled": true },
+    { "name": "weighted_tempo_fusion", "enabled": true },
+    { "name": "beat_grid_tracker", "enabled": true },
+    { "name": "simple_downbeat_scorer", "enabled": true },
+    { "name": "one_bar_grid_evaluator", "enabled": true },
+    { "name": "telemetry_writer", "enabled": true },
+    { "name": "harmonic_change", "enabled": false },
+    { "name": "section_predictor", "enabled": false },
+    { "name": "drum_pattern_generator", "enabled": false }
+  ],
+  "thresholds": {
+    "bpm_error_abs_max": 1.0,
+    "mean_beat_error_ms_max": 50.0,
+    "downbeat_error_ms_max": 80.0,
+    "one_bar_grid_score_min": 0.7
+  }
+}

@@ -1,0 +1,93 @@
+{
+  "bpm_confidence": 0.98,
+  "downbeat_confidence": 1.0,
+  "fused_bpm": 112.0,
+  "one_bar_grid": {
+    "beat_labels": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "bpm_confidence": 0.98,
+    "current_beat": 1,
+    "downbeat_error_ms": 0.0,
+    "one_bar_grid_score": 1.0
+  },
+  "one_bar_grid_score": 1.0,
+  "profile": "minimal_one_bar_grid",
+  "recommendations": [
+    "Keep synthetic_pattern as the baseline fixture while wiring real sources.",
+    "Add reference-aware comparison before enabling microphone mode.",
+    "Promote module-specific telemetry once real feature extractors are connected."
+  ],
+  "run_id": "20260528-133629-listening-synthetic",
+  "source": "synthetic_pattern",
+  "status": "success",
+  "sync_state": "LOCKED",
+  "timing_state": {
+    "bar": 1,
+    "beat_in_bar": 1,
+    "bpm": 112.0,
+    "downbeat_confidence": 1.0,
+    "meter": "4/4",
+    "next_beat_sec": 2.6785714285714284,
+    "next_downbeat_sec": 4.285714285714286,
+    "phase_confidence": 0.97,
+    "sync_state": "LOCKED",
+    "tempo_confidence": 0.98
+  },
+  "wiring": {
+    "active_modules": [
+      "normalizer",
+      "onset_strength",
+      "low_band_pulse",
+      "tempo_autocorrelation",
+      "weighted_tempo_fusion",
+      "beat_grid_tracker",
+      "simple_downbeat_scorer",
+      "one_bar_grid_evaluator",
+      "telemetry_writer"
+    ],
+    "disabled_modules": [
+      "harmonic_change",
+      "section_predictor",
+      "drum_pattern_generator"
+    ],
+    "module_edges": [
+      [
+        "normalizer",
+        "onset_strength"
+      ],
+      [
+        "onset_strength",
+        "low_band_pulse"
+      ],
+      [
+        "low_band_pulse",
+        "tempo_autocorrelation"
+      ],
+      [
+        "tempo_autocorrelation",
+        "weighted_tempo_fusion"
+      ],
+      [
+        "weighted_tempo_fusion",
+        "beat_grid_tracker"
+      ],
+      [
+        "beat_grid_tracker",
+        "simple_downbeat_scorer"
+      ],
+      [
+        "simple_downbeat_scorer",
+        "one_bar_grid_evaluator"
+      ],
+      [
+        "one_bar_grid_evaluator",
+        "telemetry_writer"
+      ]
+    ],
+    "profile": "minimal_one_bar_grid"
+  }
+}
