@@ -101,8 +101,8 @@ export default function TechnicalMapPanel({ telemetry }: TechnicalMapPanelProps)
     <div className="studio-layout">
       <section className="studio-hero compact">
         <div>
-          <p className="eyebrow">Map Lab</p>
-          <h2>Technical view of the architecture map, chain order, breakpoints and segment reconstruction drift.</h2>
+          <p className="eyebrow">Debug Logica Ricostruzione Mappa</p>
+          <h2>Vista tecnica del puzzle della mappa: catena, rotture, drift e ricostruzione dei segmenti.</h2>
         </div>
       </section>
 
@@ -196,7 +196,7 @@ export default function TechnicalMapPanel({ telemetry }: TechnicalMapPanelProps)
         </section>
 
         <section className="studio-panel">
-          <h3>Map puzzle lens</h3>
+          <h3>Puzzle della mappa</h3>
           {comparison ? (
             <div className="map-puzzle-panel">
               <div className="map-puzzle-header">

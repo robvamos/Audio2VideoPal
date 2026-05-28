@@ -21,7 +21,7 @@ const TABS = [
   { id: "control-room", label: "Control Room" },
   { id: "pipeline", label: "Pipeline" },
   { id: "wiring", label: "Wiring" },
-  { id: "map-lab", label: "Map Lab" },
+  { id: "map-lab", label: "Puzzle Mappa" },
   { id: "telemetry", label: "Telemetry" },
   { id: "learning", label: "Learning Lab" },
 ] as const;
