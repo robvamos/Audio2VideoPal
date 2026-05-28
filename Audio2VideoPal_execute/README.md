@@ -23,6 +23,7 @@ L'obiettivo non e' solo riconoscere il tempo, ma costruire una pipeline che:
 
 - [ARCHITECTURE.md](F:/_CODEX/Audio2VideoPal/Audio2VideoPal_execute/ARCHITECTURE.md): schema architetturale ipotizzato
 - [LEARNING_SYSTEM.md](F:/_CODEX/Audio2VideoPal/Audio2VideoPal_execute/LEARNING_SYSTEM.md): logica di learning, feedback e valutazione configurazioni
+- [SONG_TEST_AND_LEARNING_MODEL.md](F:/_CODEX/Audio2VideoPal/Audio2VideoPal_execute/SONG_TEST_AND_LEARNING_MODEL.md): dossier unico su song di test, setup, apprendimento e convergenza
 - [TEST_LIBRARY.md](F:/_CODEX/Audio2VideoPal/Audio2VideoPal_execute/TEST_LIBRARY.md): libreria di brani di test e scopo dei preset
 - [IMPLEMENTATION_ROADMAP.md](F:/_CODEX/Audio2VideoPal/Audio2VideoPal_execute/IMPLEMENTATION_ROADMAP.md): sequenza di lavoro consigliata
 
