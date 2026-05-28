@@ -758,6 +758,71 @@ dd.hash {
   align-items: start;
 }
 
+.compact-selector-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--accent) 5%, var(--panel-bg)), var(--panel-bg));
+}
+
+.compact-selector-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.compact-selector-head h4,
+.compact-selector-summary strong {
+  margin: 0;
+}
+
+.compact-selector-actions,
+.compact-toolbar,
+.compact-pill-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.compact-selector-summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.icon-button,
+.mini-pill {
+  min-width: 40px;
+  min-height: 38px;
+  padding: 0 12px;
+  border-radius: 999px;
+  box-shadow: none;
+}
+
+.icon-button {
+  font-weight: 700;
+}
+
+.icon-button-accent {
+  border-color: var(--accent-2);
+  background-color: color-mix(in srgb, var(--accent-2) 16%, var(--panel-bg));
+}
+
+.mini-pill {
+  font-size: 0.86rem;
+  white-space: nowrap;
+}
+
+.mini-pill.active {
+  border-color: var(--accent);
+  background-color: color-mix(in srgb, var(--accent) 12%, var(--panel-bg));
+}
+
 .structure-compare-main,
 .structure-compare-side {
   display: flex;
@@ -842,6 +907,8 @@ dd.hash {
 
 .rating-pill {
   border-radius: 999px;
+  min-width: 58px;
+  box-shadow: none;
 }
 
 .rating-pill.active {
@@ -850,7 +917,7 @@ dd.hash {
 }
 
 .learning-note {
-  min-height: 96px;
+  min-height: 76px;
   color: var(--text);
   background-color: var(--button-bg);
   border: 1px solid var(--border);

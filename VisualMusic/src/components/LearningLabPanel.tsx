@@ -41,6 +41,14 @@ const FLOW_STEPS = [
 
 type FlowStep = (typeof FLOW_STEPS)[number]["id"];
 
+function cycleIndex(currentIndex: number, length: number, delta: number) {
+  if (length <= 0) {
+    return 0;
+  }
+
+  return (currentIndex + delta + length) % length;
+}
+
 export default function LearningLabPanel({
   telemetry,
   isBusy,
@@ -77,6 +85,8 @@ export default function LearningLabPanel({
   const selectedSong = learning?.test_songs.find((song) => song.id === selectedSongId) ?? learning?.test_songs[0] ?? null;
   const selectedSetup =
     learning?.filter_setups.find((setup) => setup.id === selectedSetupId) ?? learning?.filter_setups[0] ?? null;
+  const songIndex = learning?.test_songs.findIndex((song) => song.id === selectedSongId) ?? -1;
+  const setupIndex = learning?.filter_setups.findIndex((setup) => setup.id === selectedSetupId) ?? -1;
 
   async function handleSaveEvaluation() {
     if (!selectedSongId || !selectedRating) {
@@ -94,12 +104,38 @@ export default function LearningLabPanel({
     setSetupNote("");
   }
 
+  function stepSong(delta: number) {
+    if (!learning?.test_songs.length) {
+      return;
+    }
+
+    const nextIndex = cycleIndex(songIndex >= 0 ? songIndex : 0, learning.test_songs.length, delta);
+    setSelectedSongId(learning.test_songs[nextIndex].id);
+  }
+
+  function stepSetup(delta: number) {
+    if (!learning?.filter_setups.length) {
+      return;
+    }
+
+    const nextIndex = cycleIndex(setupIndex >= 0 ? setupIndex : 0, learning.filter_setups.length, delta);
+    setSelectedSetupId(learning.filter_setups[nextIndex].id);
+  }
+
+  const compareActions = [
+    { action: "shift_left", label: "<<", hint: "Move reconstruction earlier" },
+    { action: "shift_right", label: ">>", hint: "Move reconstruction later" },
+    { action: "compress", label: "-|", hint: "Compress segment widths" },
+    { action: "expand", label: "|+", hint: "Expand segment widths" },
+    { action: "reset", label: "R", hint: "Reset learned corrections" },
+  ];
+
   return (
     <div className="studio-layout">
       <section className="studio-hero compact">
         <div>
           <p className="eyebrow">Learning Lab</p>
-          <h2>Use a simple choose, compare and rate flow so learning stays operable instead of feeling buried in telemetry.</h2>
+          <h2>Fast selection, quick visual compare, lightweight rating.</h2>
         </div>
       </section>
 
@@ -163,50 +199,89 @@ export default function LearningLabPanel({
 
       {activeStep === "choose" && (
         <section className="studio-panel">
-          <h3>Choose benchmark and setup</h3>
+          <h3>Choose</h3>
           <div className="evaluation-layout">
-            <div>
-              <h4>Benchmark songs</h4>
-              <div className="benchmark-grid">
-                {learning?.test_songs.length ? (
-                  learning.test_songs.map((song) => (
-                    <button
-                      key={song.id}
-                      type="button"
-                      className={`benchmark-card benchmark-button ${selectedSongId === song.id ? "is-current" : ""}`}
-                      onClick={() => setSelectedSongId(song.id)}
-                    >
-                      <span className="stage-index">{song.id}</span>
-                      <h4>{song.focus}</h4>
-                      <p>{song.expected_outcome}</p>
-                    </button>
-                  ))
-                ) : (
-                  <p>No benchmark song library yet.</p>
-                )}
+            <div className="compact-selector-card">
+              <div className="compact-selector-head">
+                <h4>Benchmark</h4>
+                <div className="compact-selector-actions">
+                  <button type="button" className="icon-button" onClick={() => stepSong(-1)} title="Previous benchmark">
+                    {"<"}
+                  </button>
+                  <button type="button" className="icon-button" onClick={() => stepSong(1)} title="Next benchmark">
+                    {">"}
+                  </button>
+                </div>
               </div>
+              {selectedSong ? (
+                <>
+                  <div className="compact-selector-summary">
+                    <span className="stage-index">{selectedSong.id}</span>
+                    <strong>{selectedSong.focus}</strong>
+                  </div>
+                  <p>{selectedSong.expected_outcome}</p>
+                  <div className="compact-pill-row">
+                    {learning?.test_songs.map((song) => (
+                      <button
+                        key={song.id}
+                        type="button"
+                        className={`mini-pill ${selectedSongId === song.id ? "active" : ""}`}
+                        onClick={() => setSelectedSongId(song.id)}
+                        title={song.focus}
+                      >
+                        {song.id}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <p>No benchmark song library yet.</p>
+              )}
             </div>
 
-            <div>
-              <h4>Filter setups</h4>
-              <div className="benchmark-grid">
-                {learning?.filter_setups.length ? (
-                  learning.filter_setups.map((setup) => (
-                    <button
-                      key={setup.id}
-                      type="button"
-                      className={`benchmark-card benchmark-button ${selectedSetupId === setup.id ? "is-current" : ""}`}
-                      onClick={() => setSelectedSetupId(setup.id)}
-                    >
-                      <span className="stage-index">{setup.id}</span>
-                      <h4>{setup.name}</h4>
-                      <p>{setup.description}</p>
-                    </button>
-                  ))
-                ) : (
-                  <p>No filter setup catalog yet.</p>
-                )}
+            <div className="compact-selector-card">
+              <div className="compact-selector-head">
+                <h4>Setup</h4>
+                <div className="compact-selector-actions">
+                  <button type="button" className="icon-button" onClick={() => stepSetup(-1)} title="Previous setup">
+                    {"<"}
+                  </button>
+                  <button type="button" className="icon-button" onClick={() => stepSetup(1)} title="Next setup">
+                    {">"}
+                  </button>
+                </div>
               </div>
+              {selectedSetup ? (
+                <>
+                  <div className="compact-selector-summary">
+                    <span className="stage-index">{selectedSetup.id}</span>
+                    <strong>{selectedSetup.name}</strong>
+                  </div>
+                  <p>{selectedSetup.description}</p>
+                  <div className="module-list">
+                    {selectedSetup.modules.map((moduleName) => (
+                      <span key={moduleName} className="module-pill active">
+                        {moduleName}
+                      </span>
+                    ))}
+                  </div>
+                  <div className="compact-pill-row">
+                    {learning?.filter_setups.map((setup) => (
+                      <button
+                        key={setup.id}
+                        type="button"
+                        className={`mini-pill ${selectedSetupId === setup.id ? "active" : ""}`}
+                        onClick={() => setSelectedSetupId(setup.id)}
+                        title={setup.name}
+                      >
+                        {setup.name}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <p>No filter setup catalog yet.</p>
+              )}
             </div>
           </div>
         </section>
@@ -214,11 +289,7 @@ export default function LearningLabPanel({
 
       {activeStep === "compare" && (
         <section className="studio-panel">
-          <h3>Compare and correct</h3>
-          <p>
-            Reference and reconstruction stay side by side. Use the quick controls until the thick segment strokes align
-            in a way that feels visually honest.
-          </p>
+          <h3>Compare</h3>
 
           {comparison ? (
             <div className="structure-compare-layout">
@@ -240,24 +311,27 @@ export default function LearningLabPanel({
                   <strong>{comparison.segment_scale_ratio.toFixed(3)}</strong>
                 </div>
 
-                <div className="pipeline-actions">
-                  <button onClick={() => void onAdjustStructureLearning("shift_left")} disabled={isBusy}>
-                    Shift Left
-                  </button>
-                  <button onClick={() => void onAdjustStructureLearning("shift_right")} disabled={isBusy}>
-                    Shift Right
-                  </button>
-                  <button onClick={() => void onAdjustStructureLearning("compress")} disabled={isBusy}>
-                    Compress
-                  </button>
-                  <button onClick={() => void onAdjustStructureLearning("expand")} disabled={isBusy}>
-                    Expand
-                  </button>
-                  <button onClick={() => void onAdjustStructureLearning("reset")} disabled={isBusy}>
-                    Reset
-                  </button>
-                  <button onClick={() => void onRerunListeningTest()} disabled={isBusy}>
-                    Rebuild Run
+                <div className="compact-toolbar" aria-label="Structure correction tools">
+                  {compareActions.map((item) => (
+                    <button
+                      key={item.action}
+                      type="button"
+                      className="icon-button"
+                      onClick={() => void onAdjustStructureLearning(item.action)}
+                      disabled={isBusy}
+                      title={item.hint}
+                    >
+                      {item.label}
+                    </button>
+                  ))}
+                  <button
+                    type="button"
+                    className="icon-button icon-button-accent"
+                    onClick={() => void onRerunListeningTest()}
+                    disabled={isBusy}
+                    title="Rebuild with current learned settings"
+                  >
+                    Go
                   </button>
                 </div>
               </div>
@@ -310,7 +384,7 @@ export default function LearningLabPanel({
 
       {activeStep === "rate" && (
         <section className="studio-panel">
-          <h3>Rate and register</h3>
+          <h3>Rate</h3>
           <div className="evaluation-layout">
             <div className="evaluation-form">
               <div className="readiness-row">
@@ -331,17 +405,17 @@ export default function LearningLabPanel({
                 ))}
               </div>
               <label className="pipeline-control">
-                <span>Short note</span>
+                <span title="Optional short note">Note</span>
                 <textarea
                   className="learning-note"
                   value={note}
                   onChange={(event) => setNote(event.target.value)}
-                  placeholder="Why was this configuration good or bad?"
+                  placeholder="Quick reason"
                 />
               </label>
               <div className="pipeline-actions">
                 <button onClick={() => void handleSaveEvaluation()} disabled={isBusy || !selectedSongId || !selectedRating}>
-                  Register Evaluation
+                  Save
                 </button>
               </div>
             </div>
@@ -399,12 +473,12 @@ export default function LearningLabPanel({
                 ))}
               </div>
               <label className="pipeline-control">
-                <span>Setup note</span>
+                <span title="Optional short note">Note</span>
                 <textarea
                   className="learning-note"
                   value={setupNote}
                   onChange={(event) => setSetupNote(event.target.value)}
-                  placeholder="How did this setup behave on its own?"
+                  placeholder="Quick behavior note"
                 />
               </label>
               <div className="pipeline-actions">
@@ -412,7 +486,7 @@ export default function LearningLabPanel({
                   onClick={() => void handleSaveSetupEvaluation()}
                   disabled={isBusy || !selectedSetupId || !setupRating}
                 >
-                  Register Setup Evaluation
+                  Save Setup
                 </button>
               </div>
             </div>
