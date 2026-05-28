@@ -435,11 +435,15 @@ Variabili ambiente consigliate:
 HUBMAIL_MODE=filesystem|git|email|http|cloud|disabled
 HUBMAIL_ROOT=../HubMail
 HUBMAIL_PROJECT_ID=Audio2VideoPal
-HUBMAIL_EMAIL_TO=hubmail@example.com
-HUBMAIL_EMAIL_FROM=audio2videopal@example.com
+HUBMAIL_EMAIL_TO=doomsdaygurki1@gmail.com
+HUBMAIL_EMAIL_FROM=<connected-gmail-account>
 HUBMAIL_HTTP_ENDPOINT=http://localhost:8787/hubmail/messages
 HUBMAIL_API_KEY=<secret>
 ```
+
+Mailbox canonica workspace:
+
+- tutti i progetti del workspace devono usare `doomsdaygurki1@gmail.com` come mailbox HubMail condivisa per invio messaggi, lettura feed e registrazione sul bus email, salvo override esplicito documentato nel knowledge hub.
 
 ---
 

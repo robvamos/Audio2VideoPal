@@ -1,0 +1,32 @@
+{
+  "project": "Audio2VideoPal",
+  "repo": "robvamos/Audio2VideoPal",
+  "description": "Transforms audio into synchronized audio-reactive video and listening telemetry.",
+  "hubmail": {
+    "mode": "email",
+    "canonical_mailbox": "doomsdaygurki1@gmail.com",
+    "message_types": [
+      "status_report",
+      "telemetry",
+      "task_request",
+      "project_subscribe"
+    ],
+    "feed_paths": {
+      "incoming": "feeds/incoming/",
+      "outgoing": "feeds/outgoing/",
+      "executed": "feeds/Feedexecuted/"
+    }
+  },
+  "skills": [
+    "audio ingestion",
+    "BPM detection",
+    "beat grid",
+    "visual rendering",
+    "HubMail feed writer"
+  ],
+  "interfaces": {
+    "feed_incoming": "feeds/incoming/",
+    "feed_outgoing": "feeds/outgoing/",
+    "runtime_telemetry": "VisualMusic/runtime/telemetry/"
+  }
+}
