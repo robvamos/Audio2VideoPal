@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import FlowAnalyzerPanel from "./FlowAnalyzerPanel";
 import { loadMapPuzzleState, saveMapPuzzleState } from "../services/tauriApi";
 import type { ListeningTelemetry, MapPuzzleViewState } from "../types";
 
@@ -13,6 +14,9 @@ const DEFAULT_VIEW_STATE: MapPuzzleViewState = {
   compareMode: "split",
   diagnosticsLens: "timing",
   memoryNote: "",
+  analyzerTargetType: "module",
+  analyzerTargetId: "tempo_autocorrelation",
+  analyzerWindow: "medium",
 };
 
 function buildOrderedModules(edges: [string, string][]) {
@@ -204,6 +208,13 @@ export default function TechnicalMapPanel({ telemetry }: TechnicalMapPanelProps)
     updateViewState(presets[preset]);
   }
 
+  function openAnalyzer(targetType: "module" | "edge", targetId: string) {
+    updateViewState({
+      analyzerTargetType: targetType,
+      analyzerTargetId: targetId,
+    });
+  }
+
   return (
     <div className="studio-layout">
       <section className="studio-hero compact">
@@ -377,6 +388,14 @@ export default function TechnicalMapPanel({ telemetry }: TechnicalMapPanelProps)
               <span>Modalita confronto</span>
               <strong>{viewState.compareMode}</strong>
             </div>
+            <div className="readiness-row">
+              <span>Analyzer</span>
+              <strong>
+                {viewState.analyzerTargetType
+                  ? `${viewState.analyzerTargetType}:${viewState.analyzerTargetId}`
+                  : "chiuso"}
+              </strong>
+            </div>
           </div>
         </section>
       </div>
@@ -397,6 +416,14 @@ export default function TechnicalMapPanel({ telemetry }: TechnicalMapPanelProps)
                 >
                   <span className="chain-index">{index + 1}</span>
                   <strong>{moduleName}</strong>
+                  <button
+                    type="button"
+                    className="mini-pill technical-action"
+                    onClick={() => openAnalyzer("module", moduleName)}
+                    title="Open flow analyzer for this module"
+                  >
+                    Scope
+                  </button>
                 </div>
               );
             })}
@@ -470,7 +497,17 @@ export default function TechnicalMapPanel({ telemetry }: TechnicalMapPanelProps)
                   >
                     <span>{from}</span>
                     <strong>→</strong>
-                    <span>{to}</span>
+                    <div className="edge-ledger-actions">
+                      <span>{to}</span>
+                      <button
+                        type="button"
+                        className="mini-pill technical-action"
+                        onClick={() => openAnalyzer("edge", `${from} -> ${to}`)}
+                        title="Open flow analyzer for this edge"
+                      >
+                        Flow
+                      </button>
+                    </div>
                   </div>
                 );
               })}
@@ -567,6 +604,17 @@ export default function TechnicalMapPanel({ telemetry }: TechnicalMapPanelProps)
           )}
         </section>
       </div>
+
+      {viewState.analyzerTargetType && viewState.analyzerTargetId && (
+        <FlowAnalyzerPanel
+          telemetry={telemetry}
+          targetType={viewState.analyzerTargetType}
+          targetId={viewState.analyzerTargetId}
+          memoryWindow={viewState.analyzerWindow}
+          onMemoryWindowChange={(value) => updateViewState({ analyzerWindow: value })}
+          onClose={() => updateViewState({ analyzerTargetType: null, analyzerTargetId: "" })}
+        />
+      )}
     </div>
   );
 }

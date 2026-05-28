@@ -22,6 +22,9 @@ const DEFAULT_MAP_PUZZLE_STATE: MapPuzzleViewState = {
   compareMode: "split",
   diagnosticsLens: "timing",
   memoryNote: "",
+  analyzerTargetType: "module",
+  analyzerTargetId: "tempo_autocorrelation",
+  analyzerWindow: "medium",
 };
 
 function isDesktopRuntimeAvailable(): boolean {

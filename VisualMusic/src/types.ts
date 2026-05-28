@@ -169,6 +169,9 @@ export interface MapPuzzleViewState {
   compareMode: "split" | "overlay";
   diagnosticsLens: "timing" | "reference" | "learning";
   memoryNote: string;
+  analyzerTargetType: "module" | "edge" | null;
+  analyzerTargetId: string;
+  analyzerWindow: "short" | "medium" | "long";
 }
 
 export interface PlaylistTrack {

@@ -27,6 +27,7 @@ struct StructureLearningTuning {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 struct MapPuzzleViewState {
     selected_song_id: String,
     selected_setup_id: String,
@@ -34,6 +35,9 @@ struct MapPuzzleViewState {
     compare_mode: String,
     diagnostics_lens: String,
     memory_note: String,
+    analyzer_target_type: Option<String>,
+    analyzer_target_id: String,
+    analyzer_window: String,
 }
 
 impl Default for StructureLearningTuning {
@@ -54,6 +58,9 @@ impl Default for MapPuzzleViewState {
             compare_mode: "split".to_string(),
             diagnostics_lens: "timing".to_string(),
             memory_note: String::new(),
+            analyzer_target_type: Some("module".to_string()),
+            analyzer_target_id: "tempo_autocorrelation".to_string(),
+            analyzer_window: "medium".to_string(),
         }
     }
 }
