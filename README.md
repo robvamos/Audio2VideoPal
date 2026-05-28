@@ -13,6 +13,7 @@ Il runtime principale vive in [F:\_CODEX\Audio2VideoPal\VisualMusic](F:/_CODEX/A
 
 - [F:\_CODEX\Audio2VideoPal\VisualMusic](F:/_CODEX/Audio2VideoPal/VisualMusic): applicazione desktop principale
 - [F:\_CODEX\Audio2VideoPal\feeds](F:/_CODEX/Audio2VideoPal/feeds): feed di coordinamento e report di esecuzione
+- [F:\_CODEX\Audio2VideoPal\Audio2VideoPal_execute](F:/_CODEX/Audio2VideoPal/Audio2VideoPal_execute): dossier operativo sul modulo audio "musicista improvvisatore"
 - [F:\_CODEX\Audio2VideoPal\PROJECT_BRIEF.md](F:/_CODEX/Audio2VideoPal/PROJECT_BRIEF.md): brief operativo e convenzioni progetto
 - [F:\_CODEX\Audio2VideoPal\hubmail.project.json](F:/_CODEX/Audio2VideoPal/hubmail.project.json): registrazione locale del bus HubMail
 
