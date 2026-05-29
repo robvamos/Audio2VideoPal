@@ -13,6 +13,7 @@ fn default_benchmark_library() -> Vec<TestSongDefinition> {
             file_path: None,
             bpm_hint: Some(112.0),
             meter_hint: Some("4/4".to_string()),
+            duration_hint_sec: Some(16.0),
             notes: Some("Use this as the baseline phase and beat-1 drill.".to_string()),
         },
         TestSongDefinition {
@@ -22,6 +23,7 @@ fn default_benchmark_library() -> Vec<TestSongDefinition> {
             file_path: None,
             bpm_hint: Some(112.0),
             meter_hint: Some("4/4".to_string()),
+            duration_hint_sec: Some(16.0),
             notes: Some("Preferred target for map puzzle comparisons.".to_string()),
         },
         TestSongDefinition {
@@ -31,6 +33,7 @@ fn default_benchmark_library() -> Vec<TestSongDefinition> {
             file_path: None,
             bpm_hint: None,
             meter_hint: Some("4/4".to_string()),
+            duration_hint_sec: None,
             notes: Some("Use a track with noticeable tempo or phrasing transitions.".to_string()),
         },
         TestSongDefinition {
@@ -40,6 +43,7 @@ fn default_benchmark_library() -> Vec<TestSongDefinition> {
             file_path: None,
             bpm_hint: None,
             meter_hint: Some("4/4".to_string()),
+            duration_hint_sec: None,
             notes: Some("Best with a dense and repetitive backing track.".to_string()),
         },
         TestSongDefinition {
@@ -49,6 +53,7 @@ fn default_benchmark_library() -> Vec<TestSongDefinition> {
             file_path: None,
             bpm_hint: None,
             meter_hint: Some("4/4".to_string()),
+            duration_hint_sec: None,
             notes: Some("Use a file representative of the live routing path.".to_string()),
         },
     ]
@@ -90,6 +95,7 @@ pub fn bind_song_to_file_source(
     file_path: &str,
     bpm_hint: Option<f64>,
     meter_hint: Option<String>,
+    duration_hint_sec: Option<f64>,
 ) -> Result<Vec<TestSongDefinition>, String> {
     let mut songs = load_benchmark_song_library();
     let song = songs
@@ -106,6 +112,7 @@ pub fn bind_song_to_file_source(
     song.meter_hint = meter_hint
         .map(|value| value.trim().to_string())
         .filter(|value| !value.is_empty());
+    song.duration_hint_sec = duration_hint_sec;
 
     save_benchmark_song_library(&songs)?;
     Ok(songs)

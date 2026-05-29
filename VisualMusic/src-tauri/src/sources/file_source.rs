@@ -16,6 +16,14 @@ pub struct FileSourceState {
     pub duration_hint_sec: Option<f64>,
 }
 
+#[derive(Debug, Clone)]
+pub struct FileWaveformSummary {
+    pub normalized_envelope: Vec<f64>,
+    pub transient_indexes: Vec<usize>,
+    pub peak_level: f64,
+    pub floor_level: f64,
+}
+
 impl Default for FileSourceState {
     fn default() -> Self {
         Self {
@@ -33,6 +41,7 @@ pub struct ResolvedFileSource {
     pub meter: String,
     pub duration_sec: f64,
     pub exists_on_disk: bool,
+    pub waveform_summary: Option<FileWaveformSummary>,
 }
 
 pub fn load_file_source_state() -> FileSourceState {
@@ -100,6 +109,101 @@ fn detect_duration_with_ffprobe(file_path: &str) -> Option<f64> {
         .ok()
 }
 
+fn decode_file_waveform_summary(file_path: &str, duration_sec: f64) -> Option<FileWaveformSummary> {
+    let analysis_duration = duration_sec.clamp(6.0, 45.0).to_string();
+    let output = Command::new("ffmpeg")
+        .args([
+            "-v",
+            "error",
+            "-t",
+            &analysis_duration,
+            "-i",
+            file_path,
+            "-ac",
+            "1",
+            "-ar",
+            "2000",
+            "-f",
+            "s16le",
+            "-",
+        ])
+        .output()
+        .ok()?;
+
+    if !output.status.success() {
+        return None;
+    }
+
+    let pcm = output.stdout;
+    if pcm.len() < 4 {
+        return None;
+    }
+
+    let pcm_samples = pcm
+        .chunks_exact(2)
+        .map(|chunk| i16::from_le_bytes([chunk[0], chunk[1]]) as f64 / i16::MAX as f64)
+        .collect::<Vec<_>>();
+
+    if pcm_samples.len() < 32 {
+        return None;
+    }
+
+    let bucket_count = 64usize;
+    let samples_per_bucket = (pcm_samples.len() / bucket_count).max(1);
+    let mut envelope = pcm_samples
+        .chunks(samples_per_bucket)
+        .take(bucket_count)
+        .map(|window| {
+            let sum = window.iter().map(|sample| sample.abs()).sum::<f64>();
+            (sum / window.len().max(1) as f64).clamp(0.0, 1.0)
+        })
+        .collect::<Vec<_>>();
+
+    while envelope.len() < bucket_count {
+        let last = envelope.last().copied().unwrap_or(0.0);
+        envelope.push(last);
+    }
+
+    let peak_level = envelope.iter().copied().fold(0.0, f64::max);
+    let floor_level = envelope.iter().copied().fold(1.0, f64::min);
+    if peak_level <= 0.0001 {
+        return None;
+    }
+
+    let normalized_envelope = envelope
+        .iter()
+        .map(|value| (value / peak_level).clamp(0.0, 1.0))
+        .collect::<Vec<_>>();
+    let transient_threshold = ((floor_level / peak_level) + 0.22).clamp(0.28, 0.78);
+    let transient_indexes = normalized_envelope
+        .iter()
+        .enumerate()
+        .filter_map(|(index, value)| {
+            let previous = index
+                .checked_sub(1)
+                .and_then(|prev| normalized_envelope.get(prev))
+                .copied()
+                .unwrap_or(*value);
+            let next = normalized_envelope
+                .get(index + 1)
+                .copied()
+                .unwrap_or(*value);
+            if *value >= transient_threshold && *value >= previous && *value >= next {
+                Some(index)
+            } else {
+                None
+            }
+        })
+        .collect::<Vec<_>>();
+
+    Some(FileWaveformSummary {
+        normalized_envelope,
+        transient_indexes,
+        peak_level,
+        floor_level,
+    })
+}
+
 pub fn resolve_file_source() -> Result<ResolvedFileSource, String> {
     let state = load_file_source_state();
     if state.file_path.trim().is_empty() {
@@ -120,6 +224,11 @@ pub fn resolve_file_source() -> Result<ResolvedFileSource, String> {
         .or(state.duration_hint_sec)
         .unwrap_or(16.0)
         .max(4.0);
+    let waveform_summary = if exists_on_disk {
+        decode_file_waveform_summary(&state.file_path, duration_sec)
+    } else {
+        None
+    };
 
     Ok(ResolvedFileSource {
         state,
@@ -127,6 +236,7 @@ pub fn resolve_file_source() -> Result<ResolvedFileSource, String> {
         meter,
         duration_sec,
         exists_on_disk,
+        waveform_summary,
     })
 }
 

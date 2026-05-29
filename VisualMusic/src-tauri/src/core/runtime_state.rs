@@ -69,6 +69,7 @@ pub struct TestSongDefinition {
     pub file_path: Option<String>,
     pub bpm_hint: Option<f64>,
     pub meter_hint: Option<String>,
+    pub duration_hint_sec: Option<f64>,
     pub notes: Option<String>,
 }
 

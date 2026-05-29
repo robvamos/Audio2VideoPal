@@ -4,7 +4,7 @@ import CompareStep from "./learning-lab/CompareStep";
 import { CONVERGENCE_STAGES, cycleIndex, FLOW_STEPS, type FlowStep } from "./learning-lab/constants";
 import LearningStatusPanels from "./learning-lab/LearningStatusPanels";
 import RateStep from "./learning-lab/RateStep";
-import type { ListeningFileSourceConfig, ListeningTelemetry } from "../types";
+import type { ListeningFileSourceConfig, ListeningTelemetry, TestSongDefinition } from "../types";
 
 interface LearningLabPanelProps {
   fileSourceConfig: ListeningFileSourceConfig;
@@ -15,6 +15,7 @@ interface LearningLabPanelProps {
   onSaveLearningEvaluation: (songId: string, rating: string, note: string) => Promise<void>;
   onSaveFilterSetupEvaluation: (setupId: string, rating: string, note: string) => Promise<void>;
   onBindBenchmarkSongToCurrentFile: (songId: string) => Promise<void>;
+  onLoadBenchmarkIntoFileSource: (song: TestSongDefinition) => void;
 }
 
 export default function LearningLabPanel({
@@ -26,6 +27,7 @@ export default function LearningLabPanel({
   onSaveLearningEvaluation,
   onSaveFilterSetupEvaluation,
   onBindBenchmarkSongToCurrentFile,
+  onLoadBenchmarkIntoFileSource,
 }: LearningLabPanelProps) {
   const learning = telemetry?.learning;
   const comparison = learning?.structure_comparison;
@@ -128,6 +130,7 @@ export default function LearningLabPanel({
           onStepSong={stepSong}
           onStepSetup={stepSetup}
           onBindSongToCurrentFile={onBindBenchmarkSongToCurrentFile}
+          onLoadSongIntoFileSource={onLoadBenchmarkIntoFileSource}
         />
       )}
 

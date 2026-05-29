@@ -1,7 +1,13 @@
 import { startTransition, useEffect, useState } from "react";
 import { pipelineEngine } from "../engines/pipelineEngine";
 import { BROWSER_PREVIEW_MESSAGE, isDesktopRuntimeAvailable } from "../services/tauriApi";
-import type { ListeningFileSourceConfig, ListeningTelemetry, ListeningTimingSnapshot, TimingState } from "../types";
+import type {
+  ListeningFileSourceConfig,
+  ListeningTelemetry,
+  ListeningTimingSnapshot,
+  TestSongDefinition,
+  TimingState,
+} from "../types";
 import { deriveAppStateSummary } from "../viewmodels/appState";
 
 interface UseListeningStudioOptions {
@@ -178,6 +184,7 @@ export function useListeningStudio({ onMessage }: UseListeningStudioOptions) {
           fileSourceConfig.filePath,
           fileSourceConfig.bpmHint,
           fileSourceConfig.meterHint || null,
+          fileSourceConfig.durationHintSec,
         );
         startTransition(() => {
           setTelemetry((current) =>
@@ -197,6 +204,24 @@ export function useListeningStudio({ onMessage }: UseListeningStudioOptions) {
         onMessage(`Could not bind benchmark file: ${error}`);
       }
     });
+  }
+
+  function loadBenchmarkIntoFileSource(song: TestSongDefinition) {
+    if (!song.file_path) {
+      onMessage(`No saved benchmark file for ${song.id} yet.`);
+      return;
+    }
+
+    startTransition(() => {
+      setSource("file");
+      setFileSourceConfig({
+        filePath: song.file_path ?? "",
+        bpmHint: song.bpm_hint ?? null,
+        meterHint: song.meter_hint ?? "4/4",
+        durationHintSec: song.duration_hint_sec ?? null,
+      });
+    });
+    onMessage(`Benchmark file loaded into file source: ${song.id}`);
   }
 
   useEffect(() => {
@@ -237,5 +262,6 @@ export function useListeningStudio({ onMessage }: UseListeningStudioOptions) {
     saveLearningEvaluation,
     saveFilterSetupEvaluation,
     bindBenchmarkSongToCurrentFile,
+    loadBenchmarkIntoFileSource,
   };
 }

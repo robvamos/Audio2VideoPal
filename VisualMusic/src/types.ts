@@ -70,6 +70,7 @@ export interface TestSongDefinition {
   file_path?: string | null;
   bpm_hint?: number | null;
   meter_hint?: string | null;
+  duration_hint_sec?: number | null;
   notes?: string | null;
 }
 

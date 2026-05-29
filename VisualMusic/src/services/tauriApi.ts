@@ -485,10 +485,11 @@ export async function bindBenchmarkSongFile(
   filePath: string,
   bpmHint: number | null,
   meterHint: string | null,
+  durationHintSec: number | null,
 ): Promise<TestSongDefinition[]> {
   const result = await invokeDesktop<string>(
     "bind_benchmark_song_file",
-    { songId, filePath, bpmHint, meterHint },
+    { songId, filePath, bpmHint, meterHint, durationHintSec },
     async () => {
       ensurePreviewState();
       if (!previewTelemetry) {
@@ -502,6 +503,7 @@ export async function bindBenchmarkSongFile(
               file_path: filePath || null,
               bpm_hint: bpmHint,
               meter_hint: meterHint,
+              duration_hint_sec: durationHintSec,
             }
           : song,
       );

@@ -11,6 +11,7 @@ interface ChooseStepProps {
   onStepSong: (delta: number) => void;
   onStepSetup: (delta: number) => void;
   onBindSongToCurrentFile: (songId: string) => Promise<void>;
+  onLoadSongIntoFileSource: (song: TestSongDefinition) => void;
 }
 
 export default function ChooseStep({
@@ -24,6 +25,7 @@ export default function ChooseStep({
   onStepSong,
   onStepSetup,
   onBindSongToCurrentFile,
+  onLoadSongIntoFileSource,
 }: ChooseStepProps) {
   const selectedSong = songs.find((song) => song.id === selectedSongId) ?? songs[0] ?? null;
   const selectedSetup = setups.find((setup) => setup.id === selectedSetupId) ?? setups[0] ?? null;
@@ -56,6 +58,12 @@ export default function ChooseStep({
                   <span>Bound file</span>
                   <strong>{selectedSong.file_path ?? "--"}</strong>
                 </div>
+                <div className="readiness-row">
+                  <span>BPM / meter</span>
+                  <strong>
+                    {selectedSong.bpm_hint?.toFixed(1) ?? "--"} / {selectedSong.meter_hint ?? "--"}
+                  </strong>
+                </div>
               </div>
               <div className="pipeline-actions">
                 <button
@@ -65,6 +73,14 @@ export default function ChooseStep({
                   title={currentFilePath ? "Bind the current file source to this benchmark" : "Configure a file source first"}
                 >
                   Bind Current File
+                </button>
+                <button
+                  type="button"
+                  disabled={!selectedSong.file_path}
+                  onClick={() => onLoadSongIntoFileSource(selectedSong)}
+                  title={selectedSong.file_path ? "Load this benchmark file into the file source" : "No saved file on this benchmark yet"}
+                >
+                  Use Benchmark File
                 </button>
               </div>
               <div className="compact-pill-row">

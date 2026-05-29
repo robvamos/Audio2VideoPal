@@ -651,8 +651,15 @@ pub fn bind_benchmark_song_file(
     file_path: String,
     bpm_hint: Option<f64>,
     meter_hint: Option<String>,
+    duration_hint_sec: Option<f64>,
 ) -> Result<String, String> {
-    let songs = bind_song_to_file_source(&song_id, &file_path, bpm_hint, meter_hint.clone())?;
+    let songs = bind_song_to_file_source(
+        &song_id,
+        &file_path,
+        bpm_hint,
+        meter_hint.clone(),
+        duration_hint_sec,
+    )?;
 
     if let Ok(mut runtime) = runtime_store().lock() {
         if let Some(telemetry) = runtime.latest_telemetry.as_mut() {
@@ -673,6 +680,7 @@ pub fn bind_benchmark_song_file(
                 "file_path": file_path,
                 "bpm_hint": bpm_hint,
                 "meter_hint": meter_hint,
+                "duration_hint_sec": duration_hint_sec,
             })
             .to_string(),
         ),

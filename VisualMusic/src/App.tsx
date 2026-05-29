@@ -107,6 +107,7 @@ function App() {
           onSaveLearningEvaluation={listeningStudio.saveLearningEvaluation}
           onSaveFilterSetupEvaluation={listeningStudio.saveFilterSetupEvaluation}
           onBindBenchmarkSongToCurrentFile={listeningStudio.bindBenchmarkSongToCurrentFile}
+          onLoadBenchmarkIntoFileSource={listeningStudio.loadBenchmarkIntoFileSource}
         />
       )}
 

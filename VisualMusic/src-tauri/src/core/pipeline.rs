@@ -239,6 +239,50 @@ fn build_hit_indexes(samples: &[f64]) -> Vec<usize> {
         .collect()
 }
 
+fn resize_samples(samples: &[f64], sample_count: usize) -> Vec<f64> {
+    if sample_count == 0 {
+        return Vec::new();
+    }
+
+    if samples.is_empty() {
+        return vec![0.08; sample_count];
+    }
+
+    if samples.len() == sample_count {
+        return samples.to_vec();
+    }
+
+    if sample_count == 1 {
+        return vec![samples[0]];
+    }
+
+    (0..sample_count)
+        .map(|index| {
+            let normalized = index as f64 / (sample_count - 1) as f64;
+            let position = normalized * (samples.len().saturating_sub(1) as f64);
+            let left = position.floor() as usize;
+            let right = position.ceil() as usize;
+            if left == right {
+                return samples[left];
+            }
+
+            let blend = position - left as f64;
+            let left_value = samples[left];
+            let right_value = samples[right];
+            ((left_value * (1.0 - blend)) + (right_value * blend)).clamp(0.0, 1.0)
+        })
+        .collect()
+}
+
+fn merge_file_waveform_with_event_grid(file_waveform: &[f64], event_grid: &[f64]) -> Vec<f64> {
+    let resized_waveform = resize_samples(file_waveform, event_grid.len());
+    resized_waveform
+        .iter()
+        .zip(event_grid.iter())
+        .map(|(waveform, pulse)| ((waveform * 0.72) + (pulse * 0.28)).clamp(0.0, 1.0))
+        .collect()
+}
+
 fn signal_kind_for_target(target_id: &str, target_type: &str) -> String {
     if target_type == "edge" {
         return "handoff".to_string();
@@ -262,8 +306,13 @@ fn build_flow_probes(
     duration_sec: f64,
     bpm: f64,
     residual_energy_ratio: f64,
+    file_waveform: Option<&[f64]>,
+    file_transients: Option<&[usize]>,
 ) -> Vec<FlowProbeTelemetry> {
-    let base_grid = build_base_pulse_grid(events, duration_sec, 64);
+    let event_grid = build_base_pulse_grid(events, duration_sec, 64);
+    let base_grid = file_waveform
+        .map(|waveform| merge_file_waveform_with_event_grid(waveform, &event_grid))
+        .unwrap_or(event_grid);
     let mut probes = active_modules
         .iter()
         .map(|module_name| {
@@ -280,7 +329,24 @@ fn build_flow_probes(
                 target_id: module_name.clone(),
                 display_name: module_name.clone(),
                 signal_kind: signal_kind_for_target(module_name, "module"),
-                hit_indexes: build_hit_indexes(&samples),
+                hit_indexes: if file_transients.is_some()
+                    && (module_name.contains("file")
+                        || module_name.contains("reference")
+                        || module_name.contains("onset")
+                        || module_name.contains("pulse"))
+                {
+                    file_transients
+                        .map(|indexes| {
+                            indexes
+                                .iter()
+                                .copied()
+                                .filter(|index| *index < samples.len())
+                                .collect::<Vec<_>>()
+                        })
+                        .unwrap_or_else(|| build_hit_indexes(&samples))
+                } else {
+                    build_hit_indexes(&samples)
+                },
                 samples,
                 memory_sec: 9.0,
             }
@@ -462,6 +528,8 @@ fn run_minimal_pipeline_in_dir(
         .to_string();
     let mut input_stage_name = "synthetic_pattern".to_string();
     let mut file_source_note = None;
+    let mut file_waveform = None;
+    let mut file_transients = None;
     let source_model = match source {
         "synthetic_pattern" => SyntheticPatternSource::new(
             config.source.bpm,
@@ -471,12 +539,26 @@ fn run_minimal_pipeline_in_dir(
         "file" => {
             let (file_source, resolved) = build_file_pattern_source()?;
             input_stage_name = "file_source".to_string();
+            if let Some(summary) = resolved.waveform_summary.as_ref() {
+                file_waveform = Some(summary.normalized_envelope.clone());
+                file_transients = Some(summary.transient_indexes.clone());
+            }
             file_source_note = Some(format!(
-                "{} | bpm {:.1} | meter {} | exists {}",
+                "{} | bpm {:.1} | meter {} | exists {} | waveform {}",
                 resolved.state.file_path,
                 resolved.bpm,
                 resolved.meter,
-                if resolved.exists_on_disk { "yes" } else { "no" }
+                if resolved.exists_on_disk { "yes" } else { "no" },
+                if let Some(summary) = resolved.waveform_summary.as_ref() {
+                    format!(
+                        "yes (peak {:.2}, floor {:.2}, hits {})",
+                        summary.peak_level,
+                        summary.floor_level,
+                        summary.transient_indexes.len()
+                    )
+                } else {
+                    "no".to_string()
+                }
             ));
             file_source
         }
@@ -546,9 +628,11 @@ fn run_minimal_pipeline_in_dir(
         &active_modules,
         &module_edges,
         &emitted_frames,
-        config.source.duration_sec,
+        source_model.duration_sec,
         source_model.bpm,
         preprocessing.residual_energy_ratio,
+        file_waveform.as_deref(),
+        file_transients.as_deref(),
     );
 
     let initial_telemetry = ListeningTelemetry {
@@ -576,8 +660,13 @@ fn run_minimal_pipeline_in_dir(
         module_probes,
         recommendations: vec![
             if source == "file" {
-                "Use the file source slice to validate timing, subtraction and relock on repeatable material."
-                    .to_string()
+                if file_waveform.is_some() {
+                    "File source now feeds repeatable waveform memory into the flow analyzer for more grounded comparisons."
+                        .to_string()
+                } else {
+                    "File source is active, but waveform extraction is missing: keep a BPM hint and check ffmpeg availability."
+                        .to_string()
+                }
             } else {
                 "Keep synthetic_pattern as the baseline fixture while wiring real sources.".to_string()
             },
