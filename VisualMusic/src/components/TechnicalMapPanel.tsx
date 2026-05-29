@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import FlowAnalyzerPanel from "./FlowAnalyzerPanel";
 import { loadMapPuzzleState, saveMapPuzzleState } from "../services/tauriApi";
-import type { ListeningTelemetry, MapPuzzleViewState } from "../types";
+import type { ListeningTelemetry, MapPuzzleViewState, TestSongDefinition } from "../types";
 import TechnicalChainPanel from "./technical-map/TechnicalChainPanel";
 import TechnicalComparisonPanel from "./technical-map/TechnicalComparisonPanel";
 import TechnicalConfigurationPanel from "./technical-map/TechnicalConfigurationPanel";
@@ -13,9 +13,15 @@ import TechnicalToolbar from "./technical-map/TechnicalToolbar";
 
 interface TechnicalMapPanelProps {
   telemetry: ListeningTelemetry | null;
+  onLoadBenchmarkIntoFileSource?: (song: TestSongDefinition) => void;
+  onRunBenchmarkListeningTest?: (songId: string) => Promise<void>;
 }
 
-export default function TechnicalMapPanel({ telemetry }: TechnicalMapPanelProps) {
+export default function TechnicalMapPanel({
+  telemetry,
+  onLoadBenchmarkIntoFileSource,
+  onRunBenchmarkListeningTest,
+}: TechnicalMapPanelProps) {
   const [viewState, setViewState] = useState<MapPuzzleViewState>(DEFAULT_MAP_PUZZLE_STATE);
   const [didLoadState, setDidLoadState] = useState(false);
   const wiring = telemetry?.wiring;
@@ -192,6 +198,8 @@ export default function TechnicalMapPanel({ telemetry }: TechnicalMapPanelProps)
           selectedSong={selectedSong}
           selectedSetup={selectedSetup}
           viewState={viewState}
+          onLoadBenchmarkIntoFileSource={onLoadBenchmarkIntoFileSource}
+          onRunBenchmarkListeningTest={onRunBenchmarkListeningTest}
           onUpdateViewState={updateViewState}
         />
         <TechnicalMemoryPanel

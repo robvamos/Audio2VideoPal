@@ -515,6 +515,47 @@ export async function bindBenchmarkSongFile(
   return JSON.parse(result);
 }
 
+export async function loadBenchmarkSongFileSource(songId: string): Promise<ListeningFileSourceConfig> {
+  const result = await invokeDesktop<string>(
+    "load_benchmark_song_file_source",
+    { songId },
+    async () => {
+      ensurePreviewState();
+      const song = previewTelemetry?.learning.test_songs.find((entry) => entry.id === songId);
+      if (!song?.file_path) {
+        throw new Error(`Benchmark ${songId} has no bound file yet`);
+      }
+
+      return JSON.stringify({
+        filePath: song.file_path,
+        bpmHint: song.bpm_hint ?? null,
+        meterHint: song.meter_hint ?? "4/4",
+        durationHintSec: song.duration_hint_sec ?? null,
+      } satisfies ListeningFileSourceConfig);
+    },
+  );
+
+  return {
+    ...DEFAULT_FILE_SOURCE_STATE,
+    ...JSON.parse(result),
+  };
+}
+
+export async function runBenchmarkSongTest(profile: string, songId: string): Promise<ListeningRunResult> {
+  const result = await invokeDesktop<string>(
+    "run_benchmark_song_test",
+    { profile, songId },
+    async () => {
+      const config = await loadBenchmarkSongFileSource(songId);
+      await saveFileSourceConfig(config);
+      const preview = createPreviewRunResult(profile, "file");
+      preview.telemetry.learning.structure_comparison.target_label = songId;
+      return JSON.stringify(preview);
+    },
+  );
+  return JSON.parse(result);
+}
+
 export async function initDb(): Promise<string> {
   return await invokeDesktop<string>("init_db", undefined, async () => BROWSER_PREVIEW_MESSAGE);
 }

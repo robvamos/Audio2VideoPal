@@ -3,7 +3,7 @@ use crate::core::runtime_state::{
     FilterSetupEvaluationEntry, LearningEvaluationEntry, ListeningRunResult, ListeningTelemetry,
     StructureSegment, TimingState,
 };
-use crate::core::benchmark_library::bind_song_to_file_source;
+use crate::core::benchmark_library::{bind_song_to_file_source, find_benchmark_song};
 use crate::db::{ensure_data_dir, open_db};
 use crate::db::log_event;
 use crate::sources::file_source::{load_file_source_state, save_file_source_state, FileSourceState};
@@ -384,6 +384,39 @@ fn start_pipeline(profile: &str, source: &str) -> Result<ListeningRunResult, Str
     Ok(result)
 }
 
+fn apply_benchmark_context_to_result(
+    result: &mut ListeningRunResult,
+    song_id: &str,
+) -> Result<FileSourceState, String> {
+    let song = find_benchmark_song(song_id)
+        .ok_or_else(|| format!("Unknown benchmark song id: {song_id}"))?;
+    let file_path = song
+        .file_path
+        .clone()
+        .ok_or_else(|| format!("Benchmark {song_id} does not have a bound file yet"))?;
+
+    let state = FileSourceState {
+        file_path,
+        bpm_hint: song.bpm_hint,
+        meter_hint: song.meter_hint.unwrap_or_else(|| "4/4".to_string()),
+        duration_hint_sec: song.duration_hint_sec,
+    };
+    result.telemetry.learning.structure_comparison.target_label = song.id.clone();
+    result.telemetry.learning.next_milestones.insert(
+        0,
+        format!("Benchmark active: {} ({})", song.id, song.focus),
+    );
+    result.telemetry.recommendations.insert(
+        0,
+        format!(
+            "Current benchmark file: {}",
+            state.file_path
+        ),
+    );
+
+    Ok(state)
+}
+
 #[tauri::command]
 pub fn start_listening_pipeline(profile: String, source: String) -> Result<String, String> {
     let result = start_pipeline(&profile, &source)?;
@@ -687,6 +720,73 @@ pub fn bind_benchmark_song_file(
     );
 
     Ok(result)
+}
+
+#[tauri::command]
+pub fn load_benchmark_song_file_source(song_id: String) -> Result<String, String> {
+    let song = find_benchmark_song(&song_id)
+        .ok_or_else(|| format!("Unknown benchmark song id: {song_id}"))?;
+    let file_path = song
+        .file_path
+        .clone()
+        .ok_or_else(|| format!("Benchmark {song_id} does not have a bound file yet"))?;
+
+    let state = FileSourceState {
+        file_path,
+        bpm_hint: song.bpm_hint,
+        meter_hint: song.meter_hint.unwrap_or_else(|| "4/4".to_string()),
+        duration_hint_sec: song.duration_hint_sec,
+    };
+    save_file_source_state(&state)?;
+
+    log_event(
+        "INFO",
+        "learning_lab",
+        "BENCHMARK_FILE_LOAD",
+        "Loaded benchmark file into active file source",
+        Some(
+            &serde_json::json!({
+                "song_id": song_id,
+                "file_path": state.file_path,
+                "bpm_hint": state.bpm_hint,
+                "meter_hint": state.meter_hint,
+                "duration_hint_sec": state.duration_hint_sec,
+            })
+            .to_string(),
+        ),
+    );
+
+    serde_json::to_string(&state).map_err(|error| error.to_string())
+}
+
+#[tauri::command]
+pub fn run_benchmark_song_test(profile: String, song_id: String) -> Result<String, String> {
+    let state_json = load_benchmark_song_file_source(song_id.clone())?;
+    let state: FileSourceState =
+        serde_json::from_str(&state_json).map_err(|error| error.to_string())?;
+    let mut result = start_pipeline(&profile, "file")?;
+    apply_benchmark_context_to_result(&mut result, &song_id)?;
+    update_runtime_from_result(&profile, "file", &result);
+
+    log_event(
+        "INFO",
+        "learning_lab",
+        "BENCHMARK_TEST_RUN",
+        "Listening benchmark test completed",
+        Some(
+            &serde_json::json!({
+                "profile": profile,
+                "song_id": song_id,
+                "file_path": state.file_path,
+                "fused_bpm": result.telemetry.fused_bpm,
+                "sync_state": result.telemetry.sync_state,
+                "one_bar_grid_score": result.telemetry.one_bar_grid_score,
+            })
+            .to_string(),
+        ),
+    );
+
+    serde_json::to_string(&result).map_err(|error| error.to_string())
 }
 
 #[tauri::command]

@@ -12,6 +12,7 @@ interface LearningLabPanelProps {
   isBusy: boolean;
   onAdjustStructureLearning: (action: string) => Promise<void>;
   onRerunListeningTest: () => Promise<void>;
+  onRunBenchmarkListeningTest: (songId: string) => Promise<void>;
   onSaveLearningEvaluation: (songId: string, rating: string, note: string) => Promise<void>;
   onSaveFilterSetupEvaluation: (setupId: string, rating: string, note: string) => Promise<void>;
   onBindBenchmarkSongToCurrentFile: (songId: string) => Promise<void>;
@@ -24,6 +25,7 @@ export default function LearningLabPanel({
   isBusy,
   onAdjustStructureLearning,
   onRerunListeningTest,
+  onRunBenchmarkListeningTest,
   onSaveLearningEvaluation,
   onSaveFilterSetupEvaluation,
   onBindBenchmarkSongToCurrentFile,
@@ -141,6 +143,7 @@ export default function LearningLabPanel({
           isBusy={isBusy}
           onAdjustStructureLearning={onAdjustStructureLearning}
           onRerunListeningTest={onRerunListeningTest}
+          onRunBenchmarkListeningTest={onRunBenchmarkListeningTest}
         />
       )}
 

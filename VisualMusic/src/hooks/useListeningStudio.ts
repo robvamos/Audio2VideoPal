@@ -128,6 +128,27 @@ export function useListeningStudio({ onMessage }: UseListeningStudioOptions) {
     });
   }
 
+  async function runBenchmarkListeningTest(songId: string) {
+    await runBusyAction(async () => {
+      try {
+        const config = await pipelineEngine.listening.loadBenchmarkSongFileSource(songId);
+        setSource("file");
+        setFileSourceConfig(config);
+        const result = await pipelineEngine.listening.runBenchmarkSongTest(profile, songId);
+        setAudioActive(true);
+        applySnapshot({
+          timingState: result.timing_state,
+          telemetry: result.telemetry,
+        });
+        onMessage(
+          `Benchmark test completed: ${songId}, ${result.telemetry.fused_bpm.toFixed(1)} BPM, grid ${result.one_bar_grid.one_bar_grid_score.toFixed(2)}.`,
+        );
+      } catch (error) {
+        onMessage(`Benchmark test failed: ${error}`);
+      }
+    });
+  }
+
   async function toggleVideo() {
     await runBusyAction(async () => {
       try {
@@ -257,6 +278,7 @@ export function useListeningStudio({ onMessage }: UseListeningStudioOptions) {
     startListening,
     stopListening,
     runListeningTest,
+    runBenchmarkListeningTest,
     toggleVideo,
     adjustStructureLearning,
     saveLearningEvaluation,

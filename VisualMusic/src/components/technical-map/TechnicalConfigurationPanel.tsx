@@ -6,6 +6,8 @@ interface TechnicalConfigurationPanelProps {
   selectedSong: TestSongDefinition | null;
   selectedSetup: FilterSetupDefinition | null;
   viewState: MapPuzzleViewState;
+  onLoadBenchmarkIntoFileSource?: (song: TestSongDefinition) => void;
+  onRunBenchmarkListeningTest?: (songId: string) => Promise<void>;
   onUpdateViewState: (patch: Partial<MapPuzzleViewState>) => void;
 }
 
@@ -15,6 +17,8 @@ export default function TechnicalConfigurationPanel({
   selectedSong,
   selectedSetup,
   viewState,
+  onLoadBenchmarkIntoFileSource,
+  onRunBenchmarkListeningTest,
   onUpdateViewState,
 }: TechnicalConfigurationPanelProps) {
   return (
@@ -72,6 +76,12 @@ export default function TechnicalConfigurationPanel({
           <strong>{selectedSong?.file_path ?? "--"}</strong>
         </div>
         <div className="readiness-row">
+          <span>BPM / meter</span>
+          <strong>
+            {selectedSong?.bpm_hint?.toFixed(1) ?? "--"} / {selectedSong?.meter_hint ?? "--"}
+          </strong>
+        </div>
+        <div className="readiness-row">
           <span>Setup corrente</span>
           <strong>{selectedSetup?.name ?? "--"}</strong>
         </div>
@@ -79,6 +89,25 @@ export default function TechnicalConfigurationPanel({
           <span>Obiettivo</span>
           <strong>{selectedSetup?.goal ?? "--"}</strong>
         </div>
+      </div>
+
+      <div className="pipeline-actions">
+        <button
+          type="button"
+          disabled={!selectedSong?.file_path || !onLoadBenchmarkIntoFileSource}
+          onClick={() => selectedSong && onLoadBenchmarkIntoFileSource?.(selectedSong)}
+          title={selectedSong?.file_path ? "Load this benchmark file into the active file source" : "No saved file on this benchmark yet"}
+        >
+          Use Benchmark
+        </button>
+        <button
+          type="button"
+          disabled={!selectedSong?.file_path || !onRunBenchmarkListeningTest}
+          onClick={() => selectedSong && void onRunBenchmarkListeningTest?.(selectedSong.id)}
+          title={selectedSong?.file_path ? "Run this benchmark now" : "No saved file on this benchmark yet"}
+        >
+          Run Benchmark
+        </button>
       </div>
 
       <div className="module-list">

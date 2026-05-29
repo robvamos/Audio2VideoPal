@@ -81,6 +81,12 @@ pub fn load_benchmark_song_library() -> Vec<TestSongDefinition> {
         .collect()
 }
 
+pub fn find_benchmark_song(song_id: &str) -> Option<TestSongDefinition> {
+    load_benchmark_song_library()
+        .into_iter()
+        .find(|song| song.id == song_id)
+}
+
 pub fn save_benchmark_song_library(songs: &[TestSongDefinition]) -> Result<(), String> {
     ensure_data_dir()?;
     fs::write(

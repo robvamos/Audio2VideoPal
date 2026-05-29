@@ -95,7 +95,13 @@ function App() {
         />
       )}
       {activeTab === "wiring" && <ListeningWiringPanel telemetry={listeningStudio.telemetry} />}
-      {activeTab === "map-lab" && <TechnicalMapPanel telemetry={listeningStudio.telemetry} />}
+      {activeTab === "map-lab" && (
+        <TechnicalMapPanel
+          telemetry={listeningStudio.telemetry}
+          onLoadBenchmarkIntoFileSource={listeningStudio.loadBenchmarkIntoFileSource}
+          onRunBenchmarkListeningTest={listeningStudio.runBenchmarkListeningTest}
+        />
+      )}
       {activeTab === "telemetry" && <ListeningTelemetryPanel telemetry={listeningStudio.telemetry} />}
       {activeTab === "learning" && (
         <LearningLabPanel
@@ -104,6 +110,7 @@ function App() {
           isBusy={listeningStudio.isBusy}
           onAdjustStructureLearning={listeningStudio.adjustStructureLearning}
           onRerunListeningTest={listeningStudio.runListeningTest}
+          onRunBenchmarkListeningTest={listeningStudio.runBenchmarkListeningTest}
           onSaveLearningEvaluation={listeningStudio.saveLearningEvaluation}
           onSaveFilterSetupEvaluation={listeningStudio.saveFilterSetupEvaluation}
           onBindBenchmarkSongToCurrentFile={listeningStudio.bindBenchmarkSongToCurrentFile}

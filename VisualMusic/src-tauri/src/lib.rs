@@ -34,6 +34,8 @@ pub fn run() {
             audio::load_file_source_config,
             audio::save_file_source_config,
             audio::bind_benchmark_song_file,
+            audio::load_benchmark_song_file_source,
+            audio::run_benchmark_song_test,
             video::start_video_render,
             video::stop_video_render
         ])

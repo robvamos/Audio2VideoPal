@@ -7,6 +7,7 @@ interface CompareStepProps {
   isBusy: boolean;
   onAdjustStructureLearning: (action: string) => Promise<void>;
   onRerunListeningTest: () => Promise<void>;
+  onRunBenchmarkListeningTest: (songId: string) => Promise<void>;
 }
 
 export default function CompareStep({
@@ -15,6 +16,7 @@ export default function CompareStep({
   isBusy,
   onAdjustStructureLearning,
   onRerunListeningTest,
+  onRunBenchmarkListeningTest,
 }: CompareStepProps) {
   return (
     <section className="studio-panel">
@@ -61,6 +63,15 @@ export default function CompareStep({
                 title="Rebuild with current learned settings"
               >
                 Go
+              </button>
+              <button
+                type="button"
+                className="icon-button icon-button-accent"
+                onClick={() => selectedSong && void onRunBenchmarkListeningTest(selectedSong.id)}
+                disabled={isBusy || !selectedSong?.file_path}
+                title={selectedSong?.file_path ? "Run this benchmark on its saved file" : "Bind a file to this benchmark first"}
+              >
+                Run
               </button>
             </div>
           </div>
