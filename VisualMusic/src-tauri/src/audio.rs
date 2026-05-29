@@ -5,6 +5,7 @@ use crate::core::runtime_state::{
 };
 use crate::db::{ensure_data_dir, open_db};
 use crate::db::log_event;
+use crate::sources::file_source::{load_file_source_state, save_file_source_state, FileSourceState};
 use chrono::Local;
 use rusqlite::params;
 use serde::{Deserialize, Serialize};
@@ -615,6 +616,28 @@ pub fn save_map_puzzle_state(state_json: String) -> Result<String, String> {
         "map_puzzle",
         "MAP_PUZZLE_STATE_SAVE",
         "Saved map puzzle view state",
+        Some(&state_json),
+    );
+
+    Ok("ok".to_string())
+}
+
+#[tauri::command]
+pub fn load_file_source_config() -> Result<String, String> {
+    serde_json::to_string(&load_file_source_state()).map_err(|error| error.to_string())
+}
+
+#[tauri::command]
+pub fn save_file_source_config(state_json: String) -> Result<String, String> {
+    let state: FileSourceState =
+        serde_json::from_str(&state_json).map_err(|error| error.to_string())?;
+    save_file_source_state(&state)?;
+
+    log_event(
+        "INFO",
+        "listening_input",
+        "FILE_SOURCE_CONFIG_SAVE",
+        "Saved file source configuration",
         Some(&state_json),
     );
 

@@ -6,6 +6,7 @@ use crate::core::runtime_state::{
 };
 use crate::core::telemetry::write_telemetry;
 use crate::core::event::PipelineEvent;
+use crate::sources::file_source::build_file_pattern_source;
 use crate::sources::synthetic_source::SyntheticPatternSource;
 use chrono::Local;
 use serde::{Deserialize, Serialize};
@@ -483,20 +484,35 @@ fn run_minimal_pipeline_in_dir(
     telemetry_base_dir: &Path,
 ) -> Result<ListeningRunResult, String> {
     let config = load_pipeline_config(profile)?;
-    if source != "synthetic_pattern" {
-        return Err(format!(
-            "Only synthetic_pattern is supported in the first listening slice. Requested source: {source}"
-        ));
-    }
-
     let run_id = Local::now()
         .format("%Y%m%d-%H%M%S-listening-synthetic")
         .to_string();
-    let source_model = SyntheticPatternSource::new(
-        config.source.bpm,
-        config.source.meter.clone(),
-        config.source.duration_sec,
-    );
+    let mut input_stage_name = "synthetic_pattern".to_string();
+    let mut file_source_note = None;
+    let source_model = match source {
+        "synthetic_pattern" => SyntheticPatternSource::new(
+            config.source.bpm,
+            config.source.meter.clone(),
+            config.source.duration_sec,
+        ),
+        "file" => {
+            let (file_source, resolved) = build_file_pattern_source()?;
+            input_stage_name = "file_source".to_string();
+            file_source_note = Some(format!(
+                "{} | bpm {:.1} | meter {} | exists {}",
+                resolved.state.file_path,
+                resolved.bpm,
+                resolved.meter,
+                if resolved.exists_on_disk { "yes" } else { "no" }
+            ));
+            file_source
+        }
+        other => {
+            return Err(format!(
+                "Unsupported listening source in this slice: {other}"
+            ))
+        }
+    };
     let emitted_frames = source_model.emit_frames();
     let beat_period_sec = 60.0 / source_model.bpm;
     let current_time_sec = emitted_frames
@@ -534,12 +550,13 @@ fn run_minimal_pipeline_in_dir(
         downbeat_error_ms: 0.0,
     };
 
-    let active_modules = config
+    let mut active_modules = config
         .modules
         .iter()
         .filter(|module| module.enabled)
         .map(|module| module.name.clone())
         .collect::<Vec<_>>();
+    active_modules.insert(0, input_stage_name.clone());
     let disabled_modules = config
         .modules
         .iter()
@@ -585,11 +602,21 @@ fn run_minimal_pipeline_in_dir(
         },
         module_probes,
         recommendations: vec![
-            "Keep synthetic_pattern as the baseline fixture while wiring real sources.".to_string(),
+            if source == "file" {
+                "Use the file source slice to validate timing, subtraction and relock on repeatable material."
+                    .to_string()
+            } else {
+                "Keep synthetic_pattern as the baseline fixture while wiring real sources.".to_string()
+            },
             "Route self-output reference through preprocessing before any higher-level timing inference."
                 .to_string(),
             "Add benchmark songs with known beat-1 markers before enabling adaptive musical response."
                 .to_string(),
+            if let Some(note) = file_source_note {
+                format!("Active file source: {note}")
+            } else {
+                "Switch to file source when you want repeatable runs on real material.".to_string()
+            },
         ],
         telemetry_json_path: String::new(),
         telemetry_summary_path: String::new(),

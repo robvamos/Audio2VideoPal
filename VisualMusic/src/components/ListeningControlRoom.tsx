@@ -1,8 +1,9 @@
-import type { AppStateSummary, ListeningTelemetry, TimingState } from "../types";
+import type { AppStateSummary, ListeningFileSourceConfig, ListeningTelemetry, TimingState } from "../types";
 
 interface ListeningControlRoomProps {
   audioActive: boolean;
   appState: AppStateSummary;
+  fileSourceConfig: ListeningFileSourceConfig;
   videoActive: boolean;
   isBusy: boolean;
   profile: string;
@@ -11,6 +12,7 @@ interface ListeningControlRoomProps {
   telemetry: ListeningTelemetry | null;
   onProfileChange: (value: string) => void;
   onSourceChange: (value: string) => void;
+  onFileSourceConfigChange: (patch: Partial<ListeningFileSourceConfig>) => void;
   onStartListening: () => Promise<void>;
   onStopListening: () => Promise<void>;
   onRunListeningTest: () => Promise<void>;
@@ -21,6 +23,7 @@ interface ListeningControlRoomProps {
 export default function ListeningControlRoom({
   audioActive,
   appState,
+  fileSourceConfig,
   videoActive,
   isBusy,
   profile,
@@ -29,6 +32,7 @@ export default function ListeningControlRoom({
   telemetry,
   onProfileChange,
   onSourceChange,
+  onFileSourceConfigChange,
   onStartListening,
   onStopListening,
   onRunListeningTest,
@@ -67,9 +71,7 @@ export default function ListeningControlRoom({
             <span>Source</span>
             <select value={source} onChange={(event) => onSourceChange(event.target.value)} disabled={isBusy}>
               <option value="synthetic_pattern">synthetic_pattern</option>
-              <option value="file" disabled>
-                file (next slice)
-              </option>
+              <option value="file">file</option>
               <option value="internal_player" disabled>
                 internal_player (next slice)
               </option>
@@ -78,6 +80,56 @@ export default function ListeningControlRoom({
               </option>
             </select>
           </label>
+          {source === "file" && (
+            <div className="file-source-grid">
+              <label className="pipeline-control">
+                <span>File path</span>
+                <input
+                  value={fileSourceConfig.filePath}
+                  onChange={(event) => onFileSourceConfigChange({ filePath: event.target.value })}
+                  placeholder="Paste an absolute audio file path"
+                  disabled={isBusy}
+                />
+              </label>
+              <label className="pipeline-control">
+                <span>BPM hint</span>
+                <input
+                  type="number"
+                  value={fileSourceConfig.bpmHint ?? ""}
+                  onChange={(event) =>
+                    onFileSourceConfigChange({
+                      bpmHint: event.target.value ? Number(event.target.value) : null,
+                    })
+                  }
+                  placeholder="112"
+                  disabled={isBusy}
+                />
+              </label>
+              <label className="pipeline-control">
+                <span>Meter hint</span>
+                <input
+                  value={fileSourceConfig.meterHint}
+                  onChange={(event) => onFileSourceConfigChange({ meterHint: event.target.value })}
+                  placeholder="4/4"
+                  disabled={isBusy}
+                />
+              </label>
+              <label className="pipeline-control">
+                <span>Duration hint</span>
+                <input
+                  type="number"
+                  value={fileSourceConfig.durationHintSec ?? ""}
+                  onChange={(event) =>
+                    onFileSourceConfigChange({
+                      durationHintSec: event.target.value ? Number(event.target.value) : null,
+                    })
+                  }
+                  placeholder="16"
+                  disabled={isBusy}
+                />
+              </label>
+            </div>
+          )}
           <div className="pipeline-actions">
             <button onClick={() => void (audioActive ? onStopListening() : onStartListening())} disabled={isBusy}>
               {audioActive ? "Stop Listening" : "Start Listening"}

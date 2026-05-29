@@ -185,6 +185,13 @@ export interface MapPuzzleViewState {
   analyzerWindow: "short" | "medium" | "long";
 }
 
+export interface ListeningFileSourceConfig {
+  filePath: string;
+  bpmHint: number | null;
+  meterHint: string;
+  durationHintSec: number | null;
+}
+
 export interface PlaylistTrack {
   id: string;
   name: string;

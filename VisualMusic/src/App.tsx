@@ -69,6 +69,7 @@ function App() {
         <ListeningControlRoom
           audioActive={listeningStudio.audioActive}
           appState={listeningStudio.appState}
+          fileSourceConfig={listeningStudio.fileSourceConfig}
           videoActive={listeningStudio.videoActive}
           isBusy={listeningStudio.isBusy}
           profile={listeningStudio.profile}
@@ -77,6 +78,9 @@ function App() {
           telemetry={listeningStudio.telemetry}
           onProfileChange={listeningStudio.setProfile}
           onSourceChange={listeningStudio.setSource}
+          onFileSourceConfigChange={(patch) =>
+            listeningStudio.setFileSourceConfig((current) => ({ ...current, ...patch }))
+          }
           onStartListening={listeningStudio.startListening}
           onStopListening={listeningStudio.stopListening}
           onRunListeningTest={listeningStudio.runListeningTest}

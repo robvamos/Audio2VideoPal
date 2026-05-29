@@ -1,7 +1,7 @@
 import { startTransition, useEffect, useState } from "react";
 import { pipelineEngine } from "../engines/pipelineEngine";
 import { BROWSER_PREVIEW_MESSAGE, isDesktopRuntimeAvailable } from "../services/tauriApi";
-import type { ListeningTelemetry, ListeningTimingSnapshot, TimingState } from "../types";
+import type { ListeningFileSourceConfig, ListeningTelemetry, ListeningTimingSnapshot, TimingState } from "../types";
 import { deriveAppStateSummary } from "../viewmodels/appState";
 
 interface UseListeningStudioOptions {
@@ -14,6 +14,12 @@ export function useListeningStudio({ onMessage }: UseListeningStudioOptions) {
   const [isBusy, setIsBusy] = useState(false);
   const [profile, setProfile] = useState("minimal_one_bar_grid");
   const [source, setSource] = useState("synthetic_pattern");
+  const [fileSourceConfig, setFileSourceConfig] = useState<ListeningFileSourceConfig>({
+    filePath: "",
+    bpmHint: 112,
+    meterHint: "4/4",
+    durationHintSec: 16,
+  });
   const [timingState, setTimingState] = useState<TimingState | null>(null);
   const [telemetry, setTelemetry] = useState<ListeningTelemetry | null>(null);
 
@@ -68,6 +74,9 @@ export function useListeningStudio({ onMessage }: UseListeningStudioOptions) {
   async function startListening() {
     await runBusyAction(async () => {
       try {
+        if (source === "file") {
+          await pipelineEngine.listening.saveFileSourceConfig(fileSourceConfig);
+        }
         const result = await pipelineEngine.listening.start(profile, source);
         setAudioActive(true);
         await refreshListeningState();
@@ -95,6 +104,9 @@ export function useListeningStudio({ onMessage }: UseListeningStudioOptions) {
   async function runListeningTest() {
     await runBusyAction(async () => {
       try {
+        if (source === "file") {
+          await pipelineEngine.listening.saveFileSourceConfig(fileSourceConfig);
+        }
         const result = await pipelineEngine.listening.runTest(profile, source);
         setAudioActive(true);
         applySnapshot({
@@ -162,6 +174,7 @@ export function useListeningStudio({ onMessage }: UseListeningStudioOptions) {
     if (!isDesktopRuntimeAvailable()) {
       onMessage(BROWSER_PREVIEW_MESSAGE);
     }
+    void pipelineEngine.listening.loadFileSourceConfig().then(setFileSourceConfig);
     refreshListeningState();
   }, []);
 
@@ -178,12 +191,14 @@ export function useListeningStudio({ onMessage }: UseListeningStudioOptions) {
     appState,
     videoActive,
     isBusy,
+    fileSourceConfig,
     profile,
     source,
     timingState,
     telemetry,
     setProfile,
     setSource,
+    setFileSourceConfig,
     refreshListeningState,
     startListening,
     stopListening,

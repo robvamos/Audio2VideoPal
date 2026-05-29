@@ -700,6 +700,22 @@ dd.hash {
   font: inherit;
 }
 
+.pipeline-control input {
+  min-height: 42px;
+  color: var(--text);
+  background-color: var(--button-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font: inherit;
+}
+
+.file-source-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(180px, 1fr));
+  gap: 12px;
+}
+
 .pipeline-actions {
   display: flex;
   gap: 10px;

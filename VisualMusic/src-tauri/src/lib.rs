@@ -31,6 +31,8 @@ pub fn run() {
             audio::save_filter_setup_evaluation,
             audio::load_map_puzzle_state,
             audio::save_map_puzzle_state,
+            audio::load_file_source_config,
+            audio::save_file_source_config,
             video::start_video_render,
             video::stop_video_render
         ])

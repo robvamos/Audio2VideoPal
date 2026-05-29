@@ -1,6 +1,7 @@
 import { invoke } from "@tauri-apps/api/core";
 import type {
   FlowProbeTelemetry,
+  ListeningFileSourceConfig,
   ListeningRunResult,
   ListeningTelemetry,
   MapPuzzleViewState,
@@ -15,6 +16,7 @@ const BROWSER_PREVIEW_MESSAGE =
 let previewTimingState: TimingState | null = null;
 let previewTelemetry: ListeningTelemetry | null = null;
 const MAP_PUZZLE_STATE_KEY = "visualmusic.mapPuzzleState";
+const FILE_SOURCE_STATE_KEY = "visualmusic.fileSourceState";
 
 const DEFAULT_MAP_PUZZLE_STATE: MapPuzzleViewState = {
   selectedSongId: "grid16_phrase_map",
@@ -26,6 +28,13 @@ const DEFAULT_MAP_PUZZLE_STATE: MapPuzzleViewState = {
   analyzerTargetType: "module",
   analyzerTargetId: "tempo_autocorrelation",
   analyzerWindow: "medium",
+};
+
+const DEFAULT_FILE_SOURCE_STATE: ListeningFileSourceConfig = {
+  filePath: "",
+  bpmHint: 112,
+  meterHint: "4/4",
+  durationHintSec: 16,
 };
 
 function isDesktopRuntimeAvailable(): boolean {
@@ -432,6 +441,38 @@ export async function saveMapPuzzleState(state: MapPuzzleViewState): Promise<voi
     async () => {
       if (typeof window !== "undefined") {
         window.localStorage.setItem(MAP_PUZZLE_STATE_KEY, JSON.stringify(state));
+      }
+      return "ok";
+    },
+  );
+}
+
+export async function loadFileSourceConfig(): Promise<ListeningFileSourceConfig> {
+  const result = await invokeDesktop<string>(
+    "load_file_source_config",
+    undefined,
+    async () => {
+      if (typeof window === "undefined") {
+        return JSON.stringify(DEFAULT_FILE_SOURCE_STATE);
+      }
+
+      return window.localStorage.getItem(FILE_SOURCE_STATE_KEY) ?? JSON.stringify(DEFAULT_FILE_SOURCE_STATE);
+    },
+  );
+
+  return {
+    ...DEFAULT_FILE_SOURCE_STATE,
+    ...JSON.parse(result),
+  };
+}
+
+export async function saveFileSourceConfig(state: ListeningFileSourceConfig): Promise<void> {
+  await invokeDesktop<string>(
+    "save_file_source_config",
+    { stateJson: JSON.stringify(state) },
+    async () => {
+      if (typeof window !== "undefined") {
+        window.localStorage.setItem(FILE_SOURCE_STATE_KEY, JSON.stringify(state));
       }
       return "ok";
     },
