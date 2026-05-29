@@ -431,9 +431,9 @@ def candidate_library() -> list[CandidateConfig]:
     ]
 
 
-def rank_candidates(catalog: dict) -> dict:
+def evaluate_candidates(catalog: dict, candidates: list[CandidateConfig]) -> list[dict]:
     results = []
-    for candidate in candidate_library():
+    for candidate in candidates:
         per_song = [evaluate_song(song, candidate) for song in catalog["songs"]]
         overall_score = statistics.fmean(item["overall_score"] for item in per_song)
         results.append(
@@ -446,8 +446,55 @@ def rank_candidates(catalog: dict) -> dict:
                 "songs": per_song,
             }
         )
+    return sorted(results, key=lambda item: (-item["overall_score"], item["mean_bpm_error"]))
 
-    ranked = sorted(results, key=lambda item: (-item["overall_score"], item["mean_bpm_error"]))
+
+def refine_candidate_library(seed: CandidateConfig) -> list[CandidateConfig]:
+    refinements = [
+        {"onset_weight": 0.68, "onset_low_hz": 1000, "onset_high_hz": 10000, "low_band_high_hz": 180, "threshold_bias": 0.15, "low_band_mix": 0.74, "transient_boost": 1.9},
+        {"onset_weight": 0.72, "onset_low_hz": 1000, "onset_high_hz": 10000, "low_band_high_hz": 180, "threshold_bias": 0.15, "low_band_mix": 0.74, "transient_boost": 1.98},
+        {"onset_weight": 0.7, "onset_low_hz": 1200, "onset_high_hz": 9000, "low_band_high_hz": 180, "threshold_bias": 0.14, "low_band_mix": 0.74, "transient_boost": 1.95},
+        {"onset_weight": 0.7, "onset_low_hz": 1200, "onset_high_hz": 11000, "low_band_high_hz": 180, "threshold_bias": 0.16, "low_band_mix": 0.74, "transient_boost": 1.95},
+        {"onset_weight": 0.7, "onset_low_hz": 1200, "onset_high_hz": 10000, "low_band_high_hz": 160, "threshold_bias": 0.15, "low_band_mix": 0.7, "transient_boost": 1.95},
+        {"onset_weight": 0.7, "onset_low_hz": 1200, "onset_high_hz": 10000, "low_band_high_hz": 220, "threshold_bias": 0.15, "low_band_mix": 0.8, "transient_boost": 1.95},
+        {"onset_weight": 0.66, "onset_low_hz": 1200, "onset_high_hz": 10000, "low_band_high_hz": 180, "threshold_bias": 0.15, "low_band_mix": 0.78, "transient_boost": 1.88},
+        {"onset_weight": 0.74, "onset_low_hz": 1200, "onset_high_hz": 10000, "low_band_high_hz": 180, "threshold_bias": 0.15, "low_band_mix": 0.7, "transient_boost": 2.0},
+        {"onset_weight": 0.68, "onset_low_hz": 900, "onset_high_hz": 9000, "low_band_high_hz": 200, "threshold_bias": 0.14, "low_band_mix": 0.72, "transient_boost": 1.9},
+        {"onset_weight": 0.72, "onset_low_hz": 1400, "onset_high_hz": 11000, "low_band_high_hz": 160, "threshold_bias": 0.16, "low_band_mix": 0.72, "transient_boost": 2.0},
+    ]
+    candidates = []
+    for index, refinement in enumerate(refinements, start=1):
+        onset_weight = refinement["onset_weight"]
+        candidates.append(
+            CandidateConfig(
+                id=f"{seed.id}_refine_{index:02d}",
+                plugin_mode="dual_weighted",
+                onset_weight=onset_weight,
+                low_band_weight=round(1.0 - onset_weight, 2),
+                normalize_input=True,
+                tonality_guard=seed.tonality_guard,
+                transient_boost=refinement["transient_boost"],
+                low_smoothing_ms=seed.low_smoothing_ms,
+                threshold_bias=refinement["threshold_bias"],
+                onset_low_hz=refinement["onset_low_hz"],
+                onset_high_hz=refinement["onset_high_hz"],
+                low_band_low_hz=seed.low_band_low_hz,
+                low_band_high_hz=refinement["low_band_high_hz"],
+                onset_profile=seed.onset_profile,
+                low_band_mix=refinement["low_band_mix"],
+                guard_strength=seed.guard_strength,
+            )
+        )
+    return candidates
+
+
+def rank_candidates(catalog: dict) -> dict:
+    coarse_ranked = evaluate_candidates(catalog, candidate_library())
+    coarse_best = coarse_ranked[0]
+    refined_seed = CandidateConfig(**coarse_best["candidate"])
+    refined_ranked = evaluate_candidates(catalog, [refined_seed] + refine_candidate_library(refined_seed))
+    ranked = refined_ranked if refined_ranked[0]["overall_score"] >= coarse_best["overall_score"] else coarse_ranked
+    final_best = ranked[0]
     best_per_song = {}
     for song in catalog["songs"]:
         song_results = sorted(
@@ -463,14 +510,17 @@ def rank_candidates(catalog: dict) -> dict:
 
     return {
         "generated_at": datetime.now().isoformat(timespec="seconds"),
-        "analysis_version": "band-aware-v2",
+        "analysis_version": "band-aware-v3",
+        "coarse_recommended_candidate": coarse_best,
+        "refined_recommended_candidate": refined_ranked[0],
         "ranked_candidates": ranked,
-        "recommended_candidate": ranked[0],
+        "recommended_candidate": final_best,
         "best_per_song": best_per_song,
         "selection_rationale": [
             "Mid/high-band spectral flux is favored for crisp onset detection.",
             "Low-band beat emphasis is used to reinforce kick-driven tempo tracking.",
             "Guarded variants reduce false positives when stable tonal energy masks rhythm changes.",
+            "A second local sweep is run around the first winner so the preset is refined instead of chosen from a single coarse grid.",
         ],
     }
 

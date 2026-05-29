@@ -1,12 +1,12 @@
 {
-  "preset_id": "blend_hfc_kick_fast",
+  "preset_id": "blend_hfc_kick_fast_refine_07",
   "purpose": "Internet-informed second-pass sweep winner for listening-only BPM tracking and one-bar grid reconstruction.",
   "plugin_mode": "dual_weighted",
-  "onset_weight": 0.7,
-  "low_band_weight": 0.3,
+  "onset_weight": 0.66,
+  "low_band_weight": 0.34,
   "normalize_input": true,
   "tonality_guard": false,
-  "transient_boost": 1.95,
+  "transient_boost": 1.88,
   "low_smoothing_ms": 200,
   "threshold_bias": 0.15,
   "onset_band_hz": [
@@ -18,12 +18,12 @@
     180
   ],
   "onset_profile": "hfc",
-  "low_band_mix": 0.74,
+  "low_band_mix": 0.78,
   "guard_strength": 0.0,
-  "analysis_version": "band-aware-v2",
+  "analysis_version": "band-aware-v3",
   "sweep_summary": {
-    "overall_score": 0.8732,
-    "mean_grid_score": 0.8185,
+    "overall_score": 0.874,
+    "mean_grid_score": 0.8201,
     "mean_bpm_abs_error": 0.541,
     "mean_pause_score": 1.0
   },

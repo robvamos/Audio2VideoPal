@@ -17,7 +17,7 @@ This note captures the current listening-only interpretation of the installed an
 ## Current recommendation
 
 - Primary mode: `dual_weighted`
-- Onset / low-band weights: `0.70 / 0.30`
+- Onset / low-band weights: `0.66 / 0.34`
 - Onset band: `1200-10000 Hz`
 - Low band: `45-180 Hz`
 - Onset profile: `hfc`
@@ -34,4 +34,4 @@ This note captures the current listening-only interpretation of the installed an
 
 - Re-test on less synthetic material and on files with stronger tonal drift.
 - Re-open guarded variants when harmonic masking starts to create false beat triggers.
-- Add per-song comparison views in the app so the user can see where the `0.70 / 0.30` fusion wins or loses against onset-only.
+- Add per-song comparison views in the app so the user can see where the `0.66 / 0.34` fusion wins or loses against onset-only.

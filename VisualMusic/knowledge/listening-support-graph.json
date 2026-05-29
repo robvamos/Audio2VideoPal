@@ -1,0 +1,161 @@
+{
+  "graph_id": "listening-support-graph",
+  "version": "0.1.0",
+  "scope": "Audio2VideoPal listening-only optimization support graph",
+  "nodes": [
+    {
+      "id": "plugin.onset_strength",
+      "type": "plugin",
+      "label": "onset_strength",
+      "role": "fast transient detector"
+    },
+    {
+      "id": "plugin.low_band_pulse",
+      "type": "plugin",
+      "label": "low_band_pulse",
+      "role": "kick and pulse stabilizer"
+    },
+    {
+      "id": "band.onset_bright",
+      "type": "band",
+      "label": "1200-10000 Hz",
+      "purpose": "bright attacks and hats"
+    },
+    {
+      "id": "band.low_kick",
+      "type": "band",
+      "label": "45-180 Hz",
+      "purpose": "kick pulse and low beat weight"
+    },
+    {
+      "id": "profile.hfc",
+      "type": "profile",
+      "label": "HFC onset profile"
+    },
+    {
+      "id": "metric.bpm_score",
+      "type": "metric",
+      "label": "BPM score"
+    },
+    {
+      "id": "metric.grid_score",
+      "type": "metric",
+      "label": "Grid score"
+    },
+    {
+      "id": "metric.relock_score",
+      "type": "metric",
+      "label": "Re-lock score"
+    },
+    {
+      "id": "metric.downbeat_score",
+      "type": "metric",
+      "label": "Downbeat score"
+    },
+    {
+      "id": "metric.pause_score",
+      "type": "metric",
+      "label": "Pause score"
+    },
+    {
+      "id": "failure.tonal_masking",
+      "type": "failure_mode",
+      "label": "tonal masking"
+    },
+    {
+      "id": "failure.sparse_kick",
+      "type": "failure_mode",
+      "label": "sparse kick"
+    },
+    {
+      "id": "artifact.benchmark_sweep",
+      "type": "artifact",
+      "label": "benchmark sweep"
+    },
+    {
+      "id": "artifact.benchmark_library",
+      "type": "artifact",
+      "label": "benchmark library"
+    },
+    {
+      "id": "preset.blend_hfc_kick_fast_refine_07",
+      "type": "preset",
+      "label": "blend_hfc_kick_fast_refine_07"
+    }
+  ],
+  "edges": [
+    {
+      "from": "plugin.onset_strength",
+      "to": "band.onset_bright",
+      "relation": "prefers_band"
+    },
+    {
+      "from": "plugin.low_band_pulse",
+      "to": "band.low_kick",
+      "relation": "prefers_band"
+    },
+    {
+      "from": "plugin.onset_strength",
+      "to": "metric.grid_score",
+      "relation": "drives"
+    },
+    {
+      "from": "plugin.onset_strength",
+      "to": "metric.relock_score",
+      "relation": "drives"
+    },
+    {
+      "from": "plugin.low_band_pulse",
+      "to": "metric.bpm_score",
+      "relation": "reinforces"
+    },
+    {
+      "from": "plugin.low_band_pulse",
+      "to": "metric.downbeat_score",
+      "relation": "reinforces"
+    },
+    {
+      "from": "profile.hfc",
+      "to": "plugin.onset_strength",
+      "relation": "configures"
+    },
+    {
+      "from": "failure.tonal_masking",
+      "to": "plugin.onset_strength",
+      "relation": "degrades"
+    },
+    {
+      "from": "failure.sparse_kick",
+      "to": "plugin.low_band_pulse",
+      "relation": "degrades"
+    },
+    {
+      "from": "artifact.benchmark_library",
+      "to": "artifact.benchmark_sweep",
+      "relation": "feeds"
+    },
+    {
+      "from": "artifact.benchmark_sweep",
+      "to": "preset.blend_hfc_kick_fast_refine_07",
+      "relation": "elects"
+    },
+    {
+      "from": "preset.blend_hfc_kick_fast_refine_07",
+      "to": "plugin.onset_strength",
+      "relation": "weights",
+      "value": 0.66
+    },
+    {
+      "from": "preset.blend_hfc_kick_fast_refine_07",
+      "to": "plugin.low_band_pulse",
+      "relation": "weights",
+      "value": 0.34
+    }
+  ],
+  "queries": [
+    "Which plugin mainly drives grid reconstruction?",
+    "Which band currently supports kick stabilization?",
+    "Which failure mode suggests re-enabling tonal guard?",
+    "Which preset currently wins the benchmark sweep?"
+  ]
+}
