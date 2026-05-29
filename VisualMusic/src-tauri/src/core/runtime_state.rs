@@ -102,6 +102,22 @@ pub struct LearningEvaluationEntry {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct BenchmarkRunEntry {
+    pub timestamp: String,
+    pub song_id: String,
+    pub profile: String,
+    pub source: String,
+    pub sync_state: String,
+    pub fused_bpm: f64,
+    pub bpm_confidence: f64,
+    pub downbeat_confidence: f64,
+    pub one_bar_grid_score: f64,
+    pub residual_energy_ratio: f64,
+    pub cancellation_db: f64,
+    pub file_path: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FilterSetupDefinition {
     pub id: String,
     pub name: String,
@@ -126,6 +142,7 @@ pub struct LearningTelemetry {
     pub test_songs: Vec<TestSongDefinition>,
     pub filter_setups: Vec<FilterSetupDefinition>,
     pub structure_comparison: StructureComparison,
+    pub benchmark_run_history: Vec<BenchmarkRunEntry>,
     pub evaluation_history: Vec<LearningEvaluationEntry>,
     pub setup_evaluation_history: Vec<FilterSetupEvaluationEntry>,
     pub next_milestones: Vec<String>,

@@ -1,4 +1,5 @@
 import type {
+  BenchmarkRunEntry,
   FilterSetupDefinition,
   FilterSetupEvaluationEntry,
   LearningEvaluationEntry,
@@ -9,6 +10,7 @@ interface RateStepProps {
   selectedSong: TestSongDefinition | null;
   selectedSetup: FilterSetupDefinition | null;
   ratingScale: string[];
+  benchmarkRunHistory: BenchmarkRunEntry[];
   evaluationHistory: LearningEvaluationEntry[];
   setupEvaluationHistory: FilterSetupEvaluationEntry[];
   selectedRating: string;
@@ -30,6 +32,7 @@ export default function RateStep({
   selectedSong,
   selectedSetup,
   ratingScale,
+  benchmarkRunHistory,
   evaluationHistory,
   setupEvaluationHistory,
   selectedRating,
@@ -46,9 +49,34 @@ export default function RateStep({
   onSaveEvaluation,
   onSaveSetupEvaluation,
 }: RateStepProps) {
+  const filteredBenchmarkRuns = benchmarkRunHistory.filter((entry) => entry.song_id === selectedSong?.id).slice(0, 8);
+
   return (
     <section className="studio-panel">
       <h3>Rate</h3>
+      <div className="evaluation-layout">
+        <div className="evaluation-history">
+          <h4>Recent benchmark runs</h4>
+          <div className="recommendation-list">
+            {filteredBenchmarkRuns.length ? (
+              filteredBenchmarkRuns.map((entry) => (
+                <div key={`${entry.timestamp}-${entry.song_id}-${entry.file_path}`} className="history-card">
+                  <strong>{entry.song_id}</strong>
+                  <span>{entry.sync_state}</span>
+                  <small>
+                    grid {entry.one_bar_grid_score.toFixed(2)} | residual {(entry.residual_energy_ratio * 100).toFixed(1)}% | bpm{" "}
+                    {entry.fused_bpm.toFixed(1)}
+                  </small>
+                  <p>{entry.file_path || "No file path recorded."}</p>
+                </div>
+              ))
+            ) : (
+              <p>No benchmark runs recorded yet for this song.</p>
+            )}
+          </div>
+        </div>
+      </div>
+
       <div className="evaluation-layout">
         <div className="evaluation-form">
           <div className="readiness-row">

@@ -163,6 +163,22 @@ function createPreviewRunResult(profile: string, source: string): ListeningRunRe
           { label: "Turn", start_ratio: 0.79, end_ratio: 1 },
         ],
       },
+      benchmark_run_history: [
+        {
+          timestamp: "preview",
+          song_id: "grid16_phrase_map",
+          profile: profile,
+          source: source,
+          sync_state: "preview_locked",
+          fused_bpm: 112,
+          bpm_confidence: 0.96,
+          downbeat_confidence: 0.89,
+          one_bar_grid_score: 0.93,
+          residual_energy_ratio: 0.44,
+          cancellation_db: 7.1,
+          file_path: "preview://grid16_phrase_map",
+        },
+      ],
       evaluation_history: [
         {
           timestamp: "preview",
@@ -550,6 +566,23 @@ export async function runBenchmarkSongTest(profile: string, songId: string): Pro
       await saveFileSourceConfig(config);
       const preview = createPreviewRunResult(profile, "file");
       preview.telemetry.learning.structure_comparison.target_label = songId;
+      preview.telemetry.learning.benchmark_run_history = [
+        {
+          timestamp: new Date().toISOString(),
+          song_id: songId,
+          profile,
+          source: "file",
+          sync_state: preview.telemetry.sync_state,
+          fused_bpm: preview.telemetry.fused_bpm,
+          bpm_confidence: preview.telemetry.bpm_confidence,
+          downbeat_confidence: preview.telemetry.downbeat_confidence,
+          one_bar_grid_score: preview.telemetry.one_bar_grid_score,
+          residual_energy_ratio: preview.telemetry.preprocessing.residual_energy_ratio,
+          cancellation_db: preview.telemetry.preprocessing.cancellation_db,
+          file_path: config.filePath,
+        },
+        ...preview.telemetry.learning.benchmark_run_history.filter((entry) => entry.song_id !== songId),
+      ].slice(0, 24);
       return JSON.stringify(preview);
     },
   );

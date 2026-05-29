@@ -99,6 +99,21 @@ export interface LearningEvaluationEntry {
   segment_scale_ratio: number;
 }
 
+export interface BenchmarkRunEntry {
+  timestamp: string;
+  song_id: string;
+  profile: string;
+  source: string;
+  sync_state: string;
+  fused_bpm: number;
+  bpm_confidence: number;
+  downbeat_confidence: number;
+  one_bar_grid_score: number;
+  residual_energy_ratio: number;
+  cancellation_db: number;
+  file_path: string;
+}
+
 export interface FilterSetupDefinition {
   id: string;
   name: string;
@@ -121,6 +136,7 @@ export interface LearningTelemetry {
   test_songs: TestSongDefinition[];
   filter_setups: FilterSetupDefinition[];
   structure_comparison: StructureComparison;
+  benchmark_run_history: BenchmarkRunEntry[];
   evaluation_history: LearningEvaluationEntry[];
   setup_evaluation_history: FilterSetupEvaluationEntry[];
   next_milestones: string[];

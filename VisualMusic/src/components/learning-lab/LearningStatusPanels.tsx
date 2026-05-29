@@ -6,6 +6,7 @@ interface LearningStatusPanelsProps {
 
 export default function LearningStatusPanels({ telemetry }: LearningStatusPanelsProps) {
   const learning = telemetry?.learning;
+  const latestBenchmarkRun = learning?.benchmark_run_history[0] ?? null;
 
   return (
     <div className="studio-grid">
@@ -37,6 +38,24 @@ export default function LearningStatusPanels({ telemetry }: LearningStatusPanels
           <div className="readiness-row">
             <span>Beat-1 lock</span>
             <strong>{telemetry?.sync_state ?? "--"}</strong>
+          </div>
+        </div>
+      </section>
+
+      <section className="studio-panel">
+        <h3>Benchmark memory</h3>
+        <div className="readiness-list">
+          <div className="readiness-row">
+            <span>Stored runs</span>
+            <strong>{learning?.benchmark_run_history.length ?? 0}</strong>
+          </div>
+          <div className="readiness-row">
+            <span>Last benchmark</span>
+            <strong>{latestBenchmarkRun?.song_id ?? "--"}</strong>
+          </div>
+          <div className="readiness-row">
+            <span>Last grid</span>
+            <strong>{latestBenchmarkRun ? latestBenchmarkRun.one_bar_grid_score.toFixed(2) : "--"}</strong>
           </div>
         </div>
       </section>

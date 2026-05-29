@@ -1,8 +1,8 @@
 use crate::core::runtime_state::{
-    FilterSetupDefinition, FilterSetupEvaluationEntry, LearningEvaluationEntry, LearningTelemetry,
-    ListeningRunResult, ListeningTelemetry, OneBarGridResult, PipelineContext,
-    PreprocessingTelemetry, StructureComparison, StructureSegment,
-    TimingState, WiringDescription, FlowProbeTelemetry,
+    BenchmarkRunEntry, FilterSetupDefinition, FilterSetupEvaluationEntry, LearningEvaluationEntry,
+    LearningTelemetry, ListeningRunResult, ListeningTelemetry, OneBarGridResult, PipelineContext,
+    PreprocessingTelemetry, StructureComparison, StructureSegment, TimingState,
+    WiringDescription, FlowProbeTelemetry,
 };
 use crate::core::benchmark_library::load_benchmark_song_library;
 use crate::core::telemetry::write_telemetry;
@@ -474,6 +474,20 @@ fn learning_telemetry() -> LearningTelemetry {
                 },
             ],
         },
+        benchmark_run_history: vec![BenchmarkRunEntry {
+            timestamp: "seed".to_string(),
+            song_id: "grid16_phrase_map".to_string(),
+            profile: "minimal_one_bar_grid".to_string(),
+            source: "synthetic_pattern".to_string(),
+            sync_state: "preview_locked".to_string(),
+            fused_bpm: 112.0,
+            bpm_confidence: 0.96,
+            downbeat_confidence: 0.89,
+            one_bar_grid_score: 0.93,
+            residual_energy_ratio: 0.44,
+            cancellation_db: 7.1,
+            file_path: "preview://grid16_phrase_map".to_string(),
+        }],
         evaluation_history: vec![LearningEvaluationEntry {
             timestamp: "seed".to_string(),
             song_id: "phase_alignment_drill".to_string(),

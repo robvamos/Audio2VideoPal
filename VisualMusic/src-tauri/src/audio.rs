@@ -1,7 +1,7 @@
 use crate::core::pipeline::run_minimal_pipeline;
 use crate::core::runtime_state::{
-    FilterSetupEvaluationEntry, LearningEvaluationEntry, ListeningRunResult, ListeningTelemetry,
-    StructureSegment, TimingState,
+    BenchmarkRunEntry, FilterSetupEvaluationEntry, LearningEvaluationEntry, ListeningRunResult,
+    ListeningTelemetry, StructureSegment, TimingState,
 };
 use crate::core::benchmark_library::{bind_song_to_file_source, find_benchmark_song};
 use crate::db::{ensure_data_dir, open_db};
@@ -223,6 +223,86 @@ fn load_learning_evaluations() -> Vec<LearningEvaluationEntry> {
     rows.filter_map(Result::ok).collect()
 }
 
+fn load_benchmark_run_history() -> Vec<BenchmarkRunEntry> {
+    if import_legacy_learning_evaluations_if_needed().is_err() {
+        return Vec::new();
+    }
+
+    let Ok(conn) = open_db() else {
+        return Vec::new();
+    };
+
+    let mut statement = match conn.prepare(
+        "SELECT created_at, entity_key, configuration_key, metrics_json
+         FROM learning_evaluations
+         WHERE entity_type = 'song' AND behavior_key = 'benchmark_run'
+         ORDER BY created_at DESC
+         LIMIT 80",
+    ) {
+        Ok(statement) => statement,
+        Err(_) => return Vec::new(),
+    };
+
+    let rows = match statement.query_map([], |row| {
+        let created_at: String = row.get(0)?;
+        let song_id: String = row.get(1)?;
+        let profile: Option<String> = row.get(2)?;
+        let metrics_json: String = row.get(3)?;
+        let metrics: serde_json::Value =
+            serde_json::from_str(&metrics_json).unwrap_or_else(|_| serde_json::json!({}));
+
+        Ok(BenchmarkRunEntry {
+            timestamp: created_at,
+            song_id,
+            profile: profile.unwrap_or_else(|| "minimal_one_bar_grid".to_string()),
+            source: metrics
+                .get("source")
+                .and_then(|value| value.as_str())
+                .unwrap_or("file")
+                .to_string(),
+            sync_state: metrics
+                .get("sync_state")
+                .and_then(|value| value.as_str())
+                .unwrap_or("unknown")
+                .to_string(),
+            fused_bpm: metrics
+                .get("fused_bpm")
+                .and_then(|value| value.as_f64())
+                .unwrap_or_default(),
+            bpm_confidence: metrics
+                .get("bpm_confidence")
+                .and_then(|value| value.as_f64())
+                .unwrap_or_default(),
+            downbeat_confidence: metrics
+                .get("downbeat_confidence")
+                .and_then(|value| value.as_f64())
+                .unwrap_or_default(),
+            one_bar_grid_score: metrics
+                .get("one_bar_grid_score")
+                .and_then(|value| value.as_f64())
+                .unwrap_or_default(),
+            residual_energy_ratio: metrics
+                .get("residual_energy_ratio")
+                .and_then(|value| value.as_f64())
+                .unwrap_or_default(),
+            cancellation_db: metrics
+                .get("cancellation_db")
+                .and_then(|value| value.as_f64())
+                .unwrap_or_default(),
+            file_path: metrics
+                .get("file_path")
+                .and_then(|value| value.as_str())
+                .unwrap_or_default()
+                .to_string(),
+        })
+    }) {
+        Ok(rows) => rows,
+        Err(_) => return Vec::new(),
+    };
+
+    rows.filter_map(Result::ok).collect()
+}
+
 fn load_filter_setup_evaluations() -> Vec<FilterSetupEvaluationEntry> {
     if import_legacy_learning_evaluations_if_needed().is_err() {
         return Vec::new();
@@ -280,6 +360,41 @@ fn save_learning_evaluation_entry(entry: &LearningEvaluationEntry) -> Result<(),
             "learning_lab",
             entry.rating,
             entry.note,
+            metrics_json,
+        ],
+    )
+    .map_err(|error| error.to_string())?;
+
+    Ok(())
+}
+
+fn save_benchmark_run_entry(entry: &BenchmarkRunEntry) -> Result<(), String> {
+    let conn = open_db()?;
+    let metrics_json = serde_json::json!({
+        "source": entry.source,
+        "sync_state": entry.sync_state,
+        "fused_bpm": entry.fused_bpm,
+        "bpm_confidence": entry.bpm_confidence,
+        "downbeat_confidence": entry.downbeat_confidence,
+        "one_bar_grid_score": entry.one_bar_grid_score,
+        "residual_energy_ratio": entry.residual_energy_ratio,
+        "cancellation_db": entry.cancellation_db,
+        "file_path": entry.file_path,
+    })
+    .to_string();
+
+    conn.execute(
+        "INSERT INTO learning_evaluations
+        (created_at, entity_type, entity_key, behavior_key, configuration_key, rating, note, metrics_json)
+        VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)",
+        params![
+            entry.timestamp,
+            "song",
+            entry.song_id,
+            "benchmark_run",
+            entry.profile,
+            "run",
+            "",
             metrics_json,
         ],
     )
@@ -356,6 +471,10 @@ fn apply_structure_learning_tuning(telemetry: &mut ListeningTelemetry, tuning: &
 }
 
 fn inject_learning_history(telemetry: &mut ListeningTelemetry) {
+    let mut benchmark_history = load_benchmark_run_history();
+    benchmark_history.sort_by(|left, right| right.timestamp.cmp(&left.timestamp));
+    telemetry.learning.benchmark_run_history = benchmark_history.into_iter().take(24).collect();
+
     let mut history = load_learning_evaluations();
     history.sort_by(|left, right| right.timestamp.cmp(&left.timestamp));
     telemetry.learning.evaluation_history = history.into_iter().take(12).collect();
@@ -766,6 +885,22 @@ pub fn run_benchmark_song_test(profile: String, song_id: String) -> Result<Strin
         serde_json::from_str(&state_json).map_err(|error| error.to_string())?;
     let mut result = start_pipeline(&profile, "file")?;
     apply_benchmark_context_to_result(&mut result, &song_id)?;
+    let benchmark_run_entry = BenchmarkRunEntry {
+        timestamp: Local::now().to_rfc3339(),
+        song_id: song_id.clone(),
+        profile: profile.clone(),
+        source: result.telemetry.source.clone(),
+        sync_state: result.telemetry.sync_state.clone(),
+        fused_bpm: result.telemetry.fused_bpm,
+        bpm_confidence: result.telemetry.bpm_confidence,
+        downbeat_confidence: result.telemetry.downbeat_confidence,
+        one_bar_grid_score: result.telemetry.one_bar_grid_score,
+        residual_energy_ratio: result.telemetry.preprocessing.residual_energy_ratio,
+        cancellation_db: result.telemetry.preprocessing.cancellation_db,
+        file_path: state.file_path.clone(),
+    };
+    save_benchmark_run_entry(&benchmark_run_entry)?;
+    inject_learning_history(&mut result.telemetry);
     update_runtime_from_result(&profile, "file", &result);
 
     log_event(

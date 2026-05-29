@@ -152,6 +152,7 @@ export default function LearningLabPanel({
           selectedSong={selectedSong}
           selectedSetup={selectedSetup}
           ratingScale={learning?.rating_scale ?? []}
+          benchmarkRunHistory={learning?.benchmark_run_history ?? []}
           evaluationHistory={learning?.evaluation_history ?? []}
           setupEvaluationHistory={learning?.setup_evaluation_history ?? []}
           selectedRating={selectedRating}
