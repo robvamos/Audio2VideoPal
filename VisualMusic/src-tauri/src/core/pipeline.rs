@@ -1,9 +1,10 @@
 use crate::core::runtime_state::{
     FilterSetupDefinition, FilterSetupEvaluationEntry, LearningEvaluationEntry, LearningTelemetry,
     ListeningRunResult, ListeningTelemetry, OneBarGridResult, PipelineContext,
-    PreprocessingTelemetry, StructureComparison, StructureSegment, TestSongDefinition,
+    PreprocessingTelemetry, StructureComparison, StructureSegment,
     TimingState, WiringDescription, FlowProbeTelemetry,
 };
+use crate::core::benchmark_library::load_benchmark_song_library;
 use crate::core::telemetry::write_telemetry;
 use crate::core::event::PipelineEvent;
 use crate::sources::file_source::build_file_pattern_source;
@@ -318,35 +319,7 @@ fn learning_telemetry() -> LearningTelemetry {
             "buono".to_string(),
             "ottimo".to_string(),
         ],
-        test_songs: vec![
-            TestSongDefinition {
-                id: "phase_alignment_drill".to_string(),
-                focus: "beat_1_and_phase".to_string(),
-                expected_outcome: "Fast phase lock with clean quarter ordering.".to_string(),
-            },
-            TestSongDefinition {
-                id: "grid16_phrase_map".to_string(),
-                focus: "long_phrase_tracking".to_string(),
-                expected_outcome: "Stable 4-bar and 16-grid phrase awareness.".to_string(),
-            },
-            TestSongDefinition {
-                id: "tempo_transition_stress".to_string(),
-                focus: "relock_and_resync".to_string(),
-                expected_outcome: "Controlled relock after tempo transitions.".to_string(),
-            },
-            TestSongDefinition {
-                id: "generic_reference_sample".to_string(),
-                focus: "reference_subtraction".to_string(),
-                expected_outcome: "Residual self-output energy remains low after preprocessing."
-                    .to_string(),
-            },
-            TestSongDefinition {
-                id: "reference_live_calibration".to_string(),
-                focus: "latency_alignment".to_string(),
-                expected_outcome: "Reference alignment stays usable under live routing latency."
-                    .to_string(),
-            },
-        ],
+        test_songs: load_benchmark_song_library(),
         filter_setups: vec![
             FilterSetupDefinition {
                 id: "reference_subtractive_gate".to_string(),

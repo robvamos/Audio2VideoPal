@@ -67,6 +67,10 @@ export interface TestSongDefinition {
   id: string;
   focus: string;
   expected_outcome: string;
+  file_path?: string | null;
+  bpm_hint?: number | null;
+  meter_hint?: string | null;
+  notes?: string | null;
 }
 
 export interface StructureSegment {

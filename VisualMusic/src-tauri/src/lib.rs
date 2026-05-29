@@ -33,6 +33,7 @@ pub fn run() {
             audio::save_map_puzzle_state,
             audio::load_file_source_config,
             audio::save_file_source_config,
+            audio::bind_benchmark_song_file,
             video::start_video_render,
             video::stop_video_render
         ])

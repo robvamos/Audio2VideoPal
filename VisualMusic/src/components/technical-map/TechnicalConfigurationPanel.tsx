@@ -68,6 +68,10 @@ export default function TechnicalConfigurationPanel({
           <strong>{selectedSong?.focus ?? "--"}</strong>
         </div>
         <div className="readiness-row">
+          <span>Bound file</span>
+          <strong>{selectedSong?.file_path ?? "--"}</strong>
+        </div>
+        <div className="readiness-row">
           <span>Setup corrente</span>
           <strong>{selectedSetup?.name ?? "--"}</strong>
         </div>

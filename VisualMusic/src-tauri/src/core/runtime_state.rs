@@ -66,6 +66,10 @@ pub struct TestSongDefinition {
     pub id: String,
     pub focus: String,
     pub expected_outcome: String,
+    pub file_path: Option<String>,
+    pub bpm_hint: Option<f64>,
+    pub meter_hint: Option<String>,
+    pub notes: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

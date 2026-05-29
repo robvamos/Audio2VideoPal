@@ -3,6 +3,7 @@ use crate::core::runtime_state::{
     FilterSetupEvaluationEntry, LearningEvaluationEntry, ListeningRunResult, ListeningTelemetry,
     StructureSegment, TimingState,
 };
+use crate::core::benchmark_library::bind_song_to_file_source;
 use crate::db::{ensure_data_dir, open_db};
 use crate::db::log_event;
 use crate::sources::file_source::{load_file_source_state, save_file_source_state, FileSourceState};
@@ -642,6 +643,42 @@ pub fn save_file_source_config(state_json: String) -> Result<String, String> {
     );
 
     Ok("ok".to_string())
+}
+
+#[tauri::command]
+pub fn bind_benchmark_song_file(
+    song_id: String,
+    file_path: String,
+    bpm_hint: Option<f64>,
+    meter_hint: Option<String>,
+) -> Result<String, String> {
+    let songs = bind_song_to_file_source(&song_id, &file_path, bpm_hint, meter_hint.clone())?;
+
+    if let Ok(mut runtime) = runtime_store().lock() {
+        if let Some(telemetry) = runtime.latest_telemetry.as_mut() {
+            telemetry.learning.test_songs = songs.clone();
+        }
+    }
+
+    let result = serde_json::to_string(&songs).map_err(|error| error.to_string())?;
+
+    log_event(
+        "INFO",
+        "learning_lab",
+        "BENCHMARK_FILE_BIND",
+        "Bound benchmark song to file source",
+        Some(
+            &serde_json::json!({
+                "song_id": song_id,
+                "file_path": file_path,
+                "bpm_hint": bpm_hint,
+                "meter_hint": meter_hint,
+            })
+            .to_string(),
+        ),
+    );
+
+    Ok(result)
 }
 
 #[tauri::command]

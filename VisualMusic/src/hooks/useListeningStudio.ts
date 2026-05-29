@@ -170,6 +170,35 @@ export function useListeningStudio({ onMessage }: UseListeningStudioOptions) {
     });
   }
 
+  async function bindBenchmarkSongToCurrentFile(songId: string) {
+    await runBusyAction(async () => {
+      try {
+        const songs = await pipelineEngine.listening.bindBenchmarkSongFile(
+          songId,
+          fileSourceConfig.filePath,
+          fileSourceConfig.bpmHint,
+          fileSourceConfig.meterHint || null,
+        );
+        startTransition(() => {
+          setTelemetry((current) =>
+            current
+              ? {
+                  ...current,
+                  learning: {
+                    ...current.learning,
+                    test_songs: songs,
+                  },
+                }
+              : current,
+          );
+        });
+        onMessage(`Benchmark linked to file source: ${songId}`);
+      } catch (error) {
+        onMessage(`Could not bind benchmark file: ${error}`);
+      }
+    });
+  }
+
   useEffect(() => {
     if (!isDesktopRuntimeAvailable()) {
       onMessage(BROWSER_PREVIEW_MESSAGE);
@@ -207,5 +236,6 @@ export function useListeningStudio({ onMessage }: UseListeningStudioOptions) {
     adjustStructureLearning,
     saveLearningEvaluation,
     saveFilterSetupEvaluation,
+    bindBenchmarkSongToCurrentFile,
   };
 }

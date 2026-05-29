@@ -4,24 +4,28 @@ import CompareStep from "./learning-lab/CompareStep";
 import { CONVERGENCE_STAGES, cycleIndex, FLOW_STEPS, type FlowStep } from "./learning-lab/constants";
 import LearningStatusPanels from "./learning-lab/LearningStatusPanels";
 import RateStep from "./learning-lab/RateStep";
-import type { ListeningTelemetry } from "../types";
+import type { ListeningFileSourceConfig, ListeningTelemetry } from "../types";
 
 interface LearningLabPanelProps {
+  fileSourceConfig: ListeningFileSourceConfig;
   telemetry: ListeningTelemetry | null;
   isBusy: boolean;
   onAdjustStructureLearning: (action: string) => Promise<void>;
   onRerunListeningTest: () => Promise<void>;
   onSaveLearningEvaluation: (songId: string, rating: string, note: string) => Promise<void>;
   onSaveFilterSetupEvaluation: (setupId: string, rating: string, note: string) => Promise<void>;
+  onBindBenchmarkSongToCurrentFile: (songId: string) => Promise<void>;
 }
 
 export default function LearningLabPanel({
+  fileSourceConfig,
   telemetry,
   isBusy,
   onAdjustStructureLearning,
   onRerunListeningTest,
   onSaveLearningEvaluation,
   onSaveFilterSetupEvaluation,
+  onBindBenchmarkSongToCurrentFile,
 }: LearningLabPanelProps) {
   const learning = telemetry?.learning;
   const comparison = learning?.structure_comparison;
@@ -116,12 +120,14 @@ export default function LearningLabPanel({
         <ChooseStep
           songs={learning?.test_songs ?? []}
           setups={learning?.filter_setups ?? []}
+          currentFilePath={fileSourceConfig.filePath}
           selectedSongId={selectedSongId}
           selectedSetupId={selectedSetupId}
           onSelectSong={setSelectedSongId}
           onSelectSetup={setSelectedSetupId}
           onStepSong={stepSong}
           onStepSetup={stepSetup}
+          onBindSongToCurrentFile={onBindBenchmarkSongToCurrentFile}
         />
       )}
 

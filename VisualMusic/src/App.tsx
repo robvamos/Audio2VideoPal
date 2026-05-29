@@ -99,12 +99,14 @@ function App() {
       {activeTab === "telemetry" && <ListeningTelemetryPanel telemetry={listeningStudio.telemetry} />}
       {activeTab === "learning" && (
         <LearningLabPanel
+          fileSourceConfig={listeningStudio.fileSourceConfig}
           telemetry={listeningStudio.telemetry}
           isBusy={listeningStudio.isBusy}
           onAdjustStructureLearning={listeningStudio.adjustStructureLearning}
           onRerunListeningTest={listeningStudio.runListeningTest}
           onSaveLearningEvaluation={listeningStudio.saveLearningEvaluation}
           onSaveFilterSetupEvaluation={listeningStudio.saveFilterSetupEvaluation}
+          onBindBenchmarkSongToCurrentFile={listeningStudio.bindBenchmarkSongToCurrentFile}
         />
       )}
 

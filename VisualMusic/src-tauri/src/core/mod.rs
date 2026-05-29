@@ -1,3 +1,4 @@
+pub mod benchmark_library;
 pub mod event;
 pub mod module;
 pub mod pipeline;

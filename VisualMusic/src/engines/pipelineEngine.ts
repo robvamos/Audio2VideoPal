@@ -1,5 +1,6 @@
 import {
   adjustStructureLearning,
+  bindBenchmarkSongFile,
   getLatestTelemetry,
   loadFileSourceConfig,
   getLatestTimingState,
@@ -28,6 +29,7 @@ export const pipelineEngine = {
     getLatestTelemetry,
     loadFileSourceConfig,
     saveFileSourceConfig,
+    bindBenchmarkSongFile,
     adjustStructureLearning,
     saveLearningEvaluation,
     saveFilterSetupEvaluation,

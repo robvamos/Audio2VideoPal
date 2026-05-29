@@ -1,6 +1,7 @@
 import { invoke } from "@tauri-apps/api/core";
 import type {
   FlowProbeTelemetry,
+  TestSongDefinition,
   ListeningFileSourceConfig,
   ListeningRunResult,
   ListeningTelemetry,
@@ -477,6 +478,39 @@ export async function saveFileSourceConfig(state: ListeningFileSourceConfig): Pr
       return "ok";
     },
   );
+}
+
+export async function bindBenchmarkSongFile(
+  songId: string,
+  filePath: string,
+  bpmHint: number | null,
+  meterHint: string | null,
+): Promise<TestSongDefinition[]> {
+  const result = await invokeDesktop<string>(
+    "bind_benchmark_song_file",
+    { songId, filePath, bpmHint, meterHint },
+    async () => {
+      ensurePreviewState();
+      if (!previewTelemetry) {
+        return "[]";
+      }
+
+      previewTelemetry.learning.test_songs = previewTelemetry.learning.test_songs.map((song) =>
+        song.id === songId
+          ? {
+              ...song,
+              file_path: filePath || null,
+              bpm_hint: bpmHint,
+              meter_hint: meterHint,
+            }
+          : song,
+      );
+
+      return JSON.stringify(previewTelemetry.learning.test_songs);
+    },
+  );
+
+  return JSON.parse(result);
 }
 
 export async function initDb(): Promise<string> {

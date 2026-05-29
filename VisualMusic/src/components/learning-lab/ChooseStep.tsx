@@ -3,23 +3,27 @@ import type { FilterSetupDefinition, TestSongDefinition } from "../../types";
 interface ChooseStepProps {
   songs: TestSongDefinition[];
   setups: FilterSetupDefinition[];
+  currentFilePath: string;
   selectedSongId: string;
   selectedSetupId: string;
   onSelectSong: (songId: string) => void;
   onSelectSetup: (setupId: string) => void;
   onStepSong: (delta: number) => void;
   onStepSetup: (delta: number) => void;
+  onBindSongToCurrentFile: (songId: string) => Promise<void>;
 }
 
 export default function ChooseStep({
   songs,
   setups,
+  currentFilePath,
   selectedSongId,
   selectedSetupId,
   onSelectSong,
   onSelectSetup,
   onStepSong,
   onStepSetup,
+  onBindSongToCurrentFile,
 }: ChooseStepProps) {
   const selectedSong = songs.find((song) => song.id === selectedSongId) ?? songs[0] ?? null;
   const selectedSetup = setups.find((setup) => setup.id === selectedSetupId) ?? setups[0] ?? null;
@@ -47,6 +51,22 @@ export default function ChooseStep({
                 <strong>{selectedSong.focus}</strong>
               </div>
               <p>{selectedSong.expected_outcome}</p>
+              <div className="readiness-list">
+                <div className="readiness-row">
+                  <span>Bound file</span>
+                  <strong>{selectedSong.file_path ?? "--"}</strong>
+                </div>
+              </div>
+              <div className="pipeline-actions">
+                <button
+                  type="button"
+                  disabled={!currentFilePath}
+                  onClick={() => void onBindSongToCurrentFile(selectedSong.id)}
+                  title={currentFilePath ? "Bind the current file source to this benchmark" : "Configure a file source first"}
+                >
+                  Bind Current File
+                </button>
+              </div>
               <div className="compact-pill-row">
                 {songs.map((song) => (
                   <button
