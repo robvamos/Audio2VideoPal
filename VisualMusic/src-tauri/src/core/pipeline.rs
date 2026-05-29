@@ -5,6 +5,7 @@ use crate::core::runtime_state::{
     TimingState, WiringDescription, FlowProbeTelemetry,
 };
 use crate::core::telemetry::write_telemetry;
+use crate::core::event::PipelineEvent;
 use crate::sources::synthetic_source::SyntheticPatternSource;
 use chrono::Local;
 use serde::{Deserialize, Serialize};
@@ -76,22 +77,149 @@ fn hash_value(input: &str) -> u32 {
         .fold(0_u32, |hash, value| hash.wrapping_mul(31).wrapping_add(value as u32))
 }
 
-fn build_probe_samples(target_id: &str, bpm: f64, grid_score: f64) -> Vec<f64> {
+fn build_base_pulse_grid(events: &[PipelineEvent], duration_sec: f64, sample_count: usize) -> Vec<f64> {
+    let mut samples = vec![0.08; sample_count];
+    if duration_sec <= 0.0 || sample_count == 0 {
+        return samples;
+    }
+
+    for event in events {
+        let normalized = (event.time_sec / duration_sec).clamp(0.0, 1.0);
+        let center = ((sample_count - 1) as f64 * normalized).round() as isize;
+        let beat_in_bar = event
+            .payload
+            .get("beat_in_bar")
+            .and_then(|value| value.as_u64())
+            .unwrap_or(1);
+        let pulse_strength = if beat_in_bar == 1 { 0.95 } else { 0.74 };
+
+        for spread in -2..=2 {
+            let index = center + spread;
+            if index < 0 || index >= sample_count as isize {
+                continue;
+            }
+
+            let falloff = match spread.abs() {
+                0 => pulse_strength,
+                1 => pulse_strength * 0.52,
+                _ => pulse_strength * 0.25,
+            };
+
+            let slot = &mut samples[index as usize];
+            *slot = (*slot + falloff).clamp(0.0, 1.0);
+        }
+    }
+
+    samples
+}
+
+fn smooth_samples(samples: &[f64], passes: usize) -> Vec<f64> {
+    let mut current = samples.to_vec();
+    for _ in 0..passes {
+        current = current
+            .iter()
+            .enumerate()
+            .map(|(index, value)| {
+                let previous = index.checked_sub(1).and_then(|prev| current.get(prev)).copied().unwrap_or(*value);
+                let next = current.get(index + 1).copied().unwrap_or(*value);
+                ((previous * 0.25) + (*value * 0.5) + (next * 0.25)).clamp(0.0, 1.0)
+            })
+            .collect();
+    }
+    current
+}
+
+fn accent_downbeats(samples: &[f64], events: &[PipelineEvent], duration_sec: f64) -> Vec<f64> {
+    let mut accented = samples.to_vec();
+    let sample_count = samples.len();
+    if duration_sec <= 0.0 || sample_count == 0 {
+        return accented;
+    }
+
+    for event in events {
+        let beat_in_bar = event
+            .payload
+            .get("beat_in_bar")
+            .and_then(|value| value.as_u64())
+            .unwrap_or(1);
+        if beat_in_bar != 1 {
+            continue;
+        }
+
+        let normalized = (event.time_sec / duration_sec).clamp(0.0, 1.0);
+        let center = ((sample_count - 1) as f64 * normalized).round() as isize;
+        for spread in -1..=1 {
+            let index = center + spread;
+            if index >= 0 && index < sample_count as isize {
+                accented[index as usize] = (accented[index as usize] + 0.18).clamp(0.0, 1.0);
+            }
+        }
+    }
+
+    accented
+}
+
+fn shape_probe_samples(
+    target_id: &str,
+    base_grid: &[f64],
+    events: &[PipelineEvent],
+    duration_sec: f64,
+    bpm: f64,
+    residual_energy_ratio: f64,
+) -> Vec<f64> {
     let seed = hash_value(target_id);
     let bpm_factor = bpm / 120.0;
     let phase_seed = ((seed % 17) as f64) / 5.0;
-    let pulse_period = (8_i32 - (grid_score * 4.0).round() as i32).max(3) as usize;
+    let cosine_seed = (seed % 11) as f64;
 
-    (0..64)
-        .map(|index| {
-            let x = index as f64 / 63.0;
-            let wave = 0.5
-                + (((x * PI * 2.0 * bpm_factor) + phase_seed).sin() * 0.24)
-                + (((x * PI * 6.0) + ((seed % 11) as f64)).cos() * 0.11);
-            let pulse_boost = if index % pulse_period == 0 { 0.16 } else { 0.0 };
-            (wave + pulse_boost).clamp(0.06, 0.98)
+    let fallback_wave = |index: usize, count: usize| {
+        let x = index as f64 / (count.saturating_sub(1).max(1) as f64);
+        0.42 + (((x * PI * 2.0 * bpm_factor) + phase_seed).sin() * 0.18)
+            + (((x * PI * 6.0) + cosine_seed).cos() * 0.08)
+    };
+
+    let mut samples = base_grid
+        .iter()
+        .enumerate()
+        .map(|(index, value)| {
+            let noise = fallback_wave(index, base_grid.len());
+            ((*value * 0.72) + (noise * 0.28)).clamp(0.0, 1.0)
         })
-        .collect()
+        .collect::<Vec<_>>();
+
+    if target_id.contains("reference") {
+        samples = smooth_samples(&samples, 3)
+            .into_iter()
+            .map(|value| (value * (1.0 - residual_energy_ratio * 0.35)).clamp(0.0, 1.0))
+            .collect();
+    } else if target_id.contains("subtractor") {
+        samples = samples
+            .into_iter()
+            .map(|value| (value * (1.0 - residual_energy_ratio * 0.45)).clamp(0.0, 1.0))
+            .collect();
+    } else if target_id.contains("normalizer") {
+        let max = samples.iter().copied().fold(0.0, f64::max).max(0.001);
+        samples = samples.into_iter().map(|value| (value / max).clamp(0.0, 1.0)).collect();
+    } else if target_id.contains("onset") {
+        samples = samples
+            .iter()
+            .enumerate()
+            .map(|(index, value)| {
+                let previous = index.checked_sub(1).and_then(|prev| samples.get(prev)).copied().unwrap_or(*value);
+                ((value - previous).abs() * 1.4 + 0.08).clamp(0.0, 1.0)
+            })
+            .collect();
+    } else if target_id.contains("low_band") || target_id.contains("downbeat") {
+        samples = accent_downbeats(&samples, events, duration_sec);
+    } else if target_id.contains("tempo") || target_id.contains("fusion") {
+        samples = smooth_samples(&samples, 4);
+    } else if target_id.contains("grid") || target_id.contains("beat") {
+        samples = smooth_samples(&accent_downbeats(&samples, events, duration_sec), 2);
+    } else if target_id.contains("telemetry") {
+        samples = smooth_samples(&samples, 5);
+    }
+
+    samples.into_iter().map(|value| value.clamp(0.04, 0.98)).collect()
 }
 
 fn build_hit_indexes(samples: &[f64]) -> Vec<usize> {
@@ -125,11 +253,26 @@ fn signal_kind_for_target(target_id: &str, target_type: &str) -> String {
     }
 }
 
-fn build_flow_probes(active_modules: &[String], module_edges: &[[String; 2]], bpm: f64, grid_score: f64) -> Vec<FlowProbeTelemetry> {
+fn build_flow_probes(
+    active_modules: &[String],
+    module_edges: &[[String; 2]],
+    events: &[PipelineEvent],
+    duration_sec: f64,
+    bpm: f64,
+    residual_energy_ratio: f64,
+) -> Vec<FlowProbeTelemetry> {
+    let base_grid = build_base_pulse_grid(events, duration_sec, 64);
     let mut probes = active_modules
         .iter()
         .map(|module_name| {
-            let samples = build_probe_samples(module_name, bpm, grid_score);
+            let samples = shape_probe_samples(
+                module_name,
+                &base_grid,
+                events,
+                duration_sec,
+                bpm,
+                residual_energy_ratio,
+            );
             FlowProbeTelemetry {
                 target_type: "module".to_string(),
                 target_id: module_name.clone(),
@@ -144,7 +287,13 @@ fn build_flow_probes(active_modules: &[String], module_edges: &[[String; 2]], bp
 
     probes.extend(module_edges.iter().map(|[from, to]| {
         let target_id = format!("{from} -> {to}");
-        let samples = build_probe_samples(&target_id, bpm, grid_score);
+        let source_samples = shape_probe_samples(from, &base_grid, events, duration_sec, bpm, residual_energy_ratio);
+        let target_samples = shape_probe_samples(to, &base_grid, events, duration_sec, bpm, residual_energy_ratio);
+        let samples = source_samples
+            .iter()
+            .zip(target_samples.iter())
+            .map(|(left, right)| ((left * 0.52) + (right * 0.48)).clamp(0.0, 1.0))
+            .collect::<Vec<_>>();
         FlowProbeTelemetry {
             target_type: "edge".to_string(),
             display_name: target_id.clone(),
@@ -403,7 +552,14 @@ fn run_minimal_pipeline_in_dir(
         .collect::<Vec<_>>();
     let preprocessing = calculate_preprocessing_telemetry(&config);
     let learning = learning_telemetry();
-    let module_probes = build_flow_probes(&active_modules, &module_edges, source_model.bpm, one_bar_grid.one_bar_grid_score);
+    let module_probes = build_flow_probes(
+        &active_modules,
+        &module_edges,
+        &emitted_frames,
+        config.source.duration_sec,
+        source_model.bpm,
+        preprocessing.residual_energy_ratio,
+    );
 
     let initial_telemetry = ListeningTelemetry {
         run_id: run_id.clone(),
