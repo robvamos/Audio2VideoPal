@@ -2,66 +2,21 @@ import { useEffect, useState } from "react";
 import FlowAnalyzerPanel from "./FlowAnalyzerPanel";
 import { loadMapPuzzleState, saveMapPuzzleState } from "../services/tauriApi";
 import type { ListeningTelemetry, MapPuzzleViewState } from "../types";
+import TechnicalChainPanel from "./technical-map/TechnicalChainPanel";
+import TechnicalComparisonPanel from "./technical-map/TechnicalComparisonPanel";
+import TechnicalConfigurationPanel from "./technical-map/TechnicalConfigurationPanel";
+import { buildOrderedModules, DEFAULT_MAP_PUZZLE_STATE, metricTone } from "./technical-map/defaults";
+import TechnicalDiagnosticsPanel from "./technical-map/TechnicalDiagnosticsPanel";
+import TechnicalEdgeLedgerPanel from "./technical-map/TechnicalEdgeLedgerPanel";
+import TechnicalMemoryPanel from "./technical-map/TechnicalMemoryPanel";
+import TechnicalToolbar from "./technical-map/TechnicalToolbar";
 
 interface TechnicalMapPanelProps {
   telemetry: ListeningTelemetry | null;
 }
 
-const DEFAULT_VIEW_STATE: MapPuzzleViewState = {
-  selectedSongId: "grid16_phrase_map",
-  selectedSetupId: "phase_grid_focus",
-  edgeFilter: "all",
-  compareMode: "split",
-  diagnosticsLens: "timing",
-  memoryNote: "",
-  analyzerTargetType: "module",
-  analyzerTargetId: "tempo_autocorrelation",
-  analyzerWindow: "medium",
-};
-
-function buildOrderedModules(edges: [string, string][]) {
-  if (!edges.length) {
-    return [];
-  }
-
-  const targets = new Set(edges.map(([, to]) => to));
-  const starters = edges.map(([from]) => from).filter((from) => !targets.has(from));
-  const start = starters[0] ?? edges[0][0];
-  const ordered = [start];
-  const visited = new Set<string>([start]);
-
-  let cursor = start;
-  while (true) {
-    const nextEdge = edges.find(([from]) => from === cursor);
-    if (!nextEdge) {
-      break;
-    }
-
-    const next = nextEdge[1];
-    if (visited.has(next)) {
-      break;
-    }
-
-    ordered.push(next);
-    visited.add(next);
-    cursor = next;
-  }
-
-  return ordered;
-}
-
-function metricTone(value: number, warnAt: number, dangerAt: number) {
-  if (value >= dangerAt) {
-    return "danger";
-  }
-  if (value >= warnAt) {
-    return "warning";
-  }
-  return "good";
-}
-
 export default function TechnicalMapPanel({ telemetry }: TechnicalMapPanelProps) {
-  const [viewState, setViewState] = useState<MapPuzzleViewState>(DEFAULT_VIEW_STATE);
+  const [viewState, setViewState] = useState<MapPuzzleViewState>(DEFAULT_MAP_PUZZLE_STATE);
   const [didLoadState, setDidLoadState] = useState(false);
   const wiring = telemetry?.wiring;
   const comparison = telemetry?.learning.structure_comparison;
@@ -80,7 +35,7 @@ export default function TechnicalMapPanel({ telemetry }: TechnicalMapPanelProps)
 
     void loadMapPuzzleState().then((state) => {
       if (!cancelled) {
-        setViewState({ ...DEFAULT_VIEW_STATE, ...state });
+        setViewState({ ...DEFAULT_MAP_PUZZLE_STATE, ...state });
         setDidLoadState(true);
       }
     });
@@ -105,14 +60,14 @@ export default function TechnicalMapPanel({ telemetry }: TechnicalMapPanelProps)
 
     setViewState((current) => ({
       ...current,
-      selectedSongId: current.selectedSongId || telemetry.learning.test_songs[0]?.id || DEFAULT_VIEW_STATE.selectedSongId,
+      selectedSongId: current.selectedSongId || telemetry.learning.test_songs[0]?.id || DEFAULT_MAP_PUZZLE_STATE.selectedSongId,
       selectedSetupId:
-        current.selectedSetupId || telemetry.learning.filter_setups[0]?.id || DEFAULT_VIEW_STATE.selectedSetupId,
+        current.selectedSetupId || telemetry.learning.filter_setups[0]?.id || DEFAULT_MAP_PUZZLE_STATE.selectedSetupId,
     }));
   }, [telemetry]);
 
   const architectureChecks = telemetry
-    ? [
+    ? ([
         {
           id: "timing",
           label: "Residual",
@@ -155,7 +110,7 @@ export default function TechnicalMapPanel({ telemetry }: TechnicalMapPanelProps)
           tone: telemetry.learning.setup_evaluation_history.length > 0 ? "good" : "warning",
           detail: "How many individual setup evaluations are already remembered.",
         },
-      ]
+      ] as const)
     : [];
 
   const filteredChecks = architectureChecks.filter(
@@ -179,7 +134,7 @@ export default function TechnicalMapPanel({ telemetry }: TechnicalMapPanelProps)
         wiring?.disabled_modules.includes("file_source")
           ? "Real file source is still out of chain: current map is only partially representative."
           : null,
-      ].filter(Boolean)
+      ].filter((item): item is string => Boolean(item))
     : [];
 
   const edgeRows =
@@ -224,385 +179,57 @@ export default function TechnicalMapPanel({ telemetry }: TechnicalMapPanelProps)
         </div>
       </section>
 
-      <section className="studio-panel">
-        <h3>Console tecnica</h3>
-        <div className="technical-toolbar-grid">
-          <div className="technical-control-block">
-            <span className="technical-label">Preset</span>
-            <div className="compact-pill-row">
-              <button type="button" className="mini-pill" onClick={() => applyConfigPreset("timing")} title="Focus on timing and lock">
-                Timing
-              </button>
-              <button type="button" className="mini-pill" onClick={() => applyConfigPreset("reference")} title="Focus on drift and segment reconstruction">
-                Drift
-              </button>
-              <button type="button" className="mini-pill" onClick={() => applyConfigPreset("learning")} title="Focus on learning and blocked steps">
-                Learning
-              </button>
-            </div>
-          </div>
-
-          <div className="technical-control-block">
-            <span className="technical-label">Diagnostica</span>
-            <div className="compact-pill-row">
-              {[
-                { id: "timing", label: "Timing" },
-                { id: "reference", label: "Reference" },
-                { id: "learning", label: "Learning" },
-              ].map((item) => (
-                <button
-                  key={item.id}
-                  type="button"
-                  className={`mini-pill ${viewState.diagnosticsLens === item.id ? "active" : ""}`}
-                  onClick={() => updateViewState({ diagnosticsLens: item.id as MapPuzzleViewState["diagnosticsLens"] })}
-                >
-                  {item.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="technical-control-block">
-            <span className="technical-label">Archi</span>
-            <div className="compact-pill-row">
-              {[
-                { id: "all", label: "All" },
-                { id: "active", label: "Active" },
-                { id: "blocked", label: "Blocked" },
-              ].map((item) => (
-                <button
-                  key={item.id}
-                  type="button"
-                  className={`mini-pill ${viewState.edgeFilter === item.id ? "active" : ""}`}
-                  onClick={() => updateViewState({ edgeFilter: item.id as MapPuzzleViewState["edgeFilter"] })}
-                >
-                  {item.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="technical-control-block">
-            <span className="technical-label">Confronto</span>
-            <div className="compact-pill-row">
-              {[
-                { id: "split", label: "Split" },
-                { id: "overlay", label: "Overlay" },
-              ].map((item) => (
-                <button
-                  key={item.id}
-                  type="button"
-                  className={`mini-pill ${viewState.compareMode === item.id ? "active" : ""}`}
-                  onClick={() => updateViewState({ compareMode: item.id as MapPuzzleViewState["compareMode"] })}
-                >
-                  {item.label}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+      <TechnicalToolbar
+        viewState={viewState}
+        onUpdateViewState={updateViewState}
+        onApplyConfigPreset={applyConfigPreset}
+      />
 
       <div className="evaluation-layout">
-        <section className="studio-panel">
-          <h3>Configurazione attiva</h3>
-          <div className="technical-control-block">
-            <span className="technical-label">Benchmark</span>
-            <div className="compact-pill-row">
-              {telemetry?.learning.test_songs.map((song) => (
-                <button
-                  key={song.id}
-                  type="button"
-                  className={`mini-pill ${viewState.selectedSongId === song.id ? "active" : ""}`}
-                  onClick={() => updateViewState({ selectedSongId: song.id })}
-                  title={song.focus}
-                >
-                  {song.id}
-                </button>
-              )) ?? <p>No benchmark song library yet.</p>}
-            </div>
-          </div>
-
-          <div className="technical-control-block">
-            <span className="technical-label">Setup</span>
-            <div className="compact-pill-row">
-              {telemetry?.learning.filter_setups.map((setup) => (
-                <button
-                  key={setup.id}
-                  type="button"
-                  className={`mini-pill ${viewState.selectedSetupId === setup.id ? "active" : ""}`}
-                  onClick={() => updateViewState({ selectedSetupId: setup.id })}
-                  title={setup.description}
-                >
-                  {setup.name}
-                </button>
-              )) ?? <p>No setup catalog yet.</p>}
-            </div>
-          </div>
-
-          <div className="readiness-list">
-            <div className="readiness-row">
-              <span>Benchmark corrente</span>
-              <strong>{selectedSong?.focus ?? "--"}</strong>
-            </div>
-            <div className="readiness-row">
-              <span>Setup corrente</span>
-              <strong>{selectedSetup?.name ?? "--"}</strong>
-            </div>
-            <div className="readiness-row">
-              <span>Obiettivo</span>
-              <strong>{selectedSetup?.goal ?? "--"}</strong>
-            </div>
-          </div>
-
-          <div className="module-list">
-            {selectedSetup?.modules.map((moduleName) => (
-              <span key={moduleName} className="module-pill active">
-                {moduleName}
-              </span>
-            )) ?? <p>No module focus yet.</p>}
-          </div>
-        </section>
-
-        <section className="studio-panel">
-          <h3>Memoria tecnica</h3>
-          <label className="pipeline-control">
-            <span>Nota persistente</span>
-            <textarea
-              className="learning-note"
-              value={viewState.memoryNote}
-              onChange={(event) => updateViewState({ memoryNote: event.target.value })}
-              placeholder="Annota il puzzle attuale, i sospetti o la prossima prova da fare."
-            />
-          </label>
-          <div className="readiness-list">
-            <div className="readiness-row">
-              <span>Persistenza</span>
-              <strong>{didLoadState ? "attiva" : "caricamento"}</strong>
-            </div>
-            <div className="readiness-row">
-              <span>Filtro archi</span>
-              <strong>{viewState.edgeFilter}</strong>
-            </div>
-            <div className="readiness-row">
-              <span>Modalita confronto</span>
-              <strong>{viewState.compareMode}</strong>
-            </div>
-            <div className="readiness-row">
-              <span>Analyzer</span>
-              <strong>
-                {viewState.analyzerTargetType
-                  ? `${viewState.analyzerTargetType}:${viewState.analyzerTargetId}`
-                  : "chiuso"}
-              </strong>
-            </div>
-          </div>
-        </section>
+        <TechnicalConfigurationPanel
+          songs={telemetry?.learning.test_songs ?? []}
+          setups={telemetry?.learning.filter_setups ?? []}
+          selectedSong={selectedSong}
+          selectedSetup={selectedSetup}
+          viewState={viewState}
+          onUpdateViewState={updateViewState}
+        />
+        <TechnicalMemoryPanel
+          didLoadState={didLoadState}
+          viewState={viewState}
+          onUpdateViewState={updateViewState}
+        />
       </div>
 
-      <section className="studio-panel">
-        <h3>Architecture signal chain</h3>
-        {orderedModules.length ? (
-          <div className="chain-strip">
-            {orderedModules.map((moduleName, index) => {
-              const isActive = activeSet.has(moduleName);
-              const isDisabled = disabledSet.has(moduleName);
-              const isFocused = selectedSetup?.modules.includes(moduleName);
+      <TechnicalChainPanel
+        orderedModules={orderedModules}
+        activeSet={activeSet}
+        disabledSet={disabledSet}
+        focusedModules={selectedSetup?.modules ?? []}
+        onOpenAnalyzer={openAnalyzer}
+      />
 
-              return (
-                <div
-                  key={moduleName}
-                  className={`chain-node ${isActive ? "active" : ""} ${isDisabled ? "disabled" : ""} ${isFocused ? "focused" : ""}`}
-                >
-                  <span className="chain-index">{index + 1}</span>
-                  <strong>{moduleName}</strong>
-                  <button
-                    type="button"
-                    className="mini-pill technical-action"
-                    onClick={() => openAnalyzer("module", moduleName)}
-                    title="Open flow analyzer for this module"
-                  >
-                    Scope
-                  </button>
-                </div>
-              );
-            })}
-          </div>
-        ) : (
-          <p>No ordered chain available yet.</p>
-        )}
-      </section>
-
-      <div className="studio-grid">
-        <section className="studio-panel">
-          <h3>Critical checks</h3>
-          <div className="diagnostic-grid">
-            {filteredChecks.length ? (
-              filteredChecks.map((check) => (
-                <div key={`${check.label}-${check.id}`} className={`diagnostic-card ${check.tone}`}>
-                  <span>{check.label}</span>
-                  <strong>{check.value}</strong>
-                  <p>{check.detail}</p>
-                </div>
-              ))
-            ) : (
-              <p>No diagnostics captured yet.</p>
-            )}
-          </div>
-        </section>
-
-        <section className="studio-panel">
-          <h3>Breakpoints</h3>
-          <div className="recommendation-list">
-            {breakpoints.length ? breakpoints.map((item) => <p key={item}>{item}</p>) : <p>No obvious breakpoint flagged.</p>}
-          </div>
-        </section>
-
-        <section className="studio-panel">
-          <h3>Runtime facts</h3>
-          <div className="readiness-list">
-            <div className="readiness-row">
-              <span>Profile</span>
-              <strong>{telemetry?.profile ?? "--"}</strong>
-            </div>
-            <div className="readiness-row">
-              <span>Source</span>
-              <strong>{telemetry?.source ?? "--"}</strong>
-            </div>
-            <div className="readiness-row">
-              <span>Sync</span>
-              <strong>{telemetry?.sync_state ?? "--"}</strong>
-            </div>
-            <div className="readiness-row">
-              <span>Run</span>
-              <strong>{telemetry?.run_id ?? "--"}</strong>
-            </div>
-          </div>
-        </section>
-      </div>
+      <TechnicalDiagnosticsPanel
+        diagnostics={filteredChecks}
+        breakpoints={breakpoints}
+        profile={telemetry?.profile}
+        source={telemetry?.source}
+        syncState={telemetry?.sync_state}
+        runId={telemetry?.run_id}
+      />
 
       <div className="evaluation-layout">
-        <section className="studio-panel">
-          <h3>Edge ledger</h3>
-          {edgeRows.length ? (
-            <div className="edge-ledger">
-              {edgeRows.map(([from, to]) => {
-                const active = activeSet.has(from) && activeSet.has(to);
-                const focused = selectedSetup?.modules.includes(from) || selectedSetup?.modules.includes(to);
-
-                return (
-                  <div
-                    key={`${from}-${to}`}
-                    className={`edge-ledger-row ${active ? "active" : "blocked"} ${focused ? "focused" : ""}`}
-                  >
-                    <span>{from}</span>
-                    <strong>→</strong>
-                    <div className="edge-ledger-actions">
-                      <span>{to}</span>
-                      <button
-                        type="button"
-                        className="mini-pill technical-action"
-                        onClick={() => openAnalyzer("edge", `${from} -> ${to}`)}
-                        title="Open flow analyzer for this edge"
-                      >
-                        Flow
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          ) : (
-            <p>No edge data available for this filter.</p>
-          )}
-        </section>
-
-        <section className="studio-panel">
-          <h3>Puzzle della mappa</h3>
-          {comparison ? (
-            <div className="map-puzzle-panel">
-              <div className="map-puzzle-header">
-                <span>Target {selectedSong?.id ?? comparison.target_label}</span>
-                <strong>error {(comparison.average_error_ratio * 100).toFixed(1)}%</strong>
-              </div>
-
-              {viewState.compareMode === "split" ? (
-                <>
-                  <div className="structure-track-card compact">
-                    <span className="structure-track-label">Reference</span>
-                    <div className="structure-track">
-                      {comparison.reference_segments.map((segment) => (
-                        <div
-                          key={`tech-ref-${segment.label}-${segment.start_ratio}`}
-                          className="structure-segment reference"
-                          style={{
-                            left: `${segment.start_ratio * 100}%`,
-                            width: `${(segment.end_ratio - segment.start_ratio) * 100}%`,
-                          }}
-                          title={`${segment.label}: ${Math.round(segment.start_ratio * 100)}% - ${Math.round(segment.end_ratio * 100)}%`}
-                        >
-                          <span>{segment.label}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="structure-track-card compact">
-                    <span className="structure-track-label">Reconstruction</span>
-                    <div className="structure-track">
-                      {comparison.reconstructed_segments.map((segment) => (
-                        <div
-                          key={`tech-recon-${segment.label}-${segment.start_ratio}`}
-                          className="structure-segment reconstructed"
-                          style={{
-                            left: `${segment.start_ratio * 100}%`,
-                            width: `${(segment.end_ratio - segment.start_ratio) * 100}%`,
-                          }}
-                          title={`${segment.label}: ${Math.round(segment.start_ratio * 100)}% - ${Math.round(segment.end_ratio * 100)}%`}
-                        >
-                          <span>{segment.label}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </>
-              ) : (
-                <div className="structure-track-card compact">
-                  <span className="structure-track-label">Overlay reference vs reconstruction</span>
-                  <div className="structure-track overlay">
-                    {comparison.reference_segments.map((segment) => (
-                      <div
-                        key={`overlay-ref-${segment.label}-${segment.start_ratio}`}
-                        className="structure-segment reference overlay"
-                        style={{
-                          left: `${segment.start_ratio * 100}%`,
-                          width: `${(segment.end_ratio - segment.start_ratio) * 100}%`,
-                        }}
-                        title={`Reference ${segment.label}`}
-                      >
-                        <span>{segment.label}</span>
-                      </div>
-                    ))}
-                    {comparison.reconstructed_segments.map((segment) => (
-                      <div
-                        key={`overlay-recon-${segment.label}-${segment.start_ratio}`}
-                        className="structure-segment reconstructed overlay"
-                        style={{
-                          left: `${segment.start_ratio * 100}%`,
-                          width: `${(segment.end_ratio - segment.start_ratio) * 100}%`,
-                        }}
-                        title={`Reconstruction ${segment.label}`}
-                      >
-                        <span>{segment.label}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          ) : (
-            <p>No segment map available yet.</p>
-          )}
-        </section>
+        <TechnicalEdgeLedgerPanel
+          edgeRows={edgeRows}
+          activeSet={activeSet}
+          focusedModules={selectedSetup?.modules ?? []}
+          onOpenAnalyzer={openAnalyzer}
+        />
+        <TechnicalComparisonPanel
+          comparison={comparison}
+          compareMode={viewState.compareMode}
+          selectedSong={selectedSong}
+        />
       </div>
 
       {viewState.analyzerTargetType && viewState.analyzerTargetId && (

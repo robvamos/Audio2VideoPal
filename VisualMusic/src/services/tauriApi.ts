@@ -1,5 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 import type {
+  FlowProbeTelemetry,
   ListeningRunResult,
   ListeningTelemetry,
   MapPuzzleViewState,
@@ -214,6 +215,42 @@ function createPreviewRunResult(profile: string, source: string): ListeningRunRe
         ["one_bar_grid_evaluator", "telemetry_writer"],
       ],
     },
+    module_probes: createPreviewFlowProbes(
+      [
+        "synthetic_pattern",
+        "self_output_reference",
+        "self_output_subtractor",
+        "normalizer",
+        "onset_strength",
+        "low_band_pulse",
+        "tempo_autocorrelation",
+        "window_stability_merge",
+        "learning_grid",
+        "weighted_tempo_fusion",
+        "beat_grid_tracker",
+        "simple_downbeat_scorer",
+        "one_bar_grid_evaluator",
+        "telemetry_writer",
+      ],
+      [
+        ["synthetic_pattern", "self_output_reference"],
+        ["self_output_reference", "self_output_subtractor"],
+        ["self_output_subtractor", "normalizer"],
+        ["normalizer", "onset_strength"],
+        ["normalizer", "low_band_pulse"],
+        ["onset_strength", "tempo_autocorrelation"],
+        ["tempo_autocorrelation", "window_stability_merge"],
+        ["low_band_pulse", "learning_grid"],
+        ["window_stability_merge", "weighted_tempo_fusion"],
+        ["learning_grid", "weighted_tempo_fusion"],
+        ["weighted_tempo_fusion", "beat_grid_tracker"],
+        ["beat_grid_tracker", "simple_downbeat_scorer"],
+        ["simple_downbeat_scorer", "one_bar_grid_evaluator"],
+        ["one_bar_grid_evaluator", "telemetry_writer"],
+      ],
+      112,
+      0.93,
+    ),
     recommendations: [
       "Preview mode is using a deterministic timing sample so the UI can be checked outside the desktop shell.",
       "Launch the Tauri app to replace preview values with real listening telemetry and artifact paths.",
@@ -237,6 +274,91 @@ function createPreviewRunResult(profile: string, source: string): ListeningRunRe
     },
     telemetry: previewTelemetry,
   };
+}
+
+function createPreviewFlowProbes(
+  activeModules: string[],
+  moduleEdges: [string, string][],
+  bpm: number,
+  gridScore: number,
+): FlowProbeTelemetry[] {
+  function hashValue(input: string) {
+    let hash = 0;
+    for (let index = 0; index < input.length; index += 1) {
+      hash = (hash * 31 + input.charCodeAt(index)) >>> 0;
+    }
+    return hash;
+  }
+
+  function buildSamples(targetId: string) {
+    const seed = hashValue(targetId);
+    const bpmFactor = bpm / 120;
+    const pulsePeriod = Math.max(3, Math.round(8 - gridScore * 4));
+
+    return Array.from({ length: 64 }, (_, index) => {
+      const x = index / 63;
+      const wave =
+        0.5 +
+        Math.sin((x * Math.PI * 2 * bpmFactor) + ((seed % 17) / 5)) * 0.24 +
+        Math.cos((x * Math.PI * 6) + (seed % 11)) * 0.11;
+      const pulseBoost = index % pulsePeriod === 0 ? 0.16 : 0;
+      return Math.max(0.06, Math.min(0.98, wave + pulseBoost));
+    });
+  }
+
+  function buildHits(samples: number[]) {
+    return samples
+      .map((value, index) => ({ value, index }))
+      .filter((item, index, items) => item.value > 0.72 && (index === 0 || item.value >= items[index - 1].value))
+      .map((item) => item.index);
+  }
+
+  function signalKind(targetId: string, targetType: "module" | "edge") {
+    if (targetType === "edge") {
+      return "handoff";
+    }
+    if (targetId.includes("pulse") || targetId.includes("beat")) {
+      return "pulse";
+    }
+    if (targetId.includes("grid") || targetId.includes("tempo")) {
+      return "timing";
+    }
+    if (targetId.includes("reference") || targetId.includes("subtractor")) {
+      return "reference";
+    }
+    return "signal";
+  }
+
+  const probes: FlowProbeTelemetry[] = activeModules.map((moduleName) => {
+    const samples = buildSamples(moduleName);
+    return {
+      target_type: "module",
+      target_id: moduleName,
+      display_name: moduleName,
+      signal_kind: signalKind(moduleName, "module"),
+      samples,
+      hit_indexes: buildHits(samples),
+      memory_sec: 9,
+    } satisfies FlowProbeTelemetry;
+  });
+
+  probes.push(
+    ...moduleEdges.map(([from, to]) => {
+      const targetId = `${from} -> ${to}`;
+      const samples = buildSamples(targetId);
+      return {
+        target_type: "edge",
+        target_id: targetId,
+        display_name: targetId,
+        signal_kind: signalKind(targetId, "edge"),
+        samples,
+        hit_indexes: buildHits(samples),
+        memory_sec: 9,
+      } satisfies FlowProbeTelemetry;
+    }),
+  );
+
+  return probes;
 }
 
 function ensurePreviewState(profile = "minimal_one_bar_grid", source = "synthetic_pattern") {

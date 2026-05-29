@@ -42,6 +42,17 @@ pub struct WiringDescription {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct FlowProbeTelemetry {
+    pub target_type: String,
+    pub target_id: String,
+    pub display_name: String,
+    pub signal_kind: String,
+    pub samples: Vec<f64>,
+    pub hit_indexes: Vec<usize>,
+    pub memory_sec: f64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PreprocessingTelemetry {
     pub self_reference_enabled: bool,
     pub reference_mix_ratio: f64,
@@ -129,6 +140,7 @@ pub struct ListeningTelemetry {
     pub preprocessing: PreprocessingTelemetry,
     pub learning: LearningTelemetry,
     pub wiring: WiringDescription,
+    pub module_probes: Vec<FlowProbeTelemetry>,
     pub recommendations: Vec<String>,
     pub telemetry_json_path: String,
     pub telemetry_summary_path: String,

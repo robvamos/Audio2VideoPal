@@ -1,4 +1,4 @@
-import type { ListeningTelemetry } from "../types";
+import type { FlowProbeTelemetry, ListeningTelemetry } from "../types";
 
 interface FlowAnalyzerPanelProps {
   telemetry: ListeningTelemetry | null;
@@ -23,7 +23,7 @@ function hashValue(input: string) {
   return hash;
 }
 
-function buildTrace(telemetry: ListeningTelemetry | null, targetId: string, memoryWindow: "short" | "medium" | "long") {
+function buildFallbackTrace(telemetry: ListeningTelemetry | null, targetId: string, memoryWindow: "short" | "medium" | "long") {
   const { samples } = WINDOW_META[memoryWindow];
   const base = hashValue(targetId);
   const bpmFactor = (telemetry?.fused_bpm ?? 112) / 120;
@@ -42,6 +42,28 @@ function buildTrace(telemetry: ListeningTelemetry | null, targetId: string, memo
   });
 }
 
+function resizeTrace(samples: number[], count: number) {
+  if (samples.length === count) {
+    return samples;
+  }
+
+  return Array.from({ length: count }, (_, index) => {
+    const sourceIndex = Math.round((index / Math.max(1, count - 1)) * Math.max(0, samples.length - 1));
+    return samples[sourceIndex] ?? 0;
+  });
+}
+
+function findProbe(
+  telemetry: ListeningTelemetry | null,
+  targetType: "module" | "edge",
+  targetId: string,
+): FlowProbeTelemetry | null {
+  return (
+    telemetry?.module_probes.find((probe) => probe.target_type === targetType && probe.target_id === targetId) ??
+    null
+  );
+}
+
 function buildHitIndexes(trace: number[]) {
   return trace
     .map((value, index) => ({ value, index }))
@@ -57,7 +79,10 @@ export default function FlowAnalyzerPanel({
   onMemoryWindowChange,
   onClose,
 }: FlowAnalyzerPanelProps) {
-  const trace = buildTrace(telemetry, targetId, memoryWindow);
+  const probe = findProbe(telemetry, targetType, targetId);
+  const trace = probe
+    ? resizeTrace(probe.samples, WINDOW_META[memoryWindow].samples)
+    : buildFallbackTrace(telemetry, targetId, memoryWindow);
   const hitIndexes = buildHitIndexes(trace);
   const peak = Math.max(...trace);
   const floor = Math.min(...trace);
@@ -101,6 +126,10 @@ export default function FlowAnalyzerPanel({
           <strong>{WINDOW_META[memoryWindow].seconds}</strong>
         </div>
         <div>
+          <span>Signal</span>
+          <strong>{probe?.signal_kind ?? "fallback"}</strong>
+        </div>
+        <div>
           <span>Peak</span>
           <strong>{peak.toFixed(2)}</strong>
         </div>
@@ -136,6 +165,10 @@ export default function FlowAnalyzerPanel({
         <div className="readiness-row">
           <span>Context</span>
           <strong>{targetType}</strong>
+        </div>
+        <div className="readiness-row">
+          <span>Source</span>
+          <strong>{probe ? "probe" : "fallback"}</strong>
         </div>
       </div>
     </aside>

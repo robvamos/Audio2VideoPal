@@ -2,12 +2,13 @@ use crate::core::runtime_state::{
     FilterSetupDefinition, FilterSetupEvaluationEntry, LearningEvaluationEntry, LearningTelemetry,
     ListeningRunResult, ListeningTelemetry, OneBarGridResult, PipelineContext,
     PreprocessingTelemetry, StructureComparison, StructureSegment, TestSongDefinition,
-    TimingState, WiringDescription,
+    TimingState, WiringDescription, FlowProbeTelemetry,
 };
 use crate::core::telemetry::write_telemetry;
 use crate::sources::synthetic_source::SyntheticPatternSource;
 use chrono::Local;
 use serde::{Deserialize, Serialize};
+use std::f64::consts::PI;
 use std::fs;
 use std::path::{Path, PathBuf};
 
@@ -67,6 +68,95 @@ fn calculate_preprocessing_telemetry(config: &PipelineConfig) -> PreprocessingTe
         cancellation_db,
         latency_alignment_ms: reference.latency_alignment_ms,
     }
+}
+
+fn hash_value(input: &str) -> u32 {
+    input
+        .bytes()
+        .fold(0_u32, |hash, value| hash.wrapping_mul(31).wrapping_add(value as u32))
+}
+
+fn build_probe_samples(target_id: &str, bpm: f64, grid_score: f64) -> Vec<f64> {
+    let seed = hash_value(target_id);
+    let bpm_factor = bpm / 120.0;
+    let phase_seed = ((seed % 17) as f64) / 5.0;
+    let pulse_period = (8_i32 - (grid_score * 4.0).round() as i32).max(3) as usize;
+
+    (0..64)
+        .map(|index| {
+            let x = index as f64 / 63.0;
+            let wave = 0.5
+                + (((x * PI * 2.0 * bpm_factor) + phase_seed).sin() * 0.24)
+                + (((x * PI * 6.0) + ((seed % 11) as f64)).cos() * 0.11);
+            let pulse_boost = if index % pulse_period == 0 { 0.16 } else { 0.0 };
+            (wave + pulse_boost).clamp(0.06, 0.98)
+        })
+        .collect()
+}
+
+fn build_hit_indexes(samples: &[f64]) -> Vec<usize> {
+    samples
+        .iter()
+        .enumerate()
+        .filter_map(|(index, value)| {
+            let previous = index.checked_sub(1).and_then(|prev| samples.get(prev)).copied().unwrap_or(0.0);
+            if *value > 0.72 && *value >= previous {
+                Some(index)
+            } else {
+                None
+            }
+        })
+        .collect()
+}
+
+fn signal_kind_for_target(target_id: &str, target_type: &str) -> String {
+    if target_type == "edge" {
+        return "handoff".to_string();
+    }
+
+    if target_id.contains("pulse") || target_id.contains("beat") {
+        "pulse".to_string()
+    } else if target_id.contains("grid") || target_id.contains("tempo") {
+        "timing".to_string()
+    } else if target_id.contains("reference") || target_id.contains("subtractor") {
+        "reference".to_string()
+    } else {
+        "signal".to_string()
+    }
+}
+
+fn build_flow_probes(active_modules: &[String], module_edges: &[[String; 2]], bpm: f64, grid_score: f64) -> Vec<FlowProbeTelemetry> {
+    let mut probes = active_modules
+        .iter()
+        .map(|module_name| {
+            let samples = build_probe_samples(module_name, bpm, grid_score);
+            FlowProbeTelemetry {
+                target_type: "module".to_string(),
+                target_id: module_name.clone(),
+                display_name: module_name.clone(),
+                signal_kind: signal_kind_for_target(module_name, "module"),
+                hit_indexes: build_hit_indexes(&samples),
+                samples,
+                memory_sec: 9.0,
+            }
+        })
+        .collect::<Vec<_>>();
+
+    probes.extend(module_edges.iter().map(|[from, to]| {
+        let target_id = format!("{from} -> {to}");
+        let samples = build_probe_samples(&target_id, bpm, grid_score);
+        FlowProbeTelemetry {
+            target_type: "edge".to_string(),
+            display_name: target_id.clone(),
+            signal_kind: signal_kind_for_target(&target_id, "edge"),
+            target_id,
+            hit_indexes: build_hit_indexes(&samples),
+            samples,
+            memory_sec: 9.0,
+        }
+    }));
+
+    probes
 }
 
 fn learning_telemetry() -> LearningTelemetry {
@@ -313,6 +403,7 @@ fn run_minimal_pipeline_in_dir(
         .collect::<Vec<_>>();
     let preprocessing = calculate_preprocessing_telemetry(&config);
     let learning = learning_telemetry();
+    let module_probes = build_flow_probes(&active_modules, &module_edges, source_model.bpm, one_bar_grid.one_bar_grid_score);
 
     let initial_telemetry = ListeningTelemetry {
         run_id: run_id.clone(),
@@ -336,6 +427,7 @@ fn run_minimal_pipeline_in_dir(
             disabled_modules,
             module_edges,
         },
+        module_probes,
         recommendations: vec![
             "Keep synthetic_pattern as the baseline fixture while wiring real sources.".to_string(),
             "Route self-output reference through preprocessing before any higher-level timing inference."

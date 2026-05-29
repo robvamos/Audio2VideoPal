@@ -45,6 +45,16 @@ export interface WiringDescription {
   module_edges: [string, string][];
 }
 
+export interface FlowProbeTelemetry {
+  target_type: "module" | "edge";
+  target_id: string;
+  display_name: string;
+  signal_kind: string;
+  samples: number[];
+  hit_indexes: number[];
+  memory_sec: number;
+}
+
 export interface PreprocessingTelemetry {
   self_reference_enabled: boolean;
   reference_mix_ratio: number;
@@ -124,6 +134,7 @@ export interface ListeningTelemetry {
   preprocessing: PreprocessingTelemetry;
   learning: LearningTelemetry;
   wiring: WiringDescription;
+  module_probes: FlowProbeTelemetry[];
   recommendations: string[];
   telemetry_json_path: string;
   telemetry_summary_path: string;
