@@ -6,3 +6,7 @@ target/
 .env.*
 VisualMusic/src-tauri/data/
 VisualMusic/runtime/ui-refactor-check.png
+VisualMusic/runtime/benchmark-sweeps/20*.benchmark-sweep.json
+VisualMusic/runtime/benchmark-sweeps/20*.benchmark-sweep.md
+!VisualMusic/runtime/benchmark-sweeps/latest.benchmark-sweep.json
+!VisualMusic/runtime/benchmark-sweeps/latest.benchmark-sweep.md

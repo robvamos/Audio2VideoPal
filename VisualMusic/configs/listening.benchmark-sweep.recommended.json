@@ -1,0 +1,23 @@
+{
+  "preset_id": "onset_only_norm",
+  "purpose": "Current best automatic benchmark sweep winner for BPM tracking and one-bar grid reconstruction.",
+  "plugin_mode": "onset_only",
+  "onset_weight": 1.0,
+  "low_band_weight": 0.0,
+  "normalize_input": true,
+  "tonality_guard": false,
+  "transient_boost": 1.8,
+  "low_smoothing_ms": 160,
+  "threshold_bias": 0.18,
+  "sweep_summary": {
+    "overall_score": 0.9762,
+    "mean_grid_score": 0.9505,
+    "mean_bpm_abs_error": 0.541,
+    "mean_pause_score": 1.0
+  },
+  "notes": [
+    "Best on the current 5-song benchmark library.",
+    "Dual weighted variants remain close and may become preferable when lower-band rhythm content is more dominant.",
+    "Recommended current focus: listening accuracy first, playback and generation later."
+  ]
+}
