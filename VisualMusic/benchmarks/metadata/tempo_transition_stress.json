@@ -1,0 +1,1088 @@
+{
+  "id": "tempo_transition_stress",
+  "title": "Tempo Transition Stress",
+  "purpose": "Three tempo changes and pauses to stress relock behavior.",
+  "meter": "4/4",
+  "total_bars": 24,
+  "duration_seconds": 52.91641,
+  "expected_primary_bpm": 104.0,
+  "tempo_changes": [
+    {
+      "label": "stress_base",
+      "start_sec": 0.0,
+      "bpm": 104.0
+    },
+    {
+      "label": "stress_lift",
+      "start_sec": 14.086154,
+      "bpm": 118.0
+    },
+    {
+      "label": "stress_peak",
+      "start_sec": 22.421747,
+      "bpm": 132.0
+    },
+    {
+      "label": "stress_drop",
+      "start_sec": 29.954474,
+      "bpm": 96.0
+    },
+    {
+      "label": "stress_recover",
+      "start_sec": 45.174474,
+      "bpm": 124.0
+    }
+  ],
+  "pause_windows": [
+    {
+      "label": "stress_base_pause",
+      "start_sec": 13.846154,
+      "duration_sec": 0.24
+    },
+    {
+      "label": "stress_lift_pause",
+      "start_sec": 22.221747,
+      "duration_sec": 0.2
+    },
+    {
+      "label": "stress_peak_pause",
+      "start_sec": 29.694474,
+      "duration_sec": 0.26
+    },
+    {
+      "label": "stress_drop_pause",
+      "start_sec": 44.954474,
+      "duration_sec": 0.22
+    }
+  ],
+  "known_downbeats": [
+    {
+      "time_sec": 0.0,
+      "bar_index": 1,
+      "beat_in_bar": 1,
+      "bpm": 104.0,
+      "section": "stress_base",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 2.307692,
+      "bar_index": 2,
+      "beat_in_bar": 1,
+      "bpm": 104.0,
+      "section": "stress_base",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 4.615385,
+      "bar_index": 3,
+      "beat_in_bar": 1,
+      "bpm": 104.0,
+      "section": "stress_base",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 6.923077,
+      "bar_index": 4,
+      "beat_in_bar": 1,
+      "bpm": 104.0,
+      "section": "stress_base",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 9.230769,
+      "bar_index": 5,
+      "beat_in_bar": 1,
+      "bpm": 104.0,
+      "section": "stress_base",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 11.538462,
+      "bar_index": 6,
+      "beat_in_bar": 1,
+      "bpm": 104.0,
+      "section": "stress_base",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 14.086154,
+      "bar_index": 7,
+      "beat_in_bar": 1,
+      "bpm": 118.0,
+      "section": "stress_lift",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 16.120052,
+      "bar_index": 8,
+      "beat_in_bar": 1,
+      "bpm": 118.0,
+      "section": "stress_lift",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 18.15395,
+      "bar_index": 9,
+      "beat_in_bar": 1,
+      "bpm": 118.0,
+      "section": "stress_lift",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 20.187849,
+      "bar_index": 10,
+      "beat_in_bar": 1,
+      "bpm": 118.0,
+      "section": "stress_lift",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 22.421747,
+      "bar_index": 11,
+      "beat_in_bar": 1,
+      "bpm": 132.0,
+      "section": "stress_peak",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 24.239929,
+      "bar_index": 12,
+      "beat_in_bar": 1,
+      "bpm": 132.0,
+      "section": "stress_peak",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 26.058111,
+      "bar_index": 13,
+      "beat_in_bar": 1,
+      "bpm": 132.0,
+      "section": "stress_peak",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 27.876293,
+      "bar_index": 14,
+      "beat_in_bar": 1,
+      "bpm": 132.0,
+      "section": "stress_peak",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 29.954474,
+      "bar_index": 15,
+      "beat_in_bar": 1,
+      "bpm": 96.0,
+      "section": "stress_drop",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 32.454474,
+      "bar_index": 16,
+      "beat_in_bar": 1,
+      "bpm": 96.0,
+      "section": "stress_drop",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 34.954474,
+      "bar_index": 17,
+      "beat_in_bar": 1,
+      "bpm": 96.0,
+      "section": "stress_drop",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 37.454474,
+      "bar_index": 18,
+      "beat_in_bar": 1,
+      "bpm": 96.0,
+      "section": "stress_drop",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 39.954474,
+      "bar_index": 19,
+      "beat_in_bar": 1,
+      "bpm": 96.0,
+      "section": "stress_drop",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 42.454474,
+      "bar_index": 20,
+      "beat_in_bar": 1,
+      "bpm": 96.0,
+      "section": "stress_drop",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 45.174474,
+      "bar_index": 21,
+      "beat_in_bar": 1,
+      "bpm": 124.0,
+      "section": "stress_recover",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 47.109958,
+      "bar_index": 22,
+      "beat_in_bar": 1,
+      "bpm": 124.0,
+      "section": "stress_recover",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 49.045442,
+      "bar_index": 23,
+      "beat_in_bar": 1,
+      "bpm": 124.0,
+      "section": "stress_recover",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 50.980926,
+      "bar_index": 24,
+      "beat_in_bar": 1,
+      "bpm": 124.0,
+      "section": "stress_recover",
+      "is_downbeat": true
+    }
+  ],
+  "beat_markers": [
+    {
+      "time_sec": 0.0,
+      "bar_index": 1,
+      "beat_in_bar": 1,
+      "bpm": 104.0,
+      "section": "stress_base",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 0.576923,
+      "bar_index": 1,
+      "beat_in_bar": 2,
+      "bpm": 104.0,
+      "section": "stress_base",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 1.153846,
+      "bar_index": 1,
+      "beat_in_bar": 3,
+      "bpm": 104.0,
+      "section": "stress_base",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 1.730769,
+      "bar_index": 1,
+      "beat_in_bar": 4,
+      "bpm": 104.0,
+      "section": "stress_base",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 2.307692,
+      "bar_index": 2,
+      "beat_in_bar": 1,
+      "bpm": 104.0,
+      "section": "stress_base",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 2.884615,
+      "bar_index": 2,
+      "beat_in_bar": 2,
+      "bpm": 104.0,
+      "section": "stress_base",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 3.461538,
+      "bar_index": 2,
+      "beat_in_bar": 3,
+      "bpm": 104.0,
+      "section": "stress_base",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 4.038462,
+      "bar_index": 2,
+      "beat_in_bar": 4,
+      "bpm": 104.0,
+      "section": "stress_base",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 4.615385,
+      "bar_index": 3,
+      "beat_in_bar": 1,
+      "bpm": 104.0,
+      "section": "stress_base",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 5.192308,
+      "bar_index": 3,
+      "beat_in_bar": 2,
+      "bpm": 104.0,
+      "section": "stress_base",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 5.769231,
+      "bar_index": 3,
+      "beat_in_bar": 3,
+      "bpm": 104.0,
+      "section": "stress_base",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 6.346154,
+      "bar_index": 3,
+      "beat_in_bar": 4,
+      "bpm": 104.0,
+      "section": "stress_base",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 6.923077,
+      "bar_index": 4,
+      "beat_in_bar": 1,
+      "bpm": 104.0,
+      "section": "stress_base",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 7.5,
+      "bar_index": 4,
+      "beat_in_bar": 2,
+      "bpm": 104.0,
+      "section": "stress_base",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 8.076923,
+      "bar_index": 4,
+      "beat_in_bar": 3,
+      "bpm": 104.0,
+      "section": "stress_base",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 8.653846,
+      "bar_index": 4,
+      "beat_in_bar": 4,
+      "bpm": 104.0,
+      "section": "stress_base",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 9.230769,
+      "bar_index": 5,
+      "beat_in_bar": 1,
+      "bpm": 104.0,
+      "section": "stress_base",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 9.807692,
+      "bar_index": 5,
+      "beat_in_bar": 2,
+      "bpm": 104.0,
+      "section": "stress_base",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 10.384615,
+      "bar_index": 5,
+      "beat_in_bar": 3,
+      "bpm": 104.0,
+      "section": "stress_base",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 10.961538,
+      "bar_index": 5,
+      "beat_in_bar": 4,
+      "bpm": 104.0,
+      "section": "stress_base",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 11.538462,
+      "bar_index": 6,
+      "beat_in_bar": 1,
+      "bpm": 104.0,
+      "section": "stress_base",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 12.115385,
+      "bar_index": 6,
+      "beat_in_bar": 2,
+      "bpm": 104.0,
+      "section": "stress_base",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 12.692308,
+      "bar_index": 6,
+      "beat_in_bar": 3,
+      "bpm": 104.0,
+      "section": "stress_base",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 13.269231,
+      "bar_index": 6,
+      "beat_in_bar": 4,
+      "bpm": 104.0,
+      "section": "stress_base",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 14.086154,
+      "bar_index": 7,
+      "beat_in_bar": 1,
+      "bpm": 118.0,
+      "section": "stress_lift",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 14.594628,
+      "bar_index": 7,
+      "beat_in_bar": 2,
+      "bpm": 118.0,
+      "section": "stress_lift",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 15.103103,
+      "bar_index": 7,
+      "beat_in_bar": 3,
+      "bpm": 118.0,
+      "section": "stress_lift",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 15.611578,
+      "bar_index": 7,
+      "beat_in_bar": 4,
+      "bpm": 118.0,
+      "section": "stress_lift",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 16.120052,
+      "bar_index": 8,
+      "beat_in_bar": 1,
+      "bpm": 118.0,
+      "section": "stress_lift",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 16.628527,
+      "bar_index": 8,
+      "beat_in_bar": 2,
+      "bpm": 118.0,
+      "section": "stress_lift",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 17.137001,
+      "bar_index": 8,
+      "beat_in_bar": 3,
+      "bpm": 118.0,
+      "section": "stress_lift",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 17.645476,
+      "bar_index": 8,
+      "beat_in_bar": 4,
+      "bpm": 118.0,
+      "section": "stress_lift",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 18.15395,
+      "bar_index": 9,
+      "beat_in_bar": 1,
+      "bpm": 118.0,
+      "section": "stress_lift",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 18.662425,
+      "bar_index": 9,
+      "beat_in_bar": 2,
+      "bpm": 118.0,
+      "section": "stress_lift",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 19.1709,
+      "bar_index": 9,
+      "beat_in_bar": 3,
+      "bpm": 118.0,
+      "section": "stress_lift",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 19.679374,
+      "bar_index": 9,
+      "beat_in_bar": 4,
+      "bpm": 118.0,
+      "section": "stress_lift",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 20.187849,
+      "bar_index": 10,
+      "beat_in_bar": 1,
+      "bpm": 118.0,
+      "section": "stress_lift",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 20.696323,
+      "bar_index": 10,
+      "beat_in_bar": 2,
+      "bpm": 118.0,
+      "section": "stress_lift",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 21.204798,
+      "bar_index": 10,
+      "beat_in_bar": 3,
+      "bpm": 118.0,
+      "section": "stress_lift",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 21.713272,
+      "bar_index": 10,
+      "beat_in_bar": 4,
+      "bpm": 118.0,
+      "section": "stress_lift",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 22.421747,
+      "bar_index": 11,
+      "beat_in_bar": 1,
+      "bpm": 132.0,
+      "section": "stress_peak",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 22.876293,
+      "bar_index": 11,
+      "beat_in_bar": 2,
+      "bpm": 132.0,
+      "section": "stress_peak",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 23.330838,
+      "bar_index": 11,
+      "beat_in_bar": 3,
+      "bpm": 132.0,
+      "section": "stress_peak",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 23.785383,
+      "bar_index": 11,
+      "beat_in_bar": 4,
+      "bpm": 132.0,
+      "section": "stress_peak",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 24.239929,
+      "bar_index": 12,
+      "beat_in_bar": 1,
+      "bpm": 132.0,
+      "section": "stress_peak",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 24.694474,
+      "bar_index": 12,
+      "beat_in_bar": 2,
+      "bpm": 132.0,
+      "section": "stress_peak",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 25.14902,
+      "bar_index": 12,
+      "beat_in_bar": 3,
+      "bpm": 132.0,
+      "section": "stress_peak",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 25.603565,
+      "bar_index": 12,
+      "beat_in_bar": 4,
+      "bpm": 132.0,
+      "section": "stress_peak",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 26.058111,
+      "bar_index": 13,
+      "beat_in_bar": 1,
+      "bpm": 132.0,
+      "section": "stress_peak",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 26.512656,
+      "bar_index": 13,
+      "beat_in_bar": 2,
+      "bpm": 132.0,
+      "section": "stress_peak",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 26.967202,
+      "bar_index": 13,
+      "beat_in_bar": 3,
+      "bpm": 132.0,
+      "section": "stress_peak",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 27.421747,
+      "bar_index": 13,
+      "beat_in_bar": 4,
+      "bpm": 132.0,
+      "section": "stress_peak",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 27.876293,
+      "bar_index": 14,
+      "beat_in_bar": 1,
+      "bpm": 132.0,
+      "section": "stress_peak",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 28.330838,
+      "bar_index": 14,
+      "beat_in_bar": 2,
+      "bpm": 132.0,
+      "section": "stress_peak",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 28.785383,
+      "bar_index": 14,
+      "beat_in_bar": 3,
+      "bpm": 132.0,
+      "section": "stress_peak",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 29.239929,
+      "bar_index": 14,
+      "beat_in_bar": 4,
+      "bpm": 132.0,
+      "section": "stress_peak",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 29.954474,
+      "bar_index": 15,
+      "beat_in_bar": 1,
+      "bpm": 96.0,
+      "section": "stress_drop",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 30.579474,
+      "bar_index": 15,
+      "beat_in_bar": 2,
+      "bpm": 96.0,
+      "section": "stress_drop",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 31.204474,
+      "bar_index": 15,
+      "beat_in_bar": 3,
+      "bpm": 96.0,
+      "section": "stress_drop",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 31.829474,
+      "bar_index": 15,
+      "beat_in_bar": 4,
+      "bpm": 96.0,
+      "section": "stress_drop",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 32.454474,
+      "bar_index": 16,
+      "beat_in_bar": 1,
+      "bpm": 96.0,
+      "section": "stress_drop",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 33.079474,
+      "bar_index": 16,
+      "beat_in_bar": 2,
+      "bpm": 96.0,
+      "section": "stress_drop",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 33.704474,
+      "bar_index": 16,
+      "beat_in_bar": 3,
+      "bpm": 96.0,
+      "section": "stress_drop",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 34.329474,
+      "bar_index": 16,
+      "beat_in_bar": 4,
+      "bpm": 96.0,
+      "section": "stress_drop",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 34.954474,
+      "bar_index": 17,
+      "beat_in_bar": 1,
+      "bpm": 96.0,
+      "section": "stress_drop",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 35.579474,
+      "bar_index": 17,
+      "beat_in_bar": 2,
+      "bpm": 96.0,
+      "section": "stress_drop",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 36.204474,
+      "bar_index": 17,
+      "beat_in_bar": 3,
+      "bpm": 96.0,
+      "section": "stress_drop",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 36.829474,
+      "bar_index": 17,
+      "beat_in_bar": 4,
+      "bpm": 96.0,
+      "section": "stress_drop",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 37.454474,
+      "bar_index": 18,
+      "beat_in_bar": 1,
+      "bpm": 96.0,
+      "section": "stress_drop",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 38.079474,
+      "bar_index": 18,
+      "beat_in_bar": 2,
+      "bpm": 96.0,
+      "section": "stress_drop",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 38.704474,
+      "bar_index": 18,
+      "beat_in_bar": 3,
+      "bpm": 96.0,
+      "section": "stress_drop",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 39.329474,
+      "bar_index": 18,
+      "beat_in_bar": 4,
+      "bpm": 96.0,
+      "section": "stress_drop",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 39.954474,
+      "bar_index": 19,
+      "beat_in_bar": 1,
+      "bpm": 96.0,
+      "section": "stress_drop",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 40.579474,
+      "bar_index": 19,
+      "beat_in_bar": 2,
+      "bpm": 96.0,
+      "section": "stress_drop",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 41.204474,
+      "bar_index": 19,
+      "beat_in_bar": 3,
+      "bpm": 96.0,
+      "section": "stress_drop",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 41.829474,
+      "bar_index": 19,
+      "beat_in_bar": 4,
+      "bpm": 96.0,
+      "section": "stress_drop",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 42.454474,
+      "bar_index": 20,
+      "beat_in_bar": 1,
+      "bpm": 96.0,
+      "section": "stress_drop",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 43.079474,
+      "bar_index": 20,
+      "beat_in_bar": 2,
+      "bpm": 96.0,
+      "section": "stress_drop",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 43.704474,
+      "bar_index": 20,
+      "beat_in_bar": 3,
+      "bpm": 96.0,
+      "section": "stress_drop",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 44.329474,
+      "bar_index": 20,
+      "beat_in_bar": 4,
+      "bpm": 96.0,
+      "section": "stress_drop",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 45.174474,
+      "bar_index": 21,
+      "beat_in_bar": 1,
+      "bpm": 124.0,
+      "section": "stress_recover",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 45.658345,
+      "bar_index": 21,
+      "beat_in_bar": 2,
+      "bpm": 124.0,
+      "section": "stress_recover",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 46.142216,
+      "bar_index": 21,
+      "beat_in_bar": 3,
+      "bpm": 124.0,
+      "section": "stress_recover",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 46.626087,
+      "bar_index": 21,
+      "beat_in_bar": 4,
+      "bpm": 124.0,
+      "section": "stress_recover",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 47.109958,
+      "bar_index": 22,
+      "beat_in_bar": 1,
+      "bpm": 124.0,
+      "section": "stress_recover",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 47.593829,
+      "bar_index": 22,
+      "beat_in_bar": 2,
+      "bpm": 124.0,
+      "section": "stress_recover",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 48.0777,
+      "bar_index": 22,
+      "beat_in_bar": 3,
+      "bpm": 124.0,
+      "section": "stress_recover",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 48.561571,
+      "bar_index": 22,
+      "beat_in_bar": 4,
+      "bpm": 124.0,
+      "section": "stress_recover",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 49.045442,
+      "bar_index": 23,
+      "beat_in_bar": 1,
+      "bpm": 124.0,
+      "section": "stress_recover",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 49.529313,
+      "bar_index": 23,
+      "beat_in_bar": 2,
+      "bpm": 124.0,
+      "section": "stress_recover",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 50.013184,
+      "bar_index": 23,
+      "beat_in_bar": 3,
+      "bpm": 124.0,
+      "section": "stress_recover",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 50.497055,
+      "bar_index": 23,
+      "beat_in_bar": 4,
+      "bpm": 124.0,
+      "section": "stress_recover",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 50.980926,
+      "bar_index": 24,
+      "beat_in_bar": 1,
+      "bpm": 124.0,
+      "section": "stress_recover",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 51.464797,
+      "bar_index": 24,
+      "beat_in_bar": 2,
+      "bpm": 124.0,
+      "section": "stress_recover",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 51.948668,
+      "bar_index": 24,
+      "beat_in_bar": 3,
+      "bpm": 124.0,
+      "section": "stress_recover",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 52.432539,
+      "bar_index": 24,
+      "beat_in_bar": 4,
+      "bpm": 124.0,
+      "section": "stress_recover",
+      "is_downbeat": false
+    }
+  ],
+  "sections": [
+    {
+      "label": "stress_base",
+      "start_sec": 0.0,
+      "bpm": 104.0,
+      "bars": 6,
+      "pause_after_sec": 0.24
+    },
+    {
+      "label": "stress_base_pause",
+      "start_sec": 13.846154,
+      "bpm": 0,
+      "bars": 0,
+      "pause_after_sec": 0.0
+    },
+    {
+      "label": "stress_lift",
+      "start_sec": 14.086154,
+      "bpm": 118.0,
+      "bars": 4,
+      "pause_after_sec": 0.2
+    },
+    {
+      "label": "stress_lift_pause",
+      "start_sec": 22.221747,
+      "bpm": 0,
+      "bars": 0,
+      "pause_after_sec": 0.0
+    },
+    {
+      "label": "stress_peak",
+      "start_sec": 22.421747,
+      "bpm": 132.0,
+      "bars": 4,
+      "pause_after_sec": 0.26
+    },
+    {
+      "label": "stress_peak_pause",
+      "start_sec": 29.694474,
+      "bpm": 0,
+      "bars": 0,
+      "pause_after_sec": 0.0
+    },
+    {
+      "label": "stress_drop",
+      "start_sec": 29.954474,
+      "bpm": 96.0,
+      "bars": 6,
+      "pause_after_sec": 0.22
+    },
+    {
+      "label": "stress_drop_pause",
+      "start_sec": 44.954474,
+      "bpm": 0,
+      "bars": 0,
+      "pause_after_sec": 0.0
+    },
+    {
+      "label": "stress_recover",
+      "start_sec": 45.174474,
+      "bpm": 124.0,
+      "bars": 4,
+      "pause_after_sec": 0.0
+    }
+  ],
+  "audio_file": "audio/tempo_transition_stress.wav"
+}

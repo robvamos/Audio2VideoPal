@@ -1,0 +1,904 @@
+{
+  "id": "reference_live_calibration",
+  "title": "Reference Live Calibration",
+  "purpose": "Latency-style calibration file with repeated returns and clear pauses.",
+  "meter": "4/4",
+  "total_bars": 20,
+  "duration_seconds": 40.917798,
+  "expected_primary_bpm": 120.0,
+  "tempo_changes": [
+    {
+      "label": "calibration_lock",
+      "start_sec": 0.0,
+      "bpm": 120.0
+    },
+    {
+      "label": "calibration_shift",
+      "start_sec": 12.3,
+      "bpm": 124.0
+    },
+    {
+      "label": "calibration_hold",
+      "start_sec": 20.301935,
+      "bpm": 120.0
+    },
+    {
+      "label": "calibration_slow",
+      "start_sec": 32.641935,
+      "bpm": 116.0
+    }
+  ],
+  "pause_windows": [
+    {
+      "label": "calibration_lock_pause",
+      "start_sec": 12.0,
+      "duration_sec": 0.3
+    },
+    {
+      "label": "calibration_shift_pause",
+      "start_sec": 20.041935,
+      "duration_sec": 0.26
+    },
+    {
+      "label": "calibration_hold_pause",
+      "start_sec": 32.301935,
+      "duration_sec": 0.34
+    }
+  ],
+  "known_downbeats": [
+    {
+      "time_sec": 0.0,
+      "bar_index": 1,
+      "beat_in_bar": 1,
+      "bpm": 120.0,
+      "section": "calibration_lock",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 2.0,
+      "bar_index": 2,
+      "beat_in_bar": 1,
+      "bpm": 120.0,
+      "section": "calibration_lock",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 4.0,
+      "bar_index": 3,
+      "beat_in_bar": 1,
+      "bpm": 120.0,
+      "section": "calibration_lock",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 6.0,
+      "bar_index": 4,
+      "beat_in_bar": 1,
+      "bpm": 120.0,
+      "section": "calibration_lock",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 8.0,
+      "bar_index": 5,
+      "beat_in_bar": 1,
+      "bpm": 120.0,
+      "section": "calibration_lock",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 10.0,
+      "bar_index": 6,
+      "beat_in_bar": 1,
+      "bpm": 120.0,
+      "section": "calibration_lock",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 12.3,
+      "bar_index": 7,
+      "beat_in_bar": 1,
+      "bpm": 124.0,
+      "section": "calibration_shift",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 14.235484,
+      "bar_index": 8,
+      "beat_in_bar": 1,
+      "bpm": 124.0,
+      "section": "calibration_shift",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 16.170968,
+      "bar_index": 9,
+      "beat_in_bar": 1,
+      "bpm": 124.0,
+      "section": "calibration_shift",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 18.106452,
+      "bar_index": 10,
+      "beat_in_bar": 1,
+      "bpm": 124.0,
+      "section": "calibration_shift",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 20.301935,
+      "bar_index": 11,
+      "beat_in_bar": 1,
+      "bpm": 120.0,
+      "section": "calibration_hold",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 22.301935,
+      "bar_index": 12,
+      "beat_in_bar": 1,
+      "bpm": 120.0,
+      "section": "calibration_hold",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 24.301935,
+      "bar_index": 13,
+      "beat_in_bar": 1,
+      "bpm": 120.0,
+      "section": "calibration_hold",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 26.301935,
+      "bar_index": 14,
+      "beat_in_bar": 1,
+      "bpm": 120.0,
+      "section": "calibration_hold",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 28.301935,
+      "bar_index": 15,
+      "beat_in_bar": 1,
+      "bpm": 120.0,
+      "section": "calibration_hold",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 30.301935,
+      "bar_index": 16,
+      "beat_in_bar": 1,
+      "bpm": 120.0,
+      "section": "calibration_hold",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 32.641935,
+      "bar_index": 17,
+      "beat_in_bar": 1,
+      "bpm": 116.0,
+      "section": "calibration_slow",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 34.710901,
+      "bar_index": 18,
+      "beat_in_bar": 1,
+      "bpm": 116.0,
+      "section": "calibration_slow",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 36.779867,
+      "bar_index": 19,
+      "beat_in_bar": 1,
+      "bpm": 116.0,
+      "section": "calibration_slow",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 38.848832,
+      "bar_index": 20,
+      "beat_in_bar": 1,
+      "bpm": 116.0,
+      "section": "calibration_slow",
+      "is_downbeat": true
+    }
+  ],
+  "beat_markers": [
+    {
+      "time_sec": 0.0,
+      "bar_index": 1,
+      "beat_in_bar": 1,
+      "bpm": 120.0,
+      "section": "calibration_lock",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 0.5,
+      "bar_index": 1,
+      "beat_in_bar": 2,
+      "bpm": 120.0,
+      "section": "calibration_lock",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 1.0,
+      "bar_index": 1,
+      "beat_in_bar": 3,
+      "bpm": 120.0,
+      "section": "calibration_lock",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 1.5,
+      "bar_index": 1,
+      "beat_in_bar": 4,
+      "bpm": 120.0,
+      "section": "calibration_lock",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 2.0,
+      "bar_index": 2,
+      "beat_in_bar": 1,
+      "bpm": 120.0,
+      "section": "calibration_lock",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 2.5,
+      "bar_index": 2,
+      "beat_in_bar": 2,
+      "bpm": 120.0,
+      "section": "calibration_lock",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 3.0,
+      "bar_index": 2,
+      "beat_in_bar": 3,
+      "bpm": 120.0,
+      "section": "calibration_lock",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 3.5,
+      "bar_index": 2,
+      "beat_in_bar": 4,
+      "bpm": 120.0,
+      "section": "calibration_lock",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 4.0,
+      "bar_index": 3,
+      "beat_in_bar": 1,
+      "bpm": 120.0,
+      "section": "calibration_lock",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 4.5,
+      "bar_index": 3,
+      "beat_in_bar": 2,
+      "bpm": 120.0,
+      "section": "calibration_lock",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 5.0,
+      "bar_index": 3,
+      "beat_in_bar": 3,
+      "bpm": 120.0,
+      "section": "calibration_lock",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 5.5,
+      "bar_index": 3,
+      "beat_in_bar": 4,
+      "bpm": 120.0,
+      "section": "calibration_lock",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 6.0,
+      "bar_index": 4,
+      "beat_in_bar": 1,
+      "bpm": 120.0,
+      "section": "calibration_lock",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 6.5,
+      "bar_index": 4,
+      "beat_in_bar": 2,
+      "bpm": 120.0,
+      "section": "calibration_lock",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 7.0,
+      "bar_index": 4,
+      "beat_in_bar": 3,
+      "bpm": 120.0,
+      "section": "calibration_lock",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 7.5,
+      "bar_index": 4,
+      "beat_in_bar": 4,
+      "bpm": 120.0,
+      "section": "calibration_lock",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 8.0,
+      "bar_index": 5,
+      "beat_in_bar": 1,
+      "bpm": 120.0,
+      "section": "calibration_lock",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 8.5,
+      "bar_index": 5,
+      "beat_in_bar": 2,
+      "bpm": 120.0,
+      "section": "calibration_lock",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 9.0,
+      "bar_index": 5,
+      "beat_in_bar": 3,
+      "bpm": 120.0,
+      "section": "calibration_lock",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 9.5,
+      "bar_index": 5,
+      "beat_in_bar": 4,
+      "bpm": 120.0,
+      "section": "calibration_lock",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 10.0,
+      "bar_index": 6,
+      "beat_in_bar": 1,
+      "bpm": 120.0,
+      "section": "calibration_lock",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 10.5,
+      "bar_index": 6,
+      "beat_in_bar": 2,
+      "bpm": 120.0,
+      "section": "calibration_lock",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 11.0,
+      "bar_index": 6,
+      "beat_in_bar": 3,
+      "bpm": 120.0,
+      "section": "calibration_lock",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 11.5,
+      "bar_index": 6,
+      "beat_in_bar": 4,
+      "bpm": 120.0,
+      "section": "calibration_lock",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 12.3,
+      "bar_index": 7,
+      "beat_in_bar": 1,
+      "bpm": 124.0,
+      "section": "calibration_shift",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 12.783871,
+      "bar_index": 7,
+      "beat_in_bar": 2,
+      "bpm": 124.0,
+      "section": "calibration_shift",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 13.267742,
+      "bar_index": 7,
+      "beat_in_bar": 3,
+      "bpm": 124.0,
+      "section": "calibration_shift",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 13.751613,
+      "bar_index": 7,
+      "beat_in_bar": 4,
+      "bpm": 124.0,
+      "section": "calibration_shift",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 14.235484,
+      "bar_index": 8,
+      "beat_in_bar": 1,
+      "bpm": 124.0,
+      "section": "calibration_shift",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 14.719355,
+      "bar_index": 8,
+      "beat_in_bar": 2,
+      "bpm": 124.0,
+      "section": "calibration_shift",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 15.203226,
+      "bar_index": 8,
+      "beat_in_bar": 3,
+      "bpm": 124.0,
+      "section": "calibration_shift",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 15.687097,
+      "bar_index": 8,
+      "beat_in_bar": 4,
+      "bpm": 124.0,
+      "section": "calibration_shift",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 16.170968,
+      "bar_index": 9,
+      "beat_in_bar": 1,
+      "bpm": 124.0,
+      "section": "calibration_shift",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 16.654839,
+      "bar_index": 9,
+      "beat_in_bar": 2,
+      "bpm": 124.0,
+      "section": "calibration_shift",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 17.13871,
+      "bar_index": 9,
+      "beat_in_bar": 3,
+      "bpm": 124.0,
+      "section": "calibration_shift",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 17.622581,
+      "bar_index": 9,
+      "beat_in_bar": 4,
+      "bpm": 124.0,
+      "section": "calibration_shift",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 18.106452,
+      "bar_index": 10,
+      "beat_in_bar": 1,
+      "bpm": 124.0,
+      "section": "calibration_shift",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 18.590323,
+      "bar_index": 10,
+      "beat_in_bar": 2,
+      "bpm": 124.0,
+      "section": "calibration_shift",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 19.074194,
+      "bar_index": 10,
+      "beat_in_bar": 3,
+      "bpm": 124.0,
+      "section": "calibration_shift",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 19.558065,
+      "bar_index": 10,
+      "beat_in_bar": 4,
+      "bpm": 124.0,
+      "section": "calibration_shift",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 20.301935,
+      "bar_index": 11,
+      "beat_in_bar": 1,
+      "bpm": 120.0,
+      "section": "calibration_hold",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 20.801935,
+      "bar_index": 11,
+      "beat_in_bar": 2,
+      "bpm": 120.0,
+      "section": "calibration_hold",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 21.301935,
+      "bar_index": 11,
+      "beat_in_bar": 3,
+      "bpm": 120.0,
+      "section": "calibration_hold",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 21.801935,
+      "bar_index": 11,
+      "beat_in_bar": 4,
+      "bpm": 120.0,
+      "section": "calibration_hold",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 22.301935,
+      "bar_index": 12,
+      "beat_in_bar": 1,
+      "bpm": 120.0,
+      "section": "calibration_hold",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 22.801935,
+      "bar_index": 12,
+      "beat_in_bar": 2,
+      "bpm": 120.0,
+      "section": "calibration_hold",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 23.301935,
+      "bar_index": 12,
+      "beat_in_bar": 3,
+      "bpm": 120.0,
+      "section": "calibration_hold",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 23.801935,
+      "bar_index": 12,
+      "beat_in_bar": 4,
+      "bpm": 120.0,
+      "section": "calibration_hold",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 24.301935,
+      "bar_index": 13,
+      "beat_in_bar": 1,
+      "bpm": 120.0,
+      "section": "calibration_hold",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 24.801935,
+      "bar_index": 13,
+      "beat_in_bar": 2,
+      "bpm": 120.0,
+      "section": "calibration_hold",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 25.301935,
+      "bar_index": 13,
+      "beat_in_bar": 3,
+      "bpm": 120.0,
+      "section": "calibration_hold",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 25.801935,
+      "bar_index": 13,
+      "beat_in_bar": 4,
+      "bpm": 120.0,
+      "section": "calibration_hold",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 26.301935,
+      "bar_index": 14,
+      "beat_in_bar": 1,
+      "bpm": 120.0,
+      "section": "calibration_hold",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 26.801935,
+      "bar_index": 14,
+      "beat_in_bar": 2,
+      "bpm": 120.0,
+      "section": "calibration_hold",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 27.301935,
+      "bar_index": 14,
+      "beat_in_bar": 3,
+      "bpm": 120.0,
+      "section": "calibration_hold",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 27.801935,
+      "bar_index": 14,
+      "beat_in_bar": 4,
+      "bpm": 120.0,
+      "section": "calibration_hold",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 28.301935,
+      "bar_index": 15,
+      "beat_in_bar": 1,
+      "bpm": 120.0,
+      "section": "calibration_hold",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 28.801935,
+      "bar_index": 15,
+      "beat_in_bar": 2,
+      "bpm": 120.0,
+      "section": "calibration_hold",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 29.301935,
+      "bar_index": 15,
+      "beat_in_bar": 3,
+      "bpm": 120.0,
+      "section": "calibration_hold",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 29.801935,
+      "bar_index": 15,
+      "beat_in_bar": 4,
+      "bpm": 120.0,
+      "section": "calibration_hold",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 30.301935,
+      "bar_index": 16,
+      "beat_in_bar": 1,
+      "bpm": 120.0,
+      "section": "calibration_hold",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 30.801935,
+      "bar_index": 16,
+      "beat_in_bar": 2,
+      "bpm": 120.0,
+      "section": "calibration_hold",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 31.301935,
+      "bar_index": 16,
+      "beat_in_bar": 3,
+      "bpm": 120.0,
+      "section": "calibration_hold",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 31.801935,
+      "bar_index": 16,
+      "beat_in_bar": 4,
+      "bpm": 120.0,
+      "section": "calibration_hold",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 32.641935,
+      "bar_index": 17,
+      "beat_in_bar": 1,
+      "bpm": 116.0,
+      "section": "calibration_slow",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 33.159177,
+      "bar_index": 17,
+      "beat_in_bar": 2,
+      "bpm": 116.0,
+      "section": "calibration_slow",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 33.676418,
+      "bar_index": 17,
+      "beat_in_bar": 3,
+      "bpm": 116.0,
+      "section": "calibration_slow",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 34.19366,
+      "bar_index": 17,
+      "beat_in_bar": 4,
+      "bpm": 116.0,
+      "section": "calibration_slow",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 34.710901,
+      "bar_index": 18,
+      "beat_in_bar": 1,
+      "bpm": 116.0,
+      "section": "calibration_slow",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 35.228142,
+      "bar_index": 18,
+      "beat_in_bar": 2,
+      "bpm": 116.0,
+      "section": "calibration_slow",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 35.745384,
+      "bar_index": 18,
+      "beat_in_bar": 3,
+      "bpm": 116.0,
+      "section": "calibration_slow",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 36.262625,
+      "bar_index": 18,
+      "beat_in_bar": 4,
+      "bpm": 116.0,
+      "section": "calibration_slow",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 36.779867,
+      "bar_index": 19,
+      "beat_in_bar": 1,
+      "bpm": 116.0,
+      "section": "calibration_slow",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 37.297108,
+      "bar_index": 19,
+      "beat_in_bar": 2,
+      "bpm": 116.0,
+      "section": "calibration_slow",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 37.814349,
+      "bar_index": 19,
+      "beat_in_bar": 3,
+      "bpm": 116.0,
+      "section": "calibration_slow",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 38.331591,
+      "bar_index": 19,
+      "beat_in_bar": 4,
+      "bpm": 116.0,
+      "section": "calibration_slow",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 38.848832,
+      "bar_index": 20,
+      "beat_in_bar": 1,
+      "bpm": 116.0,
+      "section": "calibration_slow",
+      "is_downbeat": true
+    },
+    {
+      "time_sec": 39.366073,
+      "bar_index": 20,
+      "beat_in_bar": 2,
+      "bpm": 116.0,
+      "section": "calibration_slow",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 39.883315,
+      "bar_index": 20,
+      "beat_in_bar": 3,
+      "bpm": 116.0,
+      "section": "calibration_slow",
+      "is_downbeat": false
+    },
+    {
+      "time_sec": 40.400556,
+      "bar_index": 20,
+      "beat_in_bar": 4,
+      "bpm": 116.0,
+      "section": "calibration_slow",
+      "is_downbeat": false
+    }
+  ],
+  "sections": [
+    {
+      "label": "calibration_lock",
+      "start_sec": 0.0,
+      "bpm": 120.0,
+      "bars": 6,
+      "pause_after_sec": 0.3
+    },
+    {
+      "label": "calibration_lock_pause",
+      "start_sec": 12.0,
+      "bpm": 0,
+      "bars": 0,
+      "pause_after_sec": 0.0
+    },
+    {
+      "label": "calibration_shift",
+      "start_sec": 12.3,
+      "bpm": 124.0,
+      "bars": 4,
+      "pause_after_sec": 0.26
+    },
+    {
+      "label": "calibration_shift_pause",
+      "start_sec": 20.041935,
+      "bpm": 0,
+      "bars": 0,
+      "pause_after_sec": 0.0
+    },
+    {
+      "label": "calibration_hold",
+      "start_sec": 20.301935,
+      "bpm": 120.0,
+      "bars": 6,
+      "pause_after_sec": 0.34
+    },
+    {
+      "label": "calibration_hold_pause",
+      "start_sec": 32.301935,
+      "bpm": 0,
+      "bars": 0,
+      "pause_after_sec": 0.0
+    },
+    {
+      "label": "calibration_slow",
+      "start_sec": 32.641935,
+      "bpm": 116.0,
+      "bars": 4,
+      "pause_after_sec": 0.0
+    }
+  ],
+  "audio_file": "audio/reference_live_calibration.wav"
+}

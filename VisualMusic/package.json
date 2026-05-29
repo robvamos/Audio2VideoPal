@@ -8,6 +8,7 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "tauri": "tauri",
+    "generate:benchmarks": "python scripts/generate_benchmark_library.py",
     "check:desktop": "cargo check --manifest-path src-tauri/Cargo.toml",
     "test:desktop": "cargo test --manifest-path src-tauri/Cargo.toml",
     "verify": "npm run build && npm run check:desktop && npm run test:desktop"

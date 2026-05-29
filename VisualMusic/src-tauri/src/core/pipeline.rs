@@ -558,8 +558,9 @@ fn run_minimal_pipeline_in_dir(
                 file_transients = Some(summary.transient_indexes.clone());
             }
             file_source_note = Some(format!(
-                "{} | bpm {:.1} | meter {} | exists {} | waveform {}",
+                "{} | resolved {} | bpm {:.1} | meter {} | exists {} | waveform {}",
                 resolved.state.file_path,
+                resolved.resolved_path,
                 resolved.bpm,
                 resolved.meter,
                 if resolved.exists_on_disk { "yes" } else { "no" },

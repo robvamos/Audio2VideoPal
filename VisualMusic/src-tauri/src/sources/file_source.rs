@@ -2,7 +2,7 @@ use crate::db::ensure_data_dir;
 use crate::sources::synthetic_source::SyntheticPatternSource;
 use serde::{Deserialize, Serialize};
 use std::fs;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::process::Command;
 
 const FILE_SOURCE_STATE_PATH: &str = "data/listening_file_source.json";
@@ -37,6 +37,7 @@ impl Default for FileSourceState {
 
 pub struct ResolvedFileSource {
     pub state: FileSourceState,
+    pub resolved_path: String,
     pub bpm: f64,
     pub meter: String,
     pub duration_sec: f64,
@@ -107,6 +108,22 @@ fn detect_duration_with_ffprobe(file_path: &str) -> Option<f64> {
         .trim()
         .parse::<f64>()
         .ok()
+}
+
+fn visual_music_root() -> PathBuf {
+    Path::new(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .unwrap_or_else(|| Path::new("."))
+        .to_path_buf()
+}
+
+fn resolve_project_audio_path(file_path: &str) -> PathBuf {
+    let raw_path = PathBuf::from(file_path);
+    if raw_path.is_absolute() {
+        raw_path
+    } else {
+        visual_music_root().join(raw_path)
+    }
 }
 
 fn decode_file_waveform_summary(file_path: &str, duration_sec: f64) -> Option<FileWaveformSummary> {
@@ -210,7 +227,9 @@ pub fn resolve_file_source() -> Result<ResolvedFileSource, String> {
         return Err("File source selected but no file path is configured yet".to_string());
     }
 
-    let exists_on_disk = Path::new(&state.file_path).exists();
+    let resolved_path = resolve_project_audio_path(&state.file_path);
+    let resolved_path_string = resolved_path.to_string_lossy().to_string();
+    let exists_on_disk = resolved_path.exists();
     let bpm = state
         .bpm_hint
         .or_else(|| infer_bpm_from_filename(&state.file_path))
@@ -220,18 +239,19 @@ pub fn resolve_file_source() -> Result<ResolvedFileSource, String> {
     } else {
         state.meter_hint.clone()
     };
-    let duration_sec = detect_duration_with_ffprobe(&state.file_path)
+    let duration_sec = detect_duration_with_ffprobe(&resolved_path_string)
         .or(state.duration_hint_sec)
         .unwrap_or(16.0)
         .max(4.0);
     let waveform_summary = if exists_on_disk {
-        decode_file_waveform_summary(&state.file_path, duration_sec)
+        decode_file_waveform_summary(&resolved_path_string, duration_sec)
     } else {
         None
     };
 
     Ok(ResolvedFileSource {
         state,
+        resolved_path: resolved_path_string,
         bpm,
         meter,
         duration_sec,
