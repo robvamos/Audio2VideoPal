@@ -1,23 +1,35 @@
 {
-  "preset_id": "onset_only_norm",
-  "purpose": "Current best automatic benchmark sweep winner for BPM tracking and one-bar grid reconstruction.",
-  "plugin_mode": "onset_only",
-  "onset_weight": 1.0,
-  "low_band_weight": 0.0,
+  "preset_id": "blend_hfc_kick_fast",
+  "purpose": "Internet-informed second-pass sweep winner for listening-only BPM tracking and one-bar grid reconstruction.",
+  "plugin_mode": "dual_weighted",
+  "onset_weight": 0.7,
+  "low_band_weight": 0.3,
   "normalize_input": true,
   "tonality_guard": false,
-  "transient_boost": 1.8,
-  "low_smoothing_ms": 160,
-  "threshold_bias": 0.18,
+  "transient_boost": 1.95,
+  "low_smoothing_ms": 200,
+  "threshold_bias": 0.15,
+  "onset_band_hz": [
+    1200,
+    10000
+  ],
+  "low_band_hz": [
+    45,
+    180
+  ],
+  "onset_profile": "hfc",
+  "low_band_mix": 0.74,
+  "guard_strength": 0.0,
+  "analysis_version": "band-aware-v2",
   "sweep_summary": {
-    "overall_score": 0.9762,
-    "mean_grid_score": 0.9505,
+    "overall_score": 0.8732,
+    "mean_grid_score": 0.8185,
     "mean_bpm_abs_error": 0.541,
     "mean_pause_score": 1.0
   },
   "notes": [
-    "Best on the current 5-song benchmark library.",
-    "Dual weighted variants remain close and may become preferable when lower-band rhythm content is more dominant.",
-    "Recommended current focus: listening accuracy first, playback and generation later."
+    "Second sweep uses explicit frequency-band analysis instead of only full-envelope analysis.",
+    "Onset plugin is treated as the transient detector; low-band plugin is treated as the kick and pulse stabilizer.",
+    "Recommended current focus: improve listening synchrony before any playback-side evolution."
   ]
 }

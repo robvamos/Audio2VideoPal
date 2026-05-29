@@ -4,16 +4,21 @@ import json
 import math
 import statistics
 import wave
-from dataclasses import dataclass, asdict
+from dataclasses import asdict, dataclass
 from datetime import datetime
 from pathlib import Path
+
+import numpy as np
 
 
 ROOT = Path(__file__).resolve().parents[1]
 CATALOG_PATH = ROOT / "benchmarks" / "benchmark_catalog.json"
 OUTPUT_DIR = ROOT / "runtime" / "benchmark-sweeps"
+PRESET_PATH = ROOT / "configs" / "listening.benchmark-sweep.recommended.json"
 WINDOW_MS = 10
 WINDOW_SAMPLES = 441
+FRAME_SIZE = 1024
+HOP_SIZE = WINDOW_SAMPLES
 
 
 @dataclass(frozen=True)
@@ -27,6 +32,13 @@ class CandidateConfig:
     transient_boost: float
     low_smoothing_ms: int
     threshold_bias: float
+    onset_low_hz: int
+    onset_high_hz: int
+    low_band_low_hz: int
+    low_band_high_hz: int
+    onset_profile: str
+    low_band_mix: float
+    guard_strength: float
 
 
 def load_catalog() -> dict:
@@ -41,9 +53,14 @@ def load_wav_mono(path: Path) -> list[float]:
         if sample_width != 2:
             raise ValueError(f"Unsupported sample width in {path}: {sample_width}")
         pcm = []
-        for index in range(0, len(frames), sample_width * channels):
-            value = int.from_bytes(frames[index:index + 2], byteorder="little", signed=True)
-            pcm.append(value / 32768.0)
+        frame_stride = sample_width * channels
+        for index in range(0, len(frames), frame_stride):
+            values = []
+            for channel in range(channels):
+                start = index + (channel * sample_width)
+                sample = int.from_bytes(frames[start:start + 2], byteorder="little", signed=True)
+                values.append(sample / 32768.0)
+            pcm.append(sum(values) / len(values))
         return pcm
 
 
@@ -80,6 +97,116 @@ def normalize(values: list[float]) -> list[float]:
     return [value / peak for value in values]
 
 
+def frame_signal(samples: np.ndarray, frame_size: int = FRAME_SIZE, hop_size: int = HOP_SIZE) -> np.ndarray:
+    if samples.size == 0:
+        return np.zeros((0, frame_size), dtype=np.float32)
+    frame_count = max(1, int(math.ceil(max(1, samples.size - frame_size) / hop_size)) + 1)
+    padded_length = ((frame_count - 1) * hop_size) + frame_size
+    padded = np.zeros(padded_length, dtype=np.float32)
+    padded[:samples.size] = samples
+    indices = np.arange(frame_size)[None, :] + (np.arange(frame_count)[:, None] * hop_size)
+    return padded[indices]
+
+
+def positive_diff(values: np.ndarray) -> np.ndarray:
+    if values.size == 0:
+        return values
+    diff = np.diff(values, prepend=values[:1])
+    return np.maximum(diff, 0.0)
+
+
+def normalize_np(values: np.ndarray) -> np.ndarray:
+    if values.size == 0:
+        return values
+    peak = float(np.max(values))
+    if peak <= 1e-9:
+        return values
+    return values / peak
+
+
+def moving_average_np(values: np.ndarray, window_size: int) -> np.ndarray:
+    if values.size == 0 or window_size <= 1:
+        return values.copy()
+    window = np.ones(window_size, dtype=np.float32) / float(window_size)
+    return np.convolve(values, window, mode="same")
+
+
+def analyze_frequency_bands(samples: list[float], candidate: CandidateConfig) -> dict[str, list[float]]:
+    audio = np.asarray(samples, dtype=np.float32)
+    if audio.size == 0:
+        return {"onset": [], "low_band": [], "combined": [], "baseline": []}
+
+    if candidate.normalize_input:
+        peak = float(np.max(np.abs(audio)))
+        if peak > 1e-9:
+            audio = audio / peak
+
+    frames = frame_signal(audio)
+    window = np.hanning(FRAME_SIZE).astype(np.float32)
+    windowed = frames * window[None, :]
+    spectrum = np.fft.rfft(windowed, axis=1)
+    magnitude = np.abs(spectrum).astype(np.float32)
+    log_magnitude = np.log1p(magnitude)
+    freqs = np.fft.rfftfreq(FRAME_SIZE, d=1.0 / 44100.0)
+
+    onset_mask = (freqs >= candidate.onset_low_hz) & (freqs <= candidate.onset_high_hz)
+    low_mask = (freqs >= candidate.low_band_low_hz) & (freqs <= candidate.low_band_high_hz)
+    if not np.any(onset_mask):
+        onset_mask = freqs >= 700.0
+    if not np.any(low_mask):
+        low_mask = freqs <= 180.0
+
+    onset_band = log_magnitude[:, onset_mask]
+    low_band = log_magnitude[:, low_mask]
+
+    onset_flux = positive_diff(np.mean(onset_band, axis=1))
+    hfc_weights = np.linspace(1.0, 2.4, onset_band.shape[1], dtype=np.float32)
+    onset_hfc = positive_diff(np.mean(onset_band * hfc_weights[None, :], axis=1))
+    if candidate.onset_profile == "hfc":
+        onset_component = onset_hfc
+    elif candidate.onset_profile == "hybrid":
+        onset_component = (onset_flux * 0.55) + (onset_hfc * 0.45)
+    else:
+        onset_component = onset_flux
+    onset_component = normalize_np(onset_component * candidate.transient_boost)
+
+    low_energy = np.mean(low_band, axis=1)
+    low_flux = positive_diff(low_energy)
+    low_energy = normalize_np(low_energy)
+    low_flux = normalize_np(low_flux)
+    smoothing_frames = max(3, int(candidate.low_smoothing_ms / WINDOW_MS))
+    low_energy = moving_average_np(low_energy, smoothing_frames)
+    low_component = (candidate.low_band_mix * low_flux) + ((1.0 - candidate.low_band_mix) * low_energy)
+    low_component = normalize_np(low_component)
+
+    baseline = normalize_np(np.asarray(rms_envelope(samples), dtype=np.float32))
+    if baseline.size < onset_component.size:
+        baseline = np.pad(baseline, (0, onset_component.size - baseline.size))
+    else:
+        baseline = baseline[:onset_component.size]
+
+    if candidate.tonality_guard:
+        spectral_flatness = np.exp(np.mean(np.log(magnitude + 1e-8), axis=1)) / (np.mean(magnitude + 1e-8, axis=1))
+        spectral_flatness = normalize_np(spectral_flatness.astype(np.float32))
+        guard = np.clip((spectral_flatness * (1.0 + candidate.guard_strength)) + 0.18, 0.15, 1.0)
+        onset_component = onset_component * guard
+        low_component = low_component * ((guard * 0.45) + (1.0 - candidate.guard_strength * 0.15))
+
+    combined = (candidate.onset_weight * onset_component) + (candidate.low_band_weight * low_component)
+    if candidate.plugin_mode == "onset_only":
+        combined = onset_component
+    elif candidate.plugin_mode == "low_only":
+        combined = low_component
+    combined = normalize_np(combined)
+
+    return {
+        "onset": onset_component.tolist(),
+        "low_band": low_component.tolist(),
+        "combined": combined.tolist(),
+        "baseline": baseline.tolist(),
+    }
+
+
 def apply_candidate(envelope: list[float], candidate: CandidateConfig) -> list[float]:
     base = normalize(envelope) if candidate.normalize_input else envelope[:]
     if candidate.tonality_guard:
@@ -104,11 +231,27 @@ def apply_candidate(envelope: list[float], candidate: CandidateConfig) -> list[f
     return normalize(combined)
 
 
+def fuse_signals(band_analysis: dict[str, list[float]], envelope: list[float], candidate: CandidateConfig) -> list[float]:
+    band_signal = band_analysis["combined"]
+    fallback_signal = apply_candidate(envelope, candidate)
+    if not band_signal:
+        return fallback_signal
+    if not fallback_signal:
+        return band_signal
+
+    limit = min(len(band_signal), len(fallback_signal))
+    fused = [
+        (band_signal[index] * 0.82) + (fallback_signal[index] * 0.18)
+        for index in range(limit)
+    ]
+    return normalize(fused)
+
+
 def detect_peaks(signal: list[float], candidate: CandidateConfig) -> list[float]:
     if not signal:
         return []
     baseline = statistics.fmean(signal)
-    threshold = max(0.14, min(0.88, baseline + candidate.threshold_bias))
+    threshold = max(0.14, min(0.9, baseline + candidate.threshold_bias))
     peaks = []
     min_gap = max(2, int(160 / WINDOW_MS))
     last_peak = -min_gap
@@ -226,7 +369,8 @@ def evaluate_song(song: dict, candidate: CandidateConfig) -> dict:
     audio_path = ROOT / "benchmarks" / song["audio_file"]
     samples = load_wav_mono(audio_path)
     envelope = rms_envelope(samples)
-    signal = apply_candidate(envelope, candidate)
+    band_analysis = analyze_frequency_bands(samples, candidate)
+    signal = fuse_signals(band_analysis, envelope, candidate)
     peaks = detect_peaks(signal, candidate)
 
     segment_scores = []
@@ -272,18 +416,18 @@ def evaluate_song(song: dict, candidate: CandidateConfig) -> dict:
 
 def candidate_library() -> list[CandidateConfig]:
     return [
-        CandidateConfig("onset_only_raw", "onset_only", 1.0, 0.0, False, False, 1.4, 160, 0.21),
-        CandidateConfig("onset_only_norm", "onset_only", 1.0, 0.0, True, False, 1.8, 160, 0.18),
-        CandidateConfig("low_only_norm", "low_only", 0.0, 1.0, True, False, 1.0, 260, 0.15),
-        CandidateConfig("low_only_guard", "low_only", 0.0, 1.0, True, True, 1.0, 300, 0.14),
-        CandidateConfig("blend_even_norm", "dual_weighted", 0.5, 0.5, True, False, 1.5, 220, 0.17),
-        CandidateConfig("blend_even_guard", "dual_weighted", 0.5, 0.5, True, True, 1.6, 220, 0.16),
-        CandidateConfig("blend_onset_65", "dual_weighted", 0.65, 0.35, True, False, 1.8, 200, 0.16),
-        CandidateConfig("blend_onset_65_guard", "dual_weighted", 0.65, 0.35, True, True, 1.9, 200, 0.15),
-        CandidateConfig("blend_low_65", "dual_weighted", 0.35, 0.65, True, False, 1.4, 260, 0.15),
-        CandidateConfig("blend_low_65_guard", "dual_weighted", 0.35, 0.65, True, True, 1.5, 280, 0.14),
-        CandidateConfig("blend_balanced_wide", "dual_weighted", 0.58, 0.42, True, True, 1.7, 300, 0.15),
-        CandidateConfig("blend_balanced_tight", "dual_weighted", 0.58, 0.42, True, False, 1.7, 180, 0.17),
+        CandidateConfig("onset_flux_mid_hi_norm", "onset_only", 1.0, 0.0, True, False, 1.7, 180, 0.16, 700, 6500, 45, 180, "flux", 0.7, 0.0),
+        CandidateConfig("onset_hfc_bright_norm", "onset_only", 1.0, 0.0, True, False, 1.85, 180, 0.15, 1200, 10000, 45, 180, "hfc", 0.7, 0.0),
+        CandidateConfig("onset_hybrid_guard", "onset_only", 1.0, 0.0, True, True, 1.85, 180, 0.14, 700, 8000, 45, 180, "hybrid", 0.7, 0.45),
+        CandidateConfig("low_kick_core_norm", "low_only", 0.0, 1.0, True, False, 1.0, 240, 0.14, 700, 6500, 45, 140, "flux", 0.76, 0.0),
+        CandidateConfig("low_kick_punch_guard", "low_only", 0.0, 1.0, True, True, 1.0, 260, 0.13, 700, 6500, 60, 220, "flux", 0.7, 0.5),
+        CandidateConfig("blend_flux_kick_core", "dual_weighted", 0.68, 0.32, True, False, 1.8, 220, 0.15, 700, 6500, 45, 140, "flux", 0.76, 0.0),
+        CandidateConfig("blend_flux_kick_guard", "dual_weighted", 0.64, 0.36, True, True, 1.85, 220, 0.14, 700, 6500, 45, 180, "flux", 0.72, 0.45),
+        CandidateConfig("blend_hybrid_punch_guard", "dual_weighted", 0.62, 0.38, True, True, 1.9, 240, 0.14, 700, 8000, 60, 220, "hybrid", 0.68, 0.5),
+        CandidateConfig("blend_hfc_kick_fast", "dual_weighted", 0.7, 0.3, True, False, 1.95, 200, 0.15, 1200, 10000, 45, 180, "hfc", 0.74, 0.0),
+        CandidateConfig("blend_balanced_melflux", "dual_weighted", 0.58, 0.42, True, False, 1.75, 240, 0.15, 500, 7000, 45, 180, "flux", 0.7, 0.0),
+        CandidateConfig("blend_balanced_guarded", "dual_weighted", 0.56, 0.44, True, True, 1.8, 260, 0.14, 500, 7000, 45, 180, "hybrid", 0.68, 0.45),
+        CandidateConfig("blend_low_bias_safe", "dual_weighted", 0.42, 0.58, True, True, 1.6, 280, 0.13, 700, 6500, 45, 140, "flux", 0.78, 0.55),
     ]
 
 
@@ -319,10 +463,51 @@ def rank_candidates(catalog: dict) -> dict:
 
     return {
         "generated_at": datetime.now().isoformat(timespec="seconds"),
+        "analysis_version": "band-aware-v2",
         "ranked_candidates": ranked,
         "recommended_candidate": ranked[0],
         "best_per_song": best_per_song,
+        "selection_rationale": [
+            "Mid/high-band spectral flux is favored for crisp onset detection.",
+            "Low-band beat emphasis is used to reinforce kick-driven tempo tracking.",
+            "Guarded variants reduce false positives when stable tonal energy masks rhythm changes.",
+        ],
     }
+
+
+def write_recommended_preset(payload: dict) -> None:
+    recommended = payload["recommended_candidate"]
+    candidate = recommended["candidate"]
+    preset = {
+        "preset_id": candidate["id"],
+        "purpose": "Internet-informed second-pass sweep winner for listening-only BPM tracking and one-bar grid reconstruction.",
+        "plugin_mode": candidate["plugin_mode"],
+        "onset_weight": candidate["onset_weight"],
+        "low_band_weight": candidate["low_band_weight"],
+        "normalize_input": candidate["normalize_input"],
+        "tonality_guard": candidate["tonality_guard"],
+        "transient_boost": candidate["transient_boost"],
+        "low_smoothing_ms": candidate["low_smoothing_ms"],
+        "threshold_bias": candidate["threshold_bias"],
+        "onset_band_hz": [candidate["onset_low_hz"], candidate["onset_high_hz"]],
+        "low_band_hz": [candidate["low_band_low_hz"], candidate["low_band_high_hz"]],
+        "onset_profile": candidate["onset_profile"],
+        "low_band_mix": candidate["low_band_mix"],
+        "guard_strength": candidate["guard_strength"],
+        "analysis_version": payload["analysis_version"],
+        "sweep_summary": {
+            "overall_score": recommended["overall_score"],
+            "mean_grid_score": recommended["mean_grid_score"],
+            "mean_bpm_abs_error": recommended["mean_bpm_error"],
+            "mean_pause_score": recommended["mean_pause_score"],
+        },
+        "notes": [
+            "Second sweep uses explicit frequency-band analysis instead of only full-envelope analysis.",
+            "Onset plugin is treated as the transient detector; low-band plugin is treated as the kick and pulse stabilizer.",
+            "Recommended current focus: improve listening synchrony before any playback-side evolution.",
+        ],
+    }
+    PRESET_PATH.write_text(json.dumps(preset, indent=2) + "\n", encoding="utf-8")
 
 
 def write_report(payload: dict) -> None:
@@ -338,40 +523,39 @@ def write_report(payload: dict) -> None:
     latest_json.write_text(json_text, encoding="utf-8")
 
     top = payload["ranked_candidates"][:6]
+    recommended = payload["recommended_candidate"]["candidate"]
     lines = [
         "# Benchmark Sweep",
         "",
         f"Generated: `{payload['generated_at']}`",
+        f"Analysis version: `{payload['analysis_version']}`",
         "",
         "## Recommended candidate",
         "",
-        f"- id: `{payload['recommended_candidate']['candidate']['id']}`",
-        f"- mode: `{payload['recommended_candidate']['candidate']['plugin_mode']}`",
-        f"- onset / low-band: `{payload['recommended_candidate']['candidate']['onset_weight']:.2f} / {payload['recommended_candidate']['candidate']['low_band_weight']:.2f}`",
-        f"- normalize: `{payload['recommended_candidate']['candidate']['normalize_input']}`",
-        f"- tonality guard: `{payload['recommended_candidate']['candidate']['tonality_guard']}`",
+        f"- id: `{recommended['id']}`",
+        f"- mode: `{recommended['plugin_mode']}`",
+        f"- onset / low-band weights: `{recommended['onset_weight']:.2f} / {recommended['low_band_weight']:.2f}`",
+        f"- onset band: `{recommended['onset_low_hz']}-{recommended['onset_high_hz']} Hz`",
+        f"- low band: `{recommended['low_band_low_hz']}-{recommended['low_band_high_hz']} Hz`",
+        f"- onset profile: `{recommended['onset_profile']}`",
+        f"- normalize: `{recommended['normalize_input']}`",
+        f"- tonality guard: `{recommended['tonality_guard']}`",
         f"- overall score: `{payload['recommended_candidate']['overall_score']:.3f}`",
         f"- mean grid score: `{payload['recommended_candidate']['mean_grid_score']:.3f}`",
         f"- mean BPM abs error: `{payload['recommended_candidate']['mean_bpm_error']:.3f}`",
         "",
         "## Top candidates",
         "",
-        "| candidate | mode | onset | low | normalize | tonal guard | overall | bpm err | grid | pause |",
-        "|---|---|---:|---:|---|---|---:|---:|---:|---:|",
+        "| candidate | mode | onset band | low band | profile | weights | guard | overall | bpm err | grid |",
+        "|---|---|---|---|---|---|---|---:|---:|---:|",
     ]
     for item in top:
         candidate = item["candidate"]
         lines.append(
-            f"| `{candidate['id']}` | `{candidate['plugin_mode']}` | {candidate['onset_weight']:.2f} | {candidate['low_band_weight']:.2f} | `{candidate['normalize_input']}` | `{candidate['tonality_guard']}` | {item['overall_score']:.3f} | {item['mean_bpm_error']:.3f} | {item['mean_grid_score']:.3f} | {item['mean_pause_score']:.3f} |"
+            f"| `{candidate['id']}` | `{candidate['plugin_mode']}` | `{candidate['onset_low_hz']}-{candidate['onset_high_hz']}` | `{candidate['low_band_low_hz']}-{candidate['low_band_high_hz']}` | `{candidate['onset_profile']}` | `{candidate['onset_weight']:.2f}/{candidate['low_band_weight']:.2f}` | `{candidate['tonality_guard']}` | {item['overall_score']:.3f} | {item['mean_bpm_error']:.3f} | {item['mean_grid_score']:.3f} |"
         )
 
-    lines.extend(
-        [
-            "",
-            "## Best per song",
-            "",
-        ]
-    )
+    lines.extend(["", "## Best per song", ""])
     for song_id, entry in payload["best_per_song"].items():
         lines.append(f"- `{song_id}` -> `{entry['candidate_id']}` score `{entry['score']:.3f}`")
 
@@ -383,6 +567,7 @@ def write_report(payload: dict) -> None:
 def main() -> None:
     payload = rank_candidates(load_catalog())
     write_report(payload)
+    write_recommended_preset(payload)
     print(json.dumps(payload["recommended_candidate"], indent=2))
 
 
