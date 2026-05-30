@@ -1,0 +1,78 @@
+{
+  "collection": "public-bpm-tests",
+  "version": "0.1.0",
+  "description": "Public royalty-free BPM-declared loops downloaded from the internet for external listening tests.",
+  "license_note": "Check each source entry. Current selection uses Creative Commons Attribution 4.0 according to the source pages.",
+  "items": [
+    {
+      "id": "free_chill_loop_95_bpm",
+      "title": "Free Chill Loop 95 bpm",
+      "bpm": 95,
+      "meter": "4/4",
+      "duration_seconds": 10.16,
+      "style": "chill synth loop",
+      "source_site": "Orange Free Sounds",
+      "source_page": "https://orangefreesounds.com/free-chill-loop-95-bpm/",
+      "direct_download": "https://orangefreesounds.com/wp-content/uploads/2024/05/Free-chill-loop-95-bpm.mp3",
+      "license": "CC BY 4.0",
+      "local_mp3": "source-mp3/free_chill_loop_95_bpm.mp3",
+      "local_wav": "audio-wav/free_chill_loop_95_bpm.wav"
+    },
+    {
+      "id": "ambient_piano_loop_105_bpm",
+      "title": "Ambient Piano Loop 105 bpm",
+      "bpm": 105,
+      "meter": "4/4",
+      "duration_seconds": 18.34,
+      "style": "ambient piano loop",
+      "source_site": "Orange Free Sounds",
+      "source_page": "https://orangefreesounds.com/ambient-piano-loop-105-bpm/",
+      "direct_download": "https://orangefreesounds.com/wp-content/uploads/2017/01/Ambient-piano-loop-105-bpm.mp3",
+      "license": "CC BY 4.0",
+      "local_mp3": "source-mp3/ambient_piano_loop_105_bpm.mp3",
+      "local_wav": "audio-wav/ambient_piano_loop_105_bpm.wav"
+    },
+    {
+      "id": "music_loop_polaris_110_bpm",
+      "title": "Music Loop Polaris 110 bpm",
+      "bpm": 110,
+      "meter": "4/4",
+      "duration_seconds": 17.5,
+      "style": "melodic synth loop",
+      "source_site": "Orange Free Sounds",
+      "source_page": "https://orangefreesounds.com/music-loop-polaris-110-bpm/",
+      "direct_download": "https://www.orangefreesounds.com/wp-content/uploads/2015/07/Music-loop-polaris-110-bpm.mp3",
+      "license": "CC BY 4.0",
+      "local_mp3": "source-mp3/music_loop_polaris_110_bpm.mp3",
+      "local_wav": "audio-wav/music_loop_polaris_110_bpm.wav"
+    },
+    {
+      "id": "synth_movement_music_loop_120_bpm",
+      "title": "Synth Movement Music Loop 120 bpm",
+      "bpm": 120,
+      "meter": "4/4",
+      "duration_seconds": 16.07,
+      "style": "electronic synth loop",
+      "source_site": "Orange Free Sounds",
+      "source_page": "https://orangefreesounds.com/synth-movement-music-loop-120-bpm/",
+      "direct_download": "https://orangefreesounds.com/wp-content/uploads/2022/05/Synth-movement-music-loop-120-bpm.mp3",
+      "license": "CC BY 4.0",
+      "local_mp3": "source-mp3/synth_movement_music_loop_120_bpm.mp3",
+      "local_wav": "audio-wav/synth_movement_music_loop_120_bpm.wav"
+    },
+    {
+      "id": "poly_dream_synth_loop_130_bpm",
+      "title": "Poly Dream Synth Loop 130 bpm",
+      "bpm": 130,
+      "meter": "4/4",
+      "duration_seconds": 14.81,
+      "style": "dream synth loop",
+      "source_site": "Orange Free Sounds",
+      "source_page": "https://orangefreesounds.com/poly-dream-synth-loop-130-bpm/",
+      "direct_download": "https://orangefreesounds.com/wp-content/uploads/2022/02/Poly-dream-synth-loop-130-bpm.mp3",
+      "license": "CC BY 4.0",
+      "local_mp3": "source-mp3/poly_dream_synth_loop_130_bpm.mp3",
+      "local_wav": "audio-wav/poly_dream_synth_loop_130_bpm.wav"
+    }
+  ]
+}

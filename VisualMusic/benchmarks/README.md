@@ -15,6 +15,9 @@ The current base set includes:
 - `generic_reference_sample`
 - `reference_live_calibration`
 
+External validation material:
+- `public-bpm-tests/` contains public BPM-declared loops downloaded from the internet and converted to local WAV files for repeated tests.
+
 Artifacts:
 - audio files: `benchmarks/audio/*.wav`
 - metadata: `benchmarks/metadata/*.json`
