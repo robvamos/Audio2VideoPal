@@ -692,6 +692,38 @@ def compute_harmonic_downbeat_score(song: dict, harmonic_signal: list[float]) ->
     return clamp01((ratio - 0.9) / 0.7)
 
 
+def compute_bar_phase_score(song: dict, signal: list[float], peaks: list[float]) -> float:
+    markers = song["beat_markers"]
+    if not markers:
+        return 0.0
+
+    bars: dict[int, dict[int, float]] = {}
+    peak_density: dict[int, dict[int, int]] = {}
+    for marker in markers:
+        bar = marker["bar_index"]
+        beat = marker["beat_in_bar"]
+        bars.setdefault(bar, {})[beat] = sample_signal_window(signal, marker["time_sec"], radius_frames=2)
+        window_start = marker["time_sec"] - 0.045
+        window_end = marker["time_sec"] + 0.045
+        peak_density.setdefault(bar, {})[beat] = sum(1 for peak in peaks if window_start <= peak <= window_end)
+
+    bar_scores = []
+    for bar_index, beat_strengths in bars.items():
+        if len(beat_strengths) < 4:
+            continue
+        ordered_strengths = [beat_strengths.get(beat, 0.0) for beat in (1, 2, 3, 4)]
+        ordered_peaks = [peak_density[bar_index].get(beat, 0) for beat in (1, 2, 3, 4)]
+        strength_total = sum(ordered_strengths)
+        if strength_total <= 1e-6:
+            continue
+        normalized = [strength / strength_total for strength in ordered_strengths]
+        beat_one_advantage = normalized[0] - max(normalized[1], normalized[2], normalized[3])
+        peak_bonus = 0.08 if ordered_peaks[0] >= max(ordered_peaks[1], ordered_peaks[2], ordered_peaks[3]) else 0.0
+        bar_scores.append(clamp01(((beat_one_advantage + 0.12) / 0.36) + peak_bonus))
+
+    return statistics.fmean(bar_scores) if bar_scores else 0.0
+
+
 def compute_grid_alignment_score(song: dict, peaks: list[float]) -> float:
     markers = song["beat_markers"]
     if not markers:
@@ -736,14 +768,17 @@ def evaluate_song(song: dict, candidate: CandidateConfig) -> dict:
     pause_score = compute_pause_score(song, peaks)
     transient_downbeat_score = compute_downbeat_score(song, signal)
     harmonic_downbeat_score = compute_harmonic_downbeat_score(song, band_analysis["harmonic_change"])
+    bar_phase_score = compute_bar_phase_score(song, signal, peaks)
     harmonic_weight = 0.18 if song.get("suite") == "realistic_alignment" else 0.10
     harmonic_bonus = max(0.0, harmonic_downbeat_score - 0.5) * 2.0 * harmonic_weight
-    downbeat_score = clamp01(transient_downbeat_score + harmonic_bonus)
+    phase_weight = 0.32 if song.get("suite") == "realistic_alignment" else 0.26
+    downbeat_core = (transient_downbeat_score * (1.0 - phase_weight)) + (bar_phase_score * phase_weight)
+    downbeat_score = clamp01(downbeat_core + harmonic_bonus)
     grid_score = compute_grid_alignment_score(song, peaks)
     phase_score = max(0.0, min(1.0, (grid_score * 0.55) + (relock_score * 0.45)))
     musical_grid_score = (
-        phase_score * 0.30
-        + downbeat_score * 0.36
+        phase_score * 0.26
+        + downbeat_score * 0.40
         + grid_score * 0.26
         + pause_score * 0.08
     )
@@ -765,6 +800,7 @@ def evaluate_song(song: dict, candidate: CandidateConfig) -> dict:
         "pause_score": round(pause_score, 4),
         "transient_downbeat_score": round(transient_downbeat_score, 4),
         "harmonic_downbeat_score": round(harmonic_downbeat_score, 4),
+        "bar_phase_score": round(bar_phase_score, 4),
         "downbeat_score": round(downbeat_score, 4),
         "grid_score": round(grid_score, 4),
         "musical_grid_score": round(musical_grid_score, 4),
@@ -777,17 +813,10 @@ def evaluate_song(song: dict, candidate: CandidateConfig) -> dict:
 def candidate_library() -> list[CandidateConfig]:
     return [
         build_candidate("onset_flux_mid_hi_norm", "onset_only", 1.0, 0.0, True, False, 1.7, 180, 0.16, 700, 6500, 45, 180, "flux", 0.7, 0.0, 0.52, 0.32, 0.16),
-        build_candidate("onset_hfc_bright_norm", "onset_only", 1.0, 0.0, True, False, 1.85, 180, 0.15, 1200, 10000, 45, 180, "hfc", 0.7, 0.0, 0.56, 0.30, 0.14),
         build_candidate("onset_hybrid_guard", "onset_only", 1.0, 0.0, True, True, 1.85, 180, 0.14, 700, 8000, 45, 180, "hybrid", 0.7, 0.45, 0.42, 0.38, 0.20),
-        build_candidate("low_kick_core_norm", "low_only", 0.0, 1.0, True, False, 1.0, 240, 0.14, 700, 6500, 45, 140, "flux", 0.76, 0.0, 0.30, 0.42, 0.28),
-        build_candidate("low_kick_punch_guard", "low_only", 0.0, 1.0, True, True, 1.0, 260, 0.13, 700, 6500, 60, 220, "flux", 0.7, 0.5, 0.26, 0.44, 0.30),
-        build_candidate("blend_flux_kick_core", "dual_weighted", 0.68, 0.32, True, False, 1.8, 220, 0.15, 700, 6500, 45, 140, "flux", 0.76, 0.0, 0.48, 0.34, 0.18),
-        build_candidate("blend_flux_kick_guard", "dual_weighted", 0.64, 0.36, True, True, 1.85, 220, 0.14, 700, 6500, 45, 180, "flux", 0.72, 0.45, 0.40, 0.38, 0.22),
-        build_candidate("blend_hybrid_punch_guard", "dual_weighted", 0.62, 0.38, True, True, 1.9, 240, 0.14, 700, 8000, 60, 220, "hybrid", 0.68, 0.5, 0.38, 0.40, 0.22),
-        build_candidate("blend_hfc_kick_fast", "dual_weighted", 0.7, 0.3, True, False, 1.95, 200, 0.15, 1200, 10000, 45, 180, "hfc", 0.74, 0.0, 0.54, 0.30, 0.16),
-        build_candidate("blend_balanced_melflux", "dual_weighted", 0.58, 0.42, True, False, 1.75, 240, 0.15, 500, 7000, 45, 180, "flux", 0.7, 0.0, 0.44, 0.36, 0.20),
-        build_candidate("blend_balanced_guarded", "dual_weighted", 0.56, 0.44, True, True, 1.8, 260, 0.14, 500, 7000, 45, 180, "hybrid", 0.68, 0.45, 0.36, 0.40, 0.24),
-        build_candidate("blend_low_bias_safe", "dual_weighted", 0.42, 0.58, True, True, 1.6, 280, 0.13, 700, 6500, 45, 140, "flux", 0.78, 0.55, 0.30, 0.40, 0.30),
+        build_candidate("onset_hybrid_guard_long_memory", "onset_only", 1.0, 0.0, True, True, 1.82, 200, 0.14, 700, 8000, 45, 180, "hybrid", 0.7, 0.42, 0.34, 0.42, 0.24),
+        build_candidate("onset_hybrid_guard_tight_band", "onset_only", 1.0, 0.0, True, True, 1.9, 180, 0.14, 1000, 9000, 45, 180, "hybrid", 0.7, 0.45, 0.40, 0.38, 0.22),
+        build_candidate("blend_hybrid_guard_light_pulse", "dual_weighted", 0.78, 0.22, True, True, 1.88, 220, 0.14, 700, 8500, 45, 180, "hybrid", 0.76, 0.42, 0.38, 0.40, 0.22),
     ]
 
 
@@ -894,7 +923,7 @@ def rank_candidates(catalog: dict) -> dict:
     coarse_best = coarse_ranked[0]
     refined_seed = CandidateConfig(**coarse_best["candidate"])
     refined_ranked = evaluate_candidates(catalog, [refined_seed] + refine_candidate_library(refined_seed))
-    ranked = refined_ranked if refined_ranked[0]["overall_score"] >= coarse_best["overall_score"] else coarse_ranked
+    ranked = refined_ranked if refined_ranked[0]["robustness_score"] >= coarse_best["robustness_score"] else coarse_ranked
     final_best = ranked[0]
     best_per_song = {}
     for song in catalog["songs"]:

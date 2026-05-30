@@ -1,0 +1,44 @@
+{
+  "bucket": "observations",
+  "level": "phrase_block",
+  "source_run": "2026-05-30T11:00:10-benchmark-sweep",
+  "observation": "Preset onset_hybrid_guard currently balances tempo tracking and musical grid alignment better than the other tested candidates on the deterministic benchmark set.",
+  "evidence": {
+    "analysis_version": "band-aware-v6-memory-realistic-bpm80-130",
+    "recommended_candidate_id": "onset_hybrid_guard",
+    "suite_summary": {
+      "synthetic_deterministic": 5,
+      "public_bpm_loop": 5,
+      "realistic_alignment": 3
+    },
+    "mean_musical_grid_score": 0.5594,
+    "mean_downbeat_score": 0.5913,
+    "mean_grid_score": 0.3769,
+    "mean_bpm_abs_error": 1.589,
+    "robustness_score": 0.6415,
+    "suite_floor": 0.5889,
+    "score_floor": 0.501,
+    "robust_song_count": 10,
+    "top_song_ids": [
+      "phase_alignment_drill",
+      "grid16_phrase_map",
+      "tempo_transition_stress",
+      "generic_reference_sample",
+      "reference_live_calibration",
+      "public_free_chill_loop_95_bpm",
+      "public_ambient_piano_loop_105_bpm",
+      "public_music_loop_polaris_110_bpm",
+      "public_synth_movement_music_loop_120_bpm",
+      "public_poly_dream_synth_loop_130_bpm",
+      "level_06_full_band_with_voice_120_bpm",
+      "level_07_full_song_sections_122_bpm",
+      "level_10_ambiguous_half_double_time_95_bpm"
+    ],
+    "failure_hints": [
+      "dense high-frequency content may still over-trigger onset-led candidates",
+      "downbeat confidence remains more fragile than BPM on section-like material",
+      "half-time and double-time ambiguity still needs stronger phase memory in realistic arrangements"
+    ]
+  },
+  "promotion_hint": "promote only after confirmation on public loops, realistic arrangement tests and future full-song material with stronger form annotations"
+}
