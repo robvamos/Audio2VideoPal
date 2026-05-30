@@ -14,6 +14,7 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[1]
 CATALOG_PATH = ROOT / "benchmarks" / "benchmark_catalog.json"
 OUTPUT_DIR = ROOT / "runtime" / "benchmark-sweeps"
+GRAPH_OBSERVATION_DIR = ROOT / "runtime" / "graph-observations"
 PRESET_PATH = ROOT / "configs" / "listening.benchmark-sweep.recommended.json"
 WINDOW_MS = 10
 WINDOW_SAMPLES = 441
@@ -393,6 +394,13 @@ def evaluate_song(song: dict, candidate: CandidateConfig) -> dict:
     pause_score = compute_pause_score(song, peaks)
     downbeat_score = compute_downbeat_score(song, signal)
     grid_score = compute_grid_alignment_score(song, peaks)
+    phase_score = max(0.0, min(1.0, (grid_score * 0.55) + (relock_score * 0.45)))
+    musical_grid_score = (
+        phase_score * 0.30
+        + downbeat_score * 0.36
+        + grid_score * 0.26
+        + pause_score * 0.08
+    )
     overall = (
         bpm_score * 0.34
         + relock_score * 0.22
@@ -404,10 +412,12 @@ def evaluate_song(song: dict, candidate: CandidateConfig) -> dict:
     return {
         "song_id": song["id"],
         "bpm_score": round(bpm_score, 4),
+        "phase_score": round(phase_score, 4),
         "relock_score": round(relock_score, 4),
         "pause_score": round(pause_score, 4),
         "downbeat_score": round(downbeat_score, 4),
         "grid_score": round(grid_score, 4),
+        "musical_grid_score": round(musical_grid_score, 4),
         "mean_bpm_abs_error": round(statistics.fmean(bpm_errors), 3) if bpm_errors else 0.0,
         "peak_count": len(peaks),
         "overall_score": round(overall, 4),
@@ -441,12 +451,21 @@ def evaluate_candidates(catalog: dict, candidates: list[CandidateConfig]) -> lis
                 "candidate": asdict(candidate),
                 "overall_score": round(overall_score, 4),
                 "mean_grid_score": round(statistics.fmean(item["grid_score"] for item in per_song), 4),
+                "mean_musical_grid_score": round(statistics.fmean(item["musical_grid_score"] for item in per_song), 4),
+                "mean_downbeat_score": round(statistics.fmean(item["downbeat_score"] for item in per_song), 4),
                 "mean_bpm_error": round(statistics.fmean(item["mean_bpm_abs_error"] for item in per_song), 3),
                 "mean_pause_score": round(statistics.fmean(item["pause_score"] for item in per_song), 4),
                 "songs": per_song,
             }
         )
-    return sorted(results, key=lambda item: (-item["overall_score"], item["mean_bpm_error"]))
+    return sorted(
+        results,
+        key=lambda item: (
+            -item["mean_musical_grid_score"],
+            -item["overall_score"],
+            item["mean_bpm_error"],
+        ),
+    )
 
 
 def refine_candidate_library(seed: CandidateConfig) -> list[CandidateConfig]:
@@ -548,6 +567,8 @@ def write_recommended_preset(payload: dict) -> None:
         "sweep_summary": {
             "overall_score": recommended["overall_score"],
             "mean_grid_score": recommended["mean_grid_score"],
+            "mean_musical_grid_score": recommended["mean_musical_grid_score"],
+            "mean_downbeat_score": recommended["mean_downbeat_score"],
             "mean_bpm_abs_error": recommended["mean_bpm_error"],
             "mean_pause_score": recommended["mean_pause_score"],
         },
@@ -558,6 +579,38 @@ def write_recommended_preset(payload: dict) -> None:
         ],
     }
     PRESET_PATH.write_text(json.dumps(preset, indent=2) + "\n", encoding="utf-8")
+
+
+def write_graph_observation(payload: dict) -> None:
+    GRAPH_OBSERVATION_DIR.mkdir(parents=True, exist_ok=True)
+    recommended = payload["recommended_candidate"]
+    candidate = recommended["candidate"]
+    observation = {
+        "bucket": "observations",
+        "level": "phrase_block",
+        "source_run": f"{payload['generated_at']}-benchmark-sweep",
+        "observation": (
+            f"Preset {candidate['id']} currently balances tempo tracking and musical grid alignment "
+            "better than the other tested candidates on the deterministic benchmark set."
+        ),
+        "evidence": {
+            "analysis_version": payload["analysis_version"],
+            "recommended_candidate_id": candidate["id"],
+            "mean_musical_grid_score": recommended["mean_musical_grid_score"],
+            "mean_downbeat_score": recommended["mean_downbeat_score"],
+            "mean_grid_score": recommended["mean_grid_score"],
+            "mean_bpm_abs_error": recommended["mean_bpm_error"],
+            "top_song_ids": [song["song_id"] for song in recommended["songs"]],
+            "failure_hints": [
+                "dense high-frequency content may still over-trigger onset-led candidates",
+                "downbeat confidence remains more fragile than BPM on section-like material",
+            ],
+        },
+        "promotion_hint": "promote only after confirmation on public loops and more realistic full-song material",
+    }
+    timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+    path = GRAPH_OBSERVATION_DIR / f"{timestamp}-benchmark-sweep-observation.json"
+    path.write_text(json.dumps(observation, indent=2) + "\n", encoding="utf-8")
 
 
 def write_report(payload: dict) -> None:
@@ -592,17 +645,19 @@ def write_report(payload: dict) -> None:
         f"- tonality guard: `{recommended['tonality_guard']}`",
         f"- overall score: `{payload['recommended_candidate']['overall_score']:.3f}`",
         f"- mean grid score: `{payload['recommended_candidate']['mean_grid_score']:.3f}`",
+        f"- mean musical grid score: `{payload['recommended_candidate']['mean_musical_grid_score']:.3f}`",
+        f"- mean downbeat score: `{payload['recommended_candidate']['mean_downbeat_score']:.3f}`",
         f"- mean BPM abs error: `{payload['recommended_candidate']['mean_bpm_error']:.3f}`",
         "",
         "## Top candidates",
         "",
-        "| candidate | mode | onset band | low band | profile | weights | guard | overall | bpm err | grid |",
-        "|---|---|---|---|---|---|---|---:|---:|---:|",
+        "| candidate | mode | onset band | low band | profile | weights | guard | musical | downbeat | overall | bpm err | grid |",
+        "|---|---|---|---|---|---|---|---:|---:|---:|---:|---:|",
     ]
     for item in top:
         candidate = item["candidate"]
         lines.append(
-            f"| `{candidate['id']}` | `{candidate['plugin_mode']}` | `{candidate['onset_low_hz']}-{candidate['onset_high_hz']}` | `{candidate['low_band_low_hz']}-{candidate['low_band_high_hz']}` | `{candidate['onset_profile']}` | `{candidate['onset_weight']:.2f}/{candidate['low_band_weight']:.2f}` | `{candidate['tonality_guard']}` | {item['overall_score']:.3f} | {item['mean_bpm_error']:.3f} | {item['mean_grid_score']:.3f} |"
+            f"| `{candidate['id']}` | `{candidate['plugin_mode']}` | `{candidate['onset_low_hz']}-{candidate['onset_high_hz']}` | `{candidate['low_band_low_hz']}-{candidate['low_band_high_hz']}` | `{candidate['onset_profile']}` | `{candidate['onset_weight']:.2f}/{candidate['low_band_weight']:.2f}` | `{candidate['tonality_guard']}` | {item['mean_musical_grid_score']:.3f} | {item['mean_downbeat_score']:.3f} | {item['overall_score']:.3f} | {item['mean_bpm_error']:.3f} | {item['mean_grid_score']:.3f} |"
         )
 
     lines.extend(["", "## Best per song", ""])
@@ -618,6 +673,7 @@ def main() -> None:
     payload = rank_candidates(load_catalog())
     write_report(payload)
     write_recommended_preset(payload)
+    write_graph_observation(payload)
     print(json.dumps(payload["recommended_candidate"], indent=2))
 
 

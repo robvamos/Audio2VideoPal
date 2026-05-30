@@ -1,0 +1,17 @@
+{
+  "experiment_id": "20260530-harmonic-downbeat-hints",
+  "class": "harmonic_hint",
+  "hypothesis": "Chord-change and harmonic-loop-return hints can improve downbeat and phrase-start detection without becoming a primary BPM detector.",
+  "changes": [
+    "add DownbeatHypothesisTracker with concurrent beat 1/2/3/4 hypotheses",
+    "add HarmonicHintBranch for chroma and chord-change evidence",
+    "keep harmonic weight at zero for BPM and low weight for downbeat/phrase"
+  ],
+  "success_metrics": {
+    "mean_musical_grid_score_delta_min": 0.03,
+    "mean_downbeat_score_delta_min": 0.05,
+    "mean_bpm_abs_error_delta_max": 0.2
+  },
+  "rollback_condition": "Rollback if BPM error worsens by more than 0.5 or if false downbeat behavior clearly increases.",
+  "status": "planned"
+}

@@ -1,0 +1,26 @@
+{
+  "bucket": "observations",
+  "level": "phrase_block",
+  "source_run": "2026-05-30T03:12:25-benchmark-sweep",
+  "observation": "Preset blend_balanced_guarded_refine_04 currently balances tempo tracking and musical grid alignment better than the other tested candidates on the deterministic benchmark set.",
+  "evidence": {
+    "analysis_version": "band-aware-v3",
+    "recommended_candidate_id": "blend_balanced_guarded_refine_04",
+    "mean_musical_grid_score": 0.7475,
+    "mean_downbeat_score": 0.52,
+    "mean_grid_score": 0.8124,
+    "mean_bpm_abs_error": 0.699,
+    "top_song_ids": [
+      "phase_alignment_drill",
+      "grid16_phrase_map",
+      "tempo_transition_stress",
+      "generic_reference_sample",
+      "reference_live_calibration"
+    ],
+    "failure_hints": [
+      "dense high-frequency content may still over-trigger onset-led candidates",
+      "downbeat confidence remains more fragile than BPM on section-like material"
+    ]
+  },
+  "promotion_hint": "promote only after confirmation on public loops and more realistic full-song material"
+}

@@ -1,30 +1,32 @@
 {
-  "preset_id": "blend_hfc_kick_fast_refine_07",
+  "preset_id": "blend_balanced_guarded_refine_04",
   "purpose": "Internet-informed second-pass sweep winner for listening-only BPM tracking and one-bar grid reconstruction.",
   "plugin_mode": "dual_weighted",
-  "onset_weight": 0.66,
-  "low_band_weight": 0.34,
+  "onset_weight": 0.7,
+  "low_band_weight": 0.3,
   "normalize_input": true,
-  "tonality_guard": false,
-  "transient_boost": 1.88,
-  "low_smoothing_ms": 200,
-  "threshold_bias": 0.15,
+  "tonality_guard": true,
+  "transient_boost": 1.95,
+  "low_smoothing_ms": 260,
+  "threshold_bias": 0.16,
   "onset_band_hz": [
     1200,
-    10000
+    11000
   ],
   "low_band_hz": [
     45,
     180
   ],
-  "onset_profile": "hfc",
-  "low_band_mix": 0.78,
-  "guard_strength": 0.0,
+  "onset_profile": "hybrid",
+  "low_band_mix": 0.74,
+  "guard_strength": 0.45,
   "analysis_version": "band-aware-v3",
   "sweep_summary": {
-    "overall_score": 0.874,
-    "mean_grid_score": 0.8201,
-    "mean_bpm_abs_error": 0.541,
+    "overall_score": 0.8745,
+    "mean_grid_score": 0.8124,
+    "mean_musical_grid_score": 0.7475,
+    "mean_downbeat_score": 0.52,
+    "mean_bpm_abs_error": 0.699,
     "mean_pause_score": 1.0
   },
   "notes": [
