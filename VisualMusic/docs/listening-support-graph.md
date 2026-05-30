@@ -5,8 +5,10 @@ This support graph is the durable memory layer for listening strategy decisions.
 Artifacts:
 
 - graph data: `VisualMusic/knowledge/listening-support-graph.json`
+- growth levels: `VisualMusic/knowledge/listening-pattern-levels.json`
 - plugin guidance: `VisualMusic/docs/listening-plugin-guidance.md`
 - recommended preset: `VisualMusic/configs/listening.benchmark-sweep.recommended.json`
+- growth model: `VisualMusic/docs/listening-graph-growth-model.md`
 
 ## Why this exists
 
@@ -68,6 +70,34 @@ Use this graph when:
 - preparing UI panels that need compact expert guidance
 - reasoning about whether the system is aligned only to tempo or also to musical phase
 - asking which form prior should be tested before the system has enough song-specific memory
+
+## How it can grow
+
+The graph is now structured to grow across levels instead of as one flat list.
+
+Levels:
+
+- `micro_timing`
+- `bar_role`
+- `riff_cycle`
+- `phrase_block`
+- `section_phase`
+- `form_cycle`
+- `genre_prior`
+
+Buckets:
+
+- `priors`
+- `observations`
+- `confirmed_memory`
+- `exceptions`
+
+This means future learning can record:
+
+- common form expectations
+- actual observations from one song
+- repeated confirmations
+- useful deviations
 
 ## Next extensions
 

@@ -1,0 +1,93 @@
+{
+  "schema_id": "listening-pattern-levels",
+  "version": "0.1.0",
+  "levels": [
+    {
+      "id": "micro_timing",
+      "scope": "sub-beat and beat",
+      "examples": [
+        "attack placement",
+        "swing feel",
+        "syncopated anticipation",
+        "ghost-note density"
+      ]
+    },
+    {
+      "id": "bar_role",
+      "scope": "inside one bar",
+      "examples": [
+        "beat 1 anchor",
+        "beat 2 response",
+        "beat 3 reinforcement",
+        "beat 4 pickup"
+      ]
+    },
+    {
+      "id": "riff_cycle",
+      "scope": "2-bar to 4-bar loop",
+      "examples": [
+        "2-bar metal riff",
+        "4-bar rock turnaround",
+        "funk vamp accumulation"
+      ]
+    },
+    {
+      "id": "phrase_block",
+      "scope": "4-bar to 8-bar phrase",
+      "examples": [
+        "8-bar pop verse",
+        "8-bar chorus",
+        "12-bar blues split into 4-bar subphrases"
+      ]
+    },
+    {
+      "id": "section_phase",
+      "scope": "song section identity",
+      "examples": [
+        "verse",
+        "pre-chorus",
+        "chorus",
+        "bridge",
+        "breakdown",
+        "solo"
+      ]
+    },
+    {
+      "id": "form_cycle",
+      "scope": "whole-song organization",
+      "examples": [
+        "intro -> verse -> chorus cycle",
+        "AABA",
+        "verse / chorus / bridge / final chorus"
+      ]
+    },
+    {
+      "id": "genre_prior",
+      "scope": "style-conditioned expectation",
+      "examples": [
+        "blues 12-bar loop",
+        "pop 8-bar section framing",
+        "funk beat-one emphasis",
+        "metal riff and breakdown contrast"
+      ]
+    }
+  ],
+  "growth_buckets": [
+    {
+      "id": "priors",
+      "purpose": "common architectural patterns known before analyzing a specific song"
+    },
+    {
+      "id": "observations",
+      "purpose": "candidate patterns observed in a concrete song or benchmark run"
+    },
+    {
+      "id": "confirmed_memory",
+      "purpose": "patterns repeatedly validated and safe to reuse as project memory"
+    },
+    {
+      "id": "exceptions",
+      "purpose": "useful deviations that prevent the graph from overfitting common form"
+    }
+  ]
+}

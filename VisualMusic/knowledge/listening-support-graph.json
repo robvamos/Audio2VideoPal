@@ -2,6 +2,16 @@
   "graph_id": "listening-support-graph",
   "version": "0.1.0",
   "scope": "Audio2VideoPal listening-only optimization support graph",
+  "pattern_growth_model": {
+    "levels_path": "knowledge/listening-pattern-levels.json",
+    "buckets": [
+      "priors",
+      "observations",
+      "confirmed_memory",
+      "exceptions"
+    ],
+    "promotion_rule": "Promote a pattern from observation to confirmed memory only after repeated validation across benchmark or song runs."
+  },
   "nodes": [
     {
       "id": "genre.blues",
@@ -388,6 +398,8 @@
     {
       "id": "sequence.blues_12_bar_standard",
       "genre": "blues",
+      "bucket": "priors",
+      "level": "form_cycle",
       "pattern": "pattern.twelve_bar_blues",
       "bars": [
         { "bar": 1, "role": "tonic statement", "harmony_hint": "I" },
@@ -407,6 +419,8 @@
     {
       "id": "sequence.rock_4_bar_riff",
       "genre": "rock",
+      "bucket": "priors",
+      "level": "riff_cycle",
       "pattern": "pattern.two_bar_riff",
       "bars": [
         { "bar": 1, "role": "riff anchor" },
@@ -418,6 +432,8 @@
     {
       "id": "sequence.pop_8_bar_verse",
       "genre": "pop",
+      "bucket": "priors",
+      "level": "phrase_block",
       "pattern": "pattern.eight_bar_section",
       "bars": [
         { "bar": 1, "role": "motif entry" },
@@ -433,6 +449,8 @@
     {
       "id": "sequence.pop_8_bar_chorus",
       "genre": "pop",
+      "bucket": "priors",
+      "level": "phrase_block",
       "pattern": "pattern.eight_bar_section",
       "bars": [
         { "bar": 1, "role": "hook launch" },
@@ -448,6 +466,8 @@
     {
       "id": "sequence.funk_1_bar_vamp",
       "genre": "funk",
+      "bucket": "priors",
+      "level": "bar_role",
       "pattern": "pattern.one_bar_vamp",
       "quarters": [
         { "quarter": 1, "role": "the one / main anchor" },
@@ -459,6 +479,8 @@
     {
       "id": "sequence.metal_2_bar_riff",
       "genre": "metal",
+      "bucket": "priors",
+      "level": "riff_cycle",
       "pattern": "pattern.two_bar_riff",
       "bars": [
         { "bar": 1, "role": "riff motif statement" },
@@ -468,6 +490,8 @@
     {
       "id": "sequence.common_song_phase_cycle",
       "genre": "cross_genre",
+      "bucket": "priors",
+      "level": "form_cycle",
       "pattern": "pattern.verse_chorus_bridge",
       "sections": [
         "intro",
@@ -483,6 +507,11 @@
       ]
     }
   ],
+  "learning_slots": {
+    "observations": [],
+    "confirmed_memory": [],
+    "exceptions": []
+  },
   "sources": [
     {
       "topic": "12-bar blues cycle and AA'B phrase logic",
