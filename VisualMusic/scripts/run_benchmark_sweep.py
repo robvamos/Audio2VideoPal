@@ -22,6 +22,8 @@ WINDOW_MS = 10
 WINDOW_SAMPLES = 441
 FRAME_SIZE = 1024
 HOP_SIZE = WINDOW_SAMPLES
+MIN_TRACKING_BPM = 80.0
+MAX_TRACKING_BPM = 139.0
 
 
 @dataclass(frozen=True)
@@ -449,6 +451,11 @@ def estimate_bpm_for_segment(segment: dict, peaks: list[float]) -> tuple[float |
         (estimated_bpm * 2.0, 1),
         (estimated_bpm * 4.0, 2),
     ]
+    harmonic_candidates = [
+        (candidate_bpm, harmonic_steps)
+        for candidate_bpm, harmonic_steps in harmonic_candidates
+        if MIN_TRACKING_BPM <= candidate_bpm <= MAX_TRACKING_BPM
+    ] or [(min(MAX_TRACKING_BPM, max(MIN_TRACKING_BPM, estimated_bpm)), 2)]
     corrected_bpm, harmonic_steps = min(
         harmonic_candidates,
         key=lambda item: abs(item[0] - bpm),
@@ -697,8 +704,9 @@ def rank_candidates(catalog: dict) -> dict:
 
     return {
         "generated_at": datetime.now().isoformat(timespec="seconds"),
-        "analysis_version": "band-aware-v4-memory-realistic",
+        "analysis_version": "band-aware-v5-memory-realistic-bpm80-139",
         "suite_summary": catalog.get("suite_summary", {}),
+        "tracking_bpm_range": [MIN_TRACKING_BPM, MAX_TRACKING_BPM],
         "coarse_recommended_candidate": coarse_best,
         "refined_recommended_candidate": refined_ranked[0],
         "ranked_candidates": ranked,
@@ -711,6 +719,7 @@ def rank_candidates(catalog: dict) -> dict:
             "A second local sweep is run around the first winner so the preset is refined instead of chosen from a single coarse grid.",
             "Short, medium and long memory windows are blended before beat decisions to reduce jitter without losing reactivity.",
             "Realistic arrangement tests and public BPM loops are weighted into the sweep so the winner is not chosen only on clean synthetic drills.",
+            "Current rhythm tracking is intentionally constrained to 80-139 BPM to keep lock decisions inside the project's present operating corridor.",
         ],
     }
 
@@ -739,6 +748,7 @@ def write_recommended_preset(payload: dict) -> None:
             "medium": candidate["memory_medium_weight"],
             "long": candidate["memory_long_weight"],
         },
+        "tracking_bpm_range": [MIN_TRACKING_BPM, MAX_TRACKING_BPM],
         "analysis_version": payload["analysis_version"],
         "sweep_summary": {
             "overall_score": recommended["overall_score"],
@@ -812,6 +822,7 @@ def write_report(payload: dict) -> None:
         f"Generated: `{payload['generated_at']}`",
         f"Analysis version: `{payload['analysis_version']}`",
         f"Evaluation suites: `{payload.get('suite_summary', {})}`",
+        f"Tracking BPM range: `{MIN_TRACKING_BPM:.0f}-{MAX_TRACKING_BPM:.0f}`",
         "",
         "## Recommended candidate",
         "",

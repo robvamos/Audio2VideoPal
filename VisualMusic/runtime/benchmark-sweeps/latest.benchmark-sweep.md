@@ -1,8 +1,9 @@
 # Benchmark Sweep
 
-Generated: `2026-05-30T03:40:33`
-Analysis version: `band-aware-v4-memory-realistic`
+Generated: `2026-05-30T03:51:21`
+Analysis version: `band-aware-v5-memory-realistic-bpm80-139`
 Evaluation suites: `{'synthetic_deterministic': 5, 'public_bpm_loop': 5, 'realistic_alignment': 3}`
+Tracking BPM range: `80-139`
 
 ## Recommended candidate
 
@@ -26,7 +27,7 @@ Evaluation suites: `{'synthetic_deterministic': 5, 'public_bpm_loop': 5, 'realis
 | candidate | mode | onset band | low band | profile | listen mem | weights | guard | musical | downbeat | overall | bpm err | grid |
 |---|---|---|---|---|---|---|---|---:|---:|---:|---:|---:|
 | `onset_flux_mid_hi_norm` | `onset_only` | `700-6500` | `45-180` | `flux` | `0.52/0.32/0.16` | `1.00/0.00` | `False` | 0.651 | 0.606 | 0.746 | 3.352 | 0.541 |
-| `onset_flux_mid_hi_norm_refine_08` | `dual_weighted` | `1200-10000` | `45-180` | `flux` | `0.52/0.32/0.16` | `0.74/0.26` | `False` | 0.631 | 0.541 | 0.747 | 3.671 | 0.547 |
+| `onset_flux_mid_hi_norm_refine_08` | `dual_weighted` | `1200-10000` | `45-180` | `flux` | `0.52/0.32/0.16` | `0.74/0.26` | `False` | 0.631 | 0.541 | 0.747 | 4.003 | 0.547 |
 | `onset_flux_mid_hi_norm_refine_10` | `dual_weighted` | `1400-11000` | `45-160` | `flux` | `0.52/0.32/0.16` | `0.72/0.28` | `False` | 0.630 | 0.543 | 0.744 | 3.276 | 0.543 |
 | `onset_flux_mid_hi_norm_refine_03` | `dual_weighted` | `1200-9000` | `45-180` | `flux` | `0.52/0.32/0.16` | `0.70/0.30` | `False` | 0.629 | 0.535 | 0.728 | 3.788 | 0.547 |
 | `onset_flux_mid_hi_norm_refine_02` | `dual_weighted` | `1000-10000` | `45-180` | `flux` | `0.52/0.32/0.16` | `0.72/0.28` | `False` | 0.627 | 0.544 | 0.744 | 2.483 | 0.538 |

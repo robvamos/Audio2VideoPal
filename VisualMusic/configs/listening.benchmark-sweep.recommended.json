@@ -25,7 +25,11 @@
     "medium": 0.32,
     "long": 0.16
   },
-  "analysis_version": "band-aware-v4-memory-realistic",
+  "tracking_bpm_range": [
+    80.0,
+    139.0
+  ],
+  "analysis_version": "band-aware-v5-memory-realistic-bpm80-139",
   "sweep_summary": {
     "overall_score": 0.7458,
     "mean_grid_score": 0.5408,

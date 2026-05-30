@@ -1,11 +1,15 @@
 {
-  "generated_at": "2026-05-30T03:40:33",
-  "analysis_version": "band-aware-v4-memory-realistic",
+  "generated_at": "2026-05-30T03:51:21",
+  "analysis_version": "band-aware-v5-memory-realistic-bpm80-139",
   "suite_summary": {
     "synthetic_deterministic": 5,
     "public_bpm_loop": 5,
     "realistic_alignment": 3
   },
+  "tracking_bpm_range": [
+    80.0,
+    139.0
+  ],
   "coarse_recommended_candidate": {
     "candidate": {
       "id": "onset_flux_mid_hi_norm",
@@ -711,7 +715,7 @@
       "mean_grid_score": 0.5467,
       "mean_musical_grid_score": 0.6314,
       "mean_downbeat_score": 0.5415,
-      "mean_bpm_error": 3.671,
+      "mean_bpm_error": 4.003,
       "mean_pause_score": 1.0,
       "songs": [
         {
@@ -815,7 +819,7 @@
           "downbeat_score": 0.3436,
           "grid_score": 0.1438,
           "musical_grid_score": 0.3998,
-          "mean_bpm_abs_error": 29.051,
+          "mean_bpm_abs_error": 34.0,
           "peak_count": 15,
           "overall_score": 0.4311
         },
@@ -2067,7 +2071,7 @@
       "mean_grid_score": 0.5385,
       "mean_musical_grid_score": 0.6261,
       "mean_downbeat_score": 0.5365,
-      "mean_bpm_error": 3.906,
+      "mean_bpm_error": 4.239,
       "mean_pause_score": 1.0,
       "songs": [
         {
@@ -2171,7 +2175,7 @@
           "downbeat_score": 0.3294,
           "grid_score": 0.1471,
           "musical_grid_score": 0.3961,
-          "mean_bpm_abs_error": 29.051,
+          "mean_bpm_abs_error": 34.0,
           "peak_count": 15,
           "overall_score": 0.4297
         },
@@ -3232,6 +3236,7 @@
     "Guarded variants reduce false positives when stable tonal energy masks rhythm changes.",
     "A second local sweep is run around the first winner so the preset is refined instead of chosen from a single coarse grid.",
     "Short, medium and long memory windows are blended before beat decisions to reduce jitter without losing reactivity.",
-    "Realistic arrangement tests and public BPM loops are weighted into the sweep so the winner is not chosen only on clean synthetic drills."
+    "Realistic arrangement tests and public BPM loops are weighted into the sweep so the winner is not chosen only on clean synthetic drills.",
+    "Current rhythm tracking is intentionally constrained to 80-139 BPM to keep lock decisions inside the project's present operating corridor."
   ]
 }
