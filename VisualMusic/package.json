@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "tauri": "tauri",
     "generate:benchmarks": "python scripts/generate_benchmark_library.py",
+    "generate:realistic-tests": "python scripts/generate_realistic_alignment_tests.py",
     "sweep:benchmarks": "python scripts/run_benchmark_sweep.py",
     "check:desktop": "cargo check --manifest-path src-tauri/Cargo.toml",
     "test:desktop": "cargo test --manifest-path src-tauri/Cargo.toml",

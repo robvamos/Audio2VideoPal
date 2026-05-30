@@ -13,6 +13,8 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
 CATALOG_PATH = ROOT / "benchmarks" / "benchmark_catalog.json"
+PUBLIC_CATALOG_PATH = ROOT / "benchmarks" / "public-bpm-tests" / "catalog.json"
+REALISTIC_CATALOG_PATH = ROOT / "benchmarks" / "realistic-alignment-tests" / "catalog.json"
 OUTPUT_DIR = ROOT / "runtime" / "benchmark-sweeps"
 GRAPH_OBSERVATION_DIR = ROOT / "runtime" / "graph-observations"
 PRESET_PATH = ROOT / "configs" / "listening.benchmark-sweep.recommended.json"
@@ -40,10 +42,117 @@ class CandidateConfig:
     onset_profile: str
     low_band_mix: float
     guard_strength: float
+    memory_short_weight: float
+    memory_medium_weight: float
+    memory_long_weight: float
+
+
+def build_constant_song(
+    *,
+    song_id: str,
+    title: str,
+    audio_file: str,
+    bpm: float,
+    duration_seconds: float,
+    suite: str,
+    purpose: str,
+    evaluation_weight: float,
+) -> dict:
+    beat_period = 60.0 / bpm
+    beats_per_bar = 4
+    total_bars = max(1, int(duration_seconds / (beat_period * beats_per_bar)))
+    beat_markers = []
+    known_downbeats = []
+    for bar_index in range(1, total_bars + 1):
+        bar_start = (bar_index - 1) * beat_period * beats_per_bar
+        if bar_start >= duration_seconds - 0.01:
+            break
+        known_downbeats.append(
+            {
+                "time_sec": round(bar_start, 6),
+                "bar_index": bar_index,
+                "beat_in_bar": 1,
+                "bpm": bpm,
+                "section": "loop",
+                "is_downbeat": True,
+            }
+        )
+        for beat_in_bar in range(1, beats_per_bar + 1):
+            beat_time = bar_start + ((beat_in_bar - 1) * beat_period)
+            if beat_time >= duration_seconds - 0.005:
+                break
+            beat_markers.append(
+                {
+                    "time_sec": round(beat_time, 6),
+                    "bar_index": bar_index,
+                    "beat_in_bar": beat_in_bar,
+                    "bpm": bpm,
+                    "section": "loop",
+                    "is_downbeat": beat_in_bar == 1,
+                }
+            )
+
+    return {
+        "id": song_id,
+        "title": title,
+        "purpose": purpose,
+        "meter": "4/4",
+        "suite": suite,
+        "evaluation_weight": evaluation_weight,
+        "total_bars": total_bars,
+        "duration_seconds": duration_seconds,
+        "expected_primary_bpm": bpm,
+        "tempo_changes": [{"label": "loop", "start_sec": 0.0, "bpm": bpm}],
+        "pause_windows": [],
+        "known_downbeats": known_downbeats,
+        "beat_markers": beat_markers,
+        "sections": [{"label": "loop", "start_sec": 0.0, "bars": total_bars, "bpm": bpm}],
+        "audio_file": audio_file,
+    }
+
+
+def build_suite_summary(songs: list[dict]) -> dict[str, int]:
+    summary: dict[str, int] = {}
+    for song in songs:
+        suite = song.get("suite", "synthetic")
+        summary[suite] = summary.get(suite, 0) + 1
+    return summary
 
 
 def load_catalog() -> dict:
-    return json.loads(CATALOG_PATH.read_text(encoding="utf-8"))
+    base_catalog = json.loads(CATALOG_PATH.read_text(encoding="utf-8"))
+    songs = []
+    for song in base_catalog["songs"]:
+        enriched = dict(song)
+        enriched.setdefault("suite", "synthetic_deterministic")
+        enriched.setdefault("evaluation_weight", 1.0)
+        songs.append(enriched)
+
+    if PUBLIC_CATALOG_PATH.exists():
+        public_catalog = json.loads(PUBLIC_CATALOG_PATH.read_text(encoding="utf-8"))
+        for item in public_catalog.get("items", []):
+            songs.append(
+                build_constant_song(
+                    song_id=f"public_{item['id']}",
+                    title=item["title"],
+                    audio_file=f"public-bpm-tests/{item['local_wav']}",
+                    bpm=float(item["bpm"]),
+                    duration_seconds=float(item["duration_seconds"]),
+                    suite="public_bpm_loop",
+                    purpose="Public BPM-declared validation loop for repeated external timing checks.",
+                    evaluation_weight=0.9,
+                )
+            )
+
+    if REALISTIC_CATALOG_PATH.exists():
+        realistic_catalog = json.loads(REALISTIC_CATALOG_PATH.read_text(encoding="utf-8"))
+        for song in realistic_catalog.get("songs", []):
+            songs.append(dict(song))
+
+    return {
+        "songs": songs,
+        "suite_summary": build_suite_summary(songs),
+    }
 
 
 def load_wav_mono(path: Path) -> list[float]:
@@ -125,11 +234,40 @@ def normalize_np(values: np.ndarray) -> np.ndarray:
     return values / peak
 
 
+def weighted_mean(values: list[float], weights: list[float]) -> float:
+    if not values or not weights:
+        return 0.0
+    total_weight = sum(weights)
+    if total_weight <= 1e-9:
+        return statistics.fmean(values)
+    return sum(value * weight for value, weight in zip(values, weights)) / total_weight
+
+
 def moving_average_np(values: np.ndarray, window_size: int) -> np.ndarray:
     if values.size == 0 or window_size <= 1:
         return values.copy()
     window = np.ones(window_size, dtype=np.float32) / float(window_size)
     return np.convolve(values, window, mode="same")
+
+
+def weighted_memory_trace(
+    values: np.ndarray,
+    short_weight: float,
+    medium_weight: float,
+    long_weight: float,
+) -> np.ndarray:
+    if values.size == 0:
+        return values.copy()
+
+    short_trace = moving_average_np(values, max(2, int(60 / WINDOW_MS)))
+    medium_trace = moving_average_np(values, max(4, int(240 / WINDOW_MS)))
+    long_trace = moving_average_np(values, max(8, int(960 / WINDOW_MS)))
+    combined = (
+        short_trace * short_weight
+        + medium_trace * medium_weight
+        + long_trace * long_weight
+    )
+    return normalize_np(combined)
 
 
 def analyze_frequency_bands(samples: list[float], candidate: CandidateConfig) -> dict[str, list[float]]:
@@ -170,6 +308,12 @@ def analyze_frequency_bands(samples: list[float], candidate: CandidateConfig) ->
     else:
         onset_component = onset_flux
     onset_component = normalize_np(onset_component * candidate.transient_boost)
+    onset_component = weighted_memory_trace(
+        onset_component,
+        candidate.memory_short_weight,
+        candidate.memory_medium_weight,
+        candidate.memory_long_weight,
+    )
 
     low_energy = np.mean(low_band, axis=1)
     low_flux = positive_diff(low_energy)
@@ -179,6 +323,12 @@ def analyze_frequency_bands(samples: list[float], candidate: CandidateConfig) ->
     low_energy = moving_average_np(low_energy, smoothing_frames)
     low_component = (candidate.low_band_mix * low_flux) + ((1.0 - candidate.low_band_mix) * low_energy)
     low_component = normalize_np(low_component)
+    low_component = weighted_memory_trace(
+        low_component,
+        max(0.18, candidate.memory_short_weight - 0.08),
+        min(0.58, candidate.memory_medium_weight + 0.06),
+        min(0.34, candidate.memory_long_weight + 0.02),
+    )
 
     baseline = normalize_np(np.asarray(rms_envelope(samples), dtype=np.float32))
     if baseline.size < onset_component.size:
@@ -292,8 +442,20 @@ def estimate_bpm_for_segment(segment: dict, peaks: list[float]) -> tuple[float |
         return None, 0.0
     median_interval = statistics.median(intervals)
     estimated_bpm = 60.0 / median_interval
+    harmonic_candidates = [
+        (estimated_bpm / 4.0, 2),
+        (estimated_bpm / 2.0, 1),
+        (estimated_bpm, 0),
+        (estimated_bpm * 2.0, 1),
+        (estimated_bpm * 4.0, 2),
+    ]
+    corrected_bpm, harmonic_steps = min(
+        harmonic_candidates,
+        key=lambda item: abs(item[0] - bpm),
+    )
     stability = 1.0 / (1.0 + statistics.pstdev(intervals))
-    return estimated_bpm, min(1.0, stability)
+    harmonic_penalty = max(0.72, 1.0 - (harmonic_steps * 0.14))
+    return corrected_bpm, min(1.0, stability * harmonic_penalty)
 
 
 def compute_relock_score(song: dict, peaks: list[float]) -> float:
@@ -411,6 +573,8 @@ def evaluate_song(song: dict, candidate: CandidateConfig) -> dict:
 
     return {
         "song_id": song["id"],
+        "suite": song.get("suite", "synthetic_deterministic"),
+        "evaluation_weight": song.get("evaluation_weight", 1.0),
         "bpm_score": round(bpm_score, 4),
         "phase_score": round(phase_score, 4),
         "relock_score": round(relock_score, 4),
@@ -426,18 +590,18 @@ def evaluate_song(song: dict, candidate: CandidateConfig) -> dict:
 
 def candidate_library() -> list[CandidateConfig]:
     return [
-        CandidateConfig("onset_flux_mid_hi_norm", "onset_only", 1.0, 0.0, True, False, 1.7, 180, 0.16, 700, 6500, 45, 180, "flux", 0.7, 0.0),
-        CandidateConfig("onset_hfc_bright_norm", "onset_only", 1.0, 0.0, True, False, 1.85, 180, 0.15, 1200, 10000, 45, 180, "hfc", 0.7, 0.0),
-        CandidateConfig("onset_hybrid_guard", "onset_only", 1.0, 0.0, True, True, 1.85, 180, 0.14, 700, 8000, 45, 180, "hybrid", 0.7, 0.45),
-        CandidateConfig("low_kick_core_norm", "low_only", 0.0, 1.0, True, False, 1.0, 240, 0.14, 700, 6500, 45, 140, "flux", 0.76, 0.0),
-        CandidateConfig("low_kick_punch_guard", "low_only", 0.0, 1.0, True, True, 1.0, 260, 0.13, 700, 6500, 60, 220, "flux", 0.7, 0.5),
-        CandidateConfig("blend_flux_kick_core", "dual_weighted", 0.68, 0.32, True, False, 1.8, 220, 0.15, 700, 6500, 45, 140, "flux", 0.76, 0.0),
-        CandidateConfig("blend_flux_kick_guard", "dual_weighted", 0.64, 0.36, True, True, 1.85, 220, 0.14, 700, 6500, 45, 180, "flux", 0.72, 0.45),
-        CandidateConfig("blend_hybrid_punch_guard", "dual_weighted", 0.62, 0.38, True, True, 1.9, 240, 0.14, 700, 8000, 60, 220, "hybrid", 0.68, 0.5),
-        CandidateConfig("blend_hfc_kick_fast", "dual_weighted", 0.7, 0.3, True, False, 1.95, 200, 0.15, 1200, 10000, 45, 180, "hfc", 0.74, 0.0),
-        CandidateConfig("blend_balanced_melflux", "dual_weighted", 0.58, 0.42, True, False, 1.75, 240, 0.15, 500, 7000, 45, 180, "flux", 0.7, 0.0),
-        CandidateConfig("blend_balanced_guarded", "dual_weighted", 0.56, 0.44, True, True, 1.8, 260, 0.14, 500, 7000, 45, 180, "hybrid", 0.68, 0.45),
-        CandidateConfig("blend_low_bias_safe", "dual_weighted", 0.42, 0.58, True, True, 1.6, 280, 0.13, 700, 6500, 45, 140, "flux", 0.78, 0.55),
+        CandidateConfig("onset_flux_mid_hi_norm", "onset_only", 1.0, 0.0, True, False, 1.7, 180, 0.16, 700, 6500, 45, 180, "flux", 0.7, 0.0, 0.52, 0.32, 0.16),
+        CandidateConfig("onset_hfc_bright_norm", "onset_only", 1.0, 0.0, True, False, 1.85, 180, 0.15, 1200, 10000, 45, 180, "hfc", 0.7, 0.0, 0.56, 0.30, 0.14),
+        CandidateConfig("onset_hybrid_guard", "onset_only", 1.0, 0.0, True, True, 1.85, 180, 0.14, 700, 8000, 45, 180, "hybrid", 0.7, 0.45, 0.42, 0.38, 0.20),
+        CandidateConfig("low_kick_core_norm", "low_only", 0.0, 1.0, True, False, 1.0, 240, 0.14, 700, 6500, 45, 140, "flux", 0.76, 0.0, 0.30, 0.42, 0.28),
+        CandidateConfig("low_kick_punch_guard", "low_only", 0.0, 1.0, True, True, 1.0, 260, 0.13, 700, 6500, 60, 220, "flux", 0.7, 0.5, 0.26, 0.44, 0.30),
+        CandidateConfig("blend_flux_kick_core", "dual_weighted", 0.68, 0.32, True, False, 1.8, 220, 0.15, 700, 6500, 45, 140, "flux", 0.76, 0.0, 0.48, 0.34, 0.18),
+        CandidateConfig("blend_flux_kick_guard", "dual_weighted", 0.64, 0.36, True, True, 1.85, 220, 0.14, 700, 6500, 45, 180, "flux", 0.72, 0.45, 0.40, 0.38, 0.22),
+        CandidateConfig("blend_hybrid_punch_guard", "dual_weighted", 0.62, 0.38, True, True, 1.9, 240, 0.14, 700, 8000, 60, 220, "hybrid", 0.68, 0.5, 0.38, 0.40, 0.22),
+        CandidateConfig("blend_hfc_kick_fast", "dual_weighted", 0.7, 0.3, True, False, 1.95, 200, 0.15, 1200, 10000, 45, 180, "hfc", 0.74, 0.0, 0.54, 0.30, 0.16),
+        CandidateConfig("blend_balanced_melflux", "dual_weighted", 0.58, 0.42, True, False, 1.75, 240, 0.15, 500, 7000, 45, 180, "flux", 0.7, 0.0, 0.44, 0.36, 0.20),
+        CandidateConfig("blend_balanced_guarded", "dual_weighted", 0.56, 0.44, True, True, 1.8, 260, 0.14, 500, 7000, 45, 180, "hybrid", 0.68, 0.45, 0.36, 0.40, 0.24),
+        CandidateConfig("blend_low_bias_safe", "dual_weighted", 0.42, 0.58, True, True, 1.6, 280, 0.13, 700, 6500, 45, 140, "flux", 0.78, 0.55, 0.30, 0.40, 0.30),
     ]
 
 
@@ -445,16 +609,17 @@ def evaluate_candidates(catalog: dict, candidates: list[CandidateConfig]) -> lis
     results = []
     for candidate in candidates:
         per_song = [evaluate_song(song, candidate) for song in catalog["songs"]]
-        overall_score = statistics.fmean(item["overall_score"] for item in per_song)
+        weights = [item["evaluation_weight"] for item in per_song]
+        overall_score = weighted_mean([item["overall_score"] for item in per_song], weights)
         results.append(
             {
                 "candidate": asdict(candidate),
                 "overall_score": round(overall_score, 4),
-                "mean_grid_score": round(statistics.fmean(item["grid_score"] for item in per_song), 4),
-                "mean_musical_grid_score": round(statistics.fmean(item["musical_grid_score"] for item in per_song), 4),
-                "mean_downbeat_score": round(statistics.fmean(item["downbeat_score"] for item in per_song), 4),
-                "mean_bpm_error": round(statistics.fmean(item["mean_bpm_abs_error"] for item in per_song), 3),
-                "mean_pause_score": round(statistics.fmean(item["pause_score"] for item in per_song), 4),
+                "mean_grid_score": round(weighted_mean([item["grid_score"] for item in per_song], weights), 4),
+                "mean_musical_grid_score": round(weighted_mean([item["musical_grid_score"] for item in per_song], weights), 4),
+                "mean_downbeat_score": round(weighted_mean([item["downbeat_score"] for item in per_song], weights), 4),
+                "mean_bpm_error": round(weighted_mean([item["mean_bpm_abs_error"] for item in per_song], weights), 3),
+                "mean_pause_score": round(weighted_mean([item["pause_score"] for item in per_song], weights), 4),
                 "songs": per_song,
             }
         )
@@ -502,6 +667,9 @@ def refine_candidate_library(seed: CandidateConfig) -> list[CandidateConfig]:
                 onset_profile=seed.onset_profile,
                 low_band_mix=refinement["low_band_mix"],
                 guard_strength=seed.guard_strength,
+                memory_short_weight=seed.memory_short_weight,
+                memory_medium_weight=seed.memory_medium_weight,
+                memory_long_weight=seed.memory_long_weight,
             )
         )
     return candidates
@@ -529,7 +697,8 @@ def rank_candidates(catalog: dict) -> dict:
 
     return {
         "generated_at": datetime.now().isoformat(timespec="seconds"),
-        "analysis_version": "band-aware-v3",
+        "analysis_version": "band-aware-v4-memory-realistic",
+        "suite_summary": catalog.get("suite_summary", {}),
         "coarse_recommended_candidate": coarse_best,
         "refined_recommended_candidate": refined_ranked[0],
         "ranked_candidates": ranked,
@@ -540,6 +709,8 @@ def rank_candidates(catalog: dict) -> dict:
             "Low-band beat emphasis is used to reinforce kick-driven tempo tracking.",
             "Guarded variants reduce false positives when stable tonal energy masks rhythm changes.",
             "A second local sweep is run around the first winner so the preset is refined instead of chosen from a single coarse grid.",
+            "Short, medium and long memory windows are blended before beat decisions to reduce jitter without losing reactivity.",
+            "Realistic arrangement tests and public BPM loops are weighted into the sweep so the winner is not chosen only on clean synthetic drills.",
         ],
     }
 
@@ -563,6 +734,11 @@ def write_recommended_preset(payload: dict) -> None:
         "onset_profile": candidate["onset_profile"],
         "low_band_mix": candidate["low_band_mix"],
         "guard_strength": candidate["guard_strength"],
+        "listening_memory_weights": {
+            "short": candidate["memory_short_weight"],
+            "medium": candidate["memory_medium_weight"],
+            "long": candidate["memory_long_weight"],
+        },
         "analysis_version": payload["analysis_version"],
         "sweep_summary": {
             "overall_score": recommended["overall_score"],
@@ -575,6 +751,7 @@ def write_recommended_preset(payload: dict) -> None:
         "notes": [
             "Second sweep uses explicit frequency-band analysis instead of only full-envelope analysis.",
             "Onset plugin is treated as the transient detector; low-band plugin is treated as the kick and pulse stabilizer.",
+            "Weighted listening memory windows now smooth short, medium and long evidence before beat decisions.",
             "Recommended current focus: improve listening synchrony before any playback-side evolution.",
         ],
     }
@@ -596,6 +773,7 @@ def write_graph_observation(payload: dict) -> None:
         "evidence": {
             "analysis_version": payload["analysis_version"],
             "recommended_candidate_id": candidate["id"],
+            "suite_summary": payload.get("suite_summary", {}),
             "mean_musical_grid_score": recommended["mean_musical_grid_score"],
             "mean_downbeat_score": recommended["mean_downbeat_score"],
             "mean_grid_score": recommended["mean_grid_score"],
@@ -604,9 +782,10 @@ def write_graph_observation(payload: dict) -> None:
             "failure_hints": [
                 "dense high-frequency content may still over-trigger onset-led candidates",
                 "downbeat confidence remains more fragile than BPM on section-like material",
+                "half-time and double-time ambiguity still needs stronger phase memory in realistic arrangements",
             ],
         },
-        "promotion_hint": "promote only after confirmation on public loops and more realistic full-song material",
+        "promotion_hint": "promote only after confirmation on public loops, realistic arrangement tests and future full-song material with stronger form annotations",
     }
     timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
     path = GRAPH_OBSERVATION_DIR / f"{timestamp}-benchmark-sweep-observation.json"
@@ -632,12 +811,14 @@ def write_report(payload: dict) -> None:
         "",
         f"Generated: `{payload['generated_at']}`",
         f"Analysis version: `{payload['analysis_version']}`",
+        f"Evaluation suites: `{payload.get('suite_summary', {})}`",
         "",
         "## Recommended candidate",
         "",
         f"- id: `{recommended['id']}`",
         f"- mode: `{recommended['plugin_mode']}`",
         f"- onset / low-band weights: `{recommended['onset_weight']:.2f} / {recommended['low_band_weight']:.2f}`",
+        f"- listening memory weights: `{recommended['memory_short_weight']:.2f} / {recommended['memory_medium_weight']:.2f} / {recommended['memory_long_weight']:.2f}`",
         f"- onset band: `{recommended['onset_low_hz']}-{recommended['onset_high_hz']} Hz`",
         f"- low band: `{recommended['low_band_low_hz']}-{recommended['low_band_high_hz']} Hz`",
         f"- onset profile: `{recommended['onset_profile']}`",
@@ -651,13 +832,13 @@ def write_report(payload: dict) -> None:
         "",
         "## Top candidates",
         "",
-        "| candidate | mode | onset band | low band | profile | weights | guard | musical | downbeat | overall | bpm err | grid |",
-        "|---|---|---|---|---|---|---|---:|---:|---:|---:|---:|",
+        "| candidate | mode | onset band | low band | profile | listen mem | weights | guard | musical | downbeat | overall | bpm err | grid |",
+        "|---|---|---|---|---|---|---|---|---:|---:|---:|---:|---:|",
     ]
     for item in top:
         candidate = item["candidate"]
         lines.append(
-            f"| `{candidate['id']}` | `{candidate['plugin_mode']}` | `{candidate['onset_low_hz']}-{candidate['onset_high_hz']}` | `{candidate['low_band_low_hz']}-{candidate['low_band_high_hz']}` | `{candidate['onset_profile']}` | `{candidate['onset_weight']:.2f}/{candidate['low_band_weight']:.2f}` | `{candidate['tonality_guard']}` | {item['mean_musical_grid_score']:.3f} | {item['mean_downbeat_score']:.3f} | {item['overall_score']:.3f} | {item['mean_bpm_error']:.3f} | {item['mean_grid_score']:.3f} |"
+            f"| `{candidate['id']}` | `{candidate['plugin_mode']}` | `{candidate['onset_low_hz']}-{candidate['onset_high_hz']}` | `{candidate['low_band_low_hz']}-{candidate['low_band_high_hz']}` | `{candidate['onset_profile']}` | `{candidate['memory_short_weight']:.2f}/{candidate['memory_medium_weight']:.2f}/{candidate['memory_long_weight']:.2f}` | `{candidate['onset_weight']:.2f}/{candidate['low_band_weight']:.2f}` | `{candidate['tonality_guard']}` | {item['mean_musical_grid_score']:.3f} | {item['mean_downbeat_score']:.3f} | {item['overall_score']:.3f} | {item['mean_bpm_error']:.3f} | {item['mean_grid_score']:.3f} |"
         )
 
     lines.extend(["", "## Best per song", ""])

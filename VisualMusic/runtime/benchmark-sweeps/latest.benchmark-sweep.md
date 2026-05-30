@@ -1,39 +1,49 @@
 # Benchmark Sweep
 
-Generated: `2026-05-30T03:12:25`
-Analysis version: `band-aware-v3`
+Generated: `2026-05-30T03:40:33`
+Analysis version: `band-aware-v4-memory-realistic`
+Evaluation suites: `{'synthetic_deterministic': 5, 'public_bpm_loop': 5, 'realistic_alignment': 3}`
 
 ## Recommended candidate
 
-- id: `blend_balanced_guarded_refine_04`
-- mode: `dual_weighted`
-- onset / low-band weights: `0.70 / 0.30`
-- onset band: `1200-11000 Hz`
+- id: `onset_flux_mid_hi_norm`
+- mode: `onset_only`
+- onset / low-band weights: `1.00 / 0.00`
+- listening memory weights: `0.52 / 0.32 / 0.16`
+- onset band: `700-6500 Hz`
 - low band: `45-180 Hz`
-- onset profile: `hybrid`
+- onset profile: `flux`
 - normalize: `True`
-- tonality guard: `True`
-- overall score: `0.875`
-- mean grid score: `0.812`
-- mean musical grid score: `0.748`
-- mean downbeat score: `0.520`
-- mean BPM abs error: `0.699`
+- tonality guard: `False`
+- overall score: `0.746`
+- mean grid score: `0.541`
+- mean musical grid score: `0.651`
+- mean downbeat score: `0.606`
+- mean BPM abs error: `3.352`
 
 ## Top candidates
 
-| candidate | mode | onset band | low band | profile | weights | guard | musical | downbeat | overall | bpm err | grid |
-|---|---|---|---|---|---|---|---:|---:|---:|---:|---:|
-| `blend_balanced_guarded_refine_04` | `dual_weighted` | `1200-11000` | `45-180` | `hybrid` | `0.70/0.30` | `True` | 0.748 | 0.520 | 0.875 | 0.699 | 0.812 |
-| `blend_balanced_guarded_refine_08` | `dual_weighted` | `1200-10000` | `45-180` | `hybrid` | `0.74/0.26` | `True` | 0.748 | 0.521 | 0.873 | 0.699 | 0.811 |
-| `blend_balanced_guarded_refine_03` | `dual_weighted` | `1200-9000` | `45-180` | `hybrid` | `0.70/0.30` | `True` | 0.747 | 0.518 | 0.871 | 0.699 | 0.812 |
-| `blend_balanced_guarded_refine_07` | `dual_weighted` | `1200-10000` | `45-180` | `hybrid` | `0.66/0.34` | `True` | 0.745 | 0.515 | 0.872 | 0.699 | 0.809 |
-| `blend_balanced_guarded_refine_01` | `dual_weighted` | `1000-10000` | `45-180` | `hybrid` | `0.68/0.32` | `True` | 0.738 | 0.494 | 0.869 | 0.699 | 0.812 |
-| `blend_balanced_guarded_refine_02` | `dual_weighted` | `1000-10000` | `45-180` | `hybrid` | `0.72/0.28` | `True` | 0.735 | 0.486 | 0.868 | 0.699 | 0.811 |
+| candidate | mode | onset band | low band | profile | listen mem | weights | guard | musical | downbeat | overall | bpm err | grid |
+|---|---|---|---|---|---|---|---|---:|---:|---:|---:|---:|
+| `onset_flux_mid_hi_norm` | `onset_only` | `700-6500` | `45-180` | `flux` | `0.52/0.32/0.16` | `1.00/0.00` | `False` | 0.651 | 0.606 | 0.746 | 3.352 | 0.541 |
+| `onset_flux_mid_hi_norm_refine_08` | `dual_weighted` | `1200-10000` | `45-180` | `flux` | `0.52/0.32/0.16` | `0.74/0.26` | `False` | 0.631 | 0.541 | 0.747 | 3.671 | 0.547 |
+| `onset_flux_mid_hi_norm_refine_10` | `dual_weighted` | `1400-11000` | `45-160` | `flux` | `0.52/0.32/0.16` | `0.72/0.28` | `False` | 0.630 | 0.543 | 0.744 | 3.276 | 0.543 |
+| `onset_flux_mid_hi_norm_refine_03` | `dual_weighted` | `1200-9000` | `45-180` | `flux` | `0.52/0.32/0.16` | `0.70/0.30` | `False` | 0.629 | 0.535 | 0.728 | 3.788 | 0.547 |
+| `onset_flux_mid_hi_norm_refine_02` | `dual_weighted` | `1000-10000` | `45-180` | `flux` | `0.52/0.32/0.16` | `0.72/0.28` | `False` | 0.627 | 0.544 | 0.744 | 2.483 | 0.538 |
+| `onset_flux_mid_hi_norm_refine_05` | `dual_weighted` | `1200-10000` | `45-160` | `flux` | `0.52/0.32/0.16` | `0.70/0.30` | `False` | 0.627 | 0.534 | 0.737 | 3.201 | 0.543 |
 
 ## Best per song
 
-- `phase_alignment_drill` -> `blend_balanced_guarded_refine_06` score `0.903`
-- `grid16_phrase_map` -> `blend_balanced_guarded_refine_04` score `0.848`
-- `tempo_transition_stress` -> `blend_balanced_guarded_refine_04` score `0.848`
-- `generic_reference_sample` -> `blend_balanced_guarded_refine_04` score `0.856`
-- `reference_live_calibration` -> `blend_balanced_guarded_refine_04` score `0.923`
+- `phase_alignment_drill` -> `onset_flux_mid_hi_norm` score `0.986`
+- `grid16_phrase_map` -> `onset_flux_mid_hi_norm` score `0.968`
+- `tempo_transition_stress` -> `onset_flux_mid_hi_norm` score `0.979`
+- `generic_reference_sample` -> `onset_flux_mid_hi_norm` score `0.967`
+- `reference_live_calibration` -> `onset_flux_mid_hi_norm_refine_08` score `0.982`
+- `public_free_chill_loop_95_bpm` -> `onset_flux_mid_hi_norm_refine_05` score `0.748`
+- `public_ambient_piano_loop_105_bpm` -> `onset_flux_mid_hi_norm_refine_02` score `0.637`
+- `public_music_loop_polaris_110_bpm` -> `onset_flux_mid_hi_norm` score `0.720`
+- `public_synth_movement_music_loop_120_bpm` -> `onset_flux_mid_hi_norm_refine_01` score `0.652`
+- `public_poly_dream_synth_loop_130_bpm` -> `onset_flux_mid_hi_norm` score `0.841`
+- `level_06_full_band_with_voice_120_bpm` -> `onset_flux_mid_hi_norm_refine_08` score `0.492`
+- `level_07_full_song_sections_122_bpm` -> `onset_flux_mid_hi_norm` score `0.541`
+- `level_10_ambiguous_half_double_time_95_bpm` -> `onset_flux_mid_hi_norm_refine_05` score `0.679`

@@ -1,37 +1,43 @@
 {
-  "preset_id": "blend_balanced_guarded_refine_04",
+  "preset_id": "onset_flux_mid_hi_norm",
   "purpose": "Internet-informed second-pass sweep winner for listening-only BPM tracking and one-bar grid reconstruction.",
-  "plugin_mode": "dual_weighted",
-  "onset_weight": 0.7,
-  "low_band_weight": 0.3,
+  "plugin_mode": "onset_only",
+  "onset_weight": 1.0,
+  "low_band_weight": 0.0,
   "normalize_input": true,
-  "tonality_guard": true,
-  "transient_boost": 1.95,
-  "low_smoothing_ms": 260,
+  "tonality_guard": false,
+  "transient_boost": 1.7,
+  "low_smoothing_ms": 180,
   "threshold_bias": 0.16,
   "onset_band_hz": [
-    1200,
-    11000
+    700,
+    6500
   ],
   "low_band_hz": [
     45,
     180
   ],
-  "onset_profile": "hybrid",
-  "low_band_mix": 0.74,
-  "guard_strength": 0.45,
-  "analysis_version": "band-aware-v3",
+  "onset_profile": "flux",
+  "low_band_mix": 0.7,
+  "guard_strength": 0.0,
+  "listening_memory_weights": {
+    "short": 0.52,
+    "medium": 0.32,
+    "long": 0.16
+  },
+  "analysis_version": "band-aware-v4-memory-realistic",
   "sweep_summary": {
-    "overall_score": 0.8745,
-    "mean_grid_score": 0.8124,
-    "mean_musical_grid_score": 0.7475,
-    "mean_downbeat_score": 0.52,
-    "mean_bpm_abs_error": 0.699,
+    "overall_score": 0.7458,
+    "mean_grid_score": 0.5408,
+    "mean_musical_grid_score": 0.651,
+    "mean_downbeat_score": 0.6059,
+    "mean_bpm_abs_error": 3.352,
     "mean_pause_score": 1.0
   },
   "notes": [
     "Second sweep uses explicit frequency-band analysis instead of only full-envelope analysis.",
     "Onset plugin is treated as the transient detector; low-band plugin is treated as the kick and pulse stabilizer.",
+    "Weighted listening memory windows now smooth short, medium and long evidence before beat decisions.",
     "Recommended current focus: improve listening synchrony before any playback-side evolution."
   ]
 }
