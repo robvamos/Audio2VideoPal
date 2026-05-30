@@ -223,8 +223,11 @@ export interface PlaylistTrack {
 
 export interface BenchmarkSweepSongResult {
   song_id: string;
+  suite: string;
   overall_score: number;
   grid_score: number;
+  downbeat_score: number;
+  bar_phase_score: number;
   mean_bpm_abs_error: number;
 }
 
@@ -238,11 +241,17 @@ export interface BenchmarkSweepCandidateSummary {
   onset_profile: string;
   tonality_guard: boolean;
   overall_score: number;
+  robustness_score: number;
+  suite_floor: number;
+  score_floor: number;
+  robust_song_count: number;
   mean_grid_score: number;
+  mean_downbeat_score: number;
   mean_bpm_error: number;
   mean_pause_score: number;
   distance_from_best: number;
   distance_from_worst: number;
+  suite_scores: Record<string, number>;
   songs: BenchmarkSweepSongResult[];
 }
 

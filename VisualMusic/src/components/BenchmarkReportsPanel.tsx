@@ -43,7 +43,10 @@ function renderCandidateRow(
         {candidate.onset_band_label} · {candidate.low_band_label}
       </p>
       <div className="report-metrics-inline">
+        <span>Robust {formatPct(candidate.robustness_score)}</span>
+        <span>Suite floor {formatPct(candidate.suite_floor)}</span>
         <span>Grid {formatPct(candidate.mean_grid_score)}</span>
+        <span>Downbeat {formatPct(candidate.mean_downbeat_score)}</span>
         <span>Gap top {formatGap(candidate.distance_from_best)}</span>
         <span>Lead bottom {formatGap(candidate.distance_from_worst)}</span>
       </div>
@@ -121,14 +124,23 @@ export default function BenchmarkReportsPanel({ reports, onRefresh }: BenchmarkR
 
           <div className="report-grid">
             <div className="studio-panel">
-              <h3>Best Songs Snapshot</h3>
+              <h3>Phase / Grid Snapshot</h3>
               <div className="report-song-grid">
                 {(latest.top_candidates[0]?.songs ?? []).map((song) => (
                   <article className="report-song-card" key={song.song_id}>
                     <strong>{song.song_id}</strong>
+                    <span>Suite {song.suite}</span>
                     <span>Overall {formatPct(song.overall_score)}</span>
+                    <span>Downbeat {formatPct(song.downbeat_score)}</span>
+                    <span>Bar phase {formatPct(song.bar_phase_score)}</span>
                     <span>Grid {formatPct(song.grid_score)}</span>
                     <span>BPM err {song.mean_bpm_abs_error.toFixed(3)}</span>
+                    <div className="report-phase-ladder" aria-hidden="true">
+                      <div className="report-phase-pill is-one" style={{ opacity: Math.max(0.2, song.downbeat_score) }}>1</div>
+                      <div className="report-phase-pill" style={{ opacity: Math.max(0.2, 1 - song.bar_phase_score * 0.45) }}>2</div>
+                      <div className="report-phase-pill" style={{ opacity: Math.max(0.2, 1 - song.bar_phase_score * 0.65) }}>3</div>
+                      <div className="report-phase-pill" style={{ opacity: Math.max(0.2, 1 - song.bar_phase_score * 0.55) }}>4</div>
+                    </div>
                   </article>
                 ))}
               </div>

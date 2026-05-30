@@ -10,6 +10,7 @@ use crate::sources::file_source::{load_file_source_state, save_file_source_state
 use chrono::Local;
 use rusqlite::params;
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::sync::{Mutex, OnceLock};
@@ -84,19 +85,28 @@ struct BenchmarkSweepCandidateSummary {
     onset_profile: String,
     tonality_guard: bool,
     overall_score: f64,
+    robustness_score: f64,
+    suite_floor: f64,
+    score_floor: f64,
+    robust_song_count: usize,
     mean_grid_score: f64,
+    mean_downbeat_score: f64,
     mean_bpm_error: f64,
     mean_pause_score: f64,
     distance_from_best: f64,
     distance_from_worst: f64,
+    suite_scores: HashMap<String, f64>,
     songs: Vec<BenchmarkSweepSongResult>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct BenchmarkSweepSongResult {
     song_id: String,
+    suite: String,
     overall_score: f64,
     grid_score: f64,
+    downbeat_score: f64,
+    bar_phase_score: f64,
     mean_bpm_abs_error: f64,
 }
 
@@ -131,8 +141,14 @@ struct RawBenchmarkSweepCandidate {
 #[derive(Debug, Clone, Deserialize)]
 struct RawBenchmarkSweepSong {
     song_id: String,
+    #[serde(default = "default_benchmark_suite")]
+    suite: String,
     overall_score: f64,
     grid_score: f64,
+    #[serde(default)]
+    downbeat_score: f64,
+    #[serde(default)]
+    bar_phase_score: f64,
     mean_bpm_abs_error: f64,
 }
 
@@ -140,9 +156,21 @@ struct RawBenchmarkSweepSong {
 struct RawBenchmarkSweepRankedCandidate {
     candidate: RawBenchmarkSweepCandidate,
     overall_score: f64,
+    #[serde(default)]
+    robustness_score: f64,
+    #[serde(default)]
+    suite_floor: f64,
+    #[serde(default)]
+    score_floor: f64,
+    #[serde(default)]
+    robust_song_count: usize,
     mean_grid_score: f64,
+    #[serde(default)]
+    mean_downbeat_score: f64,
     mean_bpm_error: f64,
     mean_pause_score: f64,
+    #[serde(default)]
+    suite_scores: HashMap<String, f64>,
     songs: Vec<RawBenchmarkSweepSong>,
 }
 
@@ -170,6 +198,10 @@ fn benchmark_sweep_dir() -> PathBuf {
     visual_music_root().join(BENCHMARK_SWEEP_DIR)
 }
 
+fn default_benchmark_suite() -> String {
+    "synthetic_deterministic".to_string()
+}
+
 fn summarize_candidate(
     raw: &RawBenchmarkSweepRankedCandidate,
     best_overall: f64,
@@ -191,18 +223,27 @@ fn summarize_candidate(
         onset_profile: raw.candidate.onset_profile.clone(),
         tonality_guard: raw.candidate.tonality_guard,
         overall_score: raw.overall_score,
+        robustness_score: raw.robustness_score,
+        suite_floor: raw.suite_floor,
+        score_floor: raw.score_floor,
+        robust_song_count: raw.robust_song_count,
         mean_grid_score: raw.mean_grid_score,
+        mean_downbeat_score: raw.mean_downbeat_score,
         mean_bpm_error: raw.mean_bpm_error,
         mean_pause_score: raw.mean_pause_score,
         distance_from_best: (best_overall - raw.overall_score).max(0.0),
         distance_from_worst: (raw.overall_score - worst_overall).max(0.0),
+        suite_scores: raw.suite_scores.clone(),
         songs: raw
             .songs
             .iter()
             .map(|song| BenchmarkSweepSongResult {
                 song_id: song.song_id.clone(),
+                suite: song.suite.clone(),
                 overall_score: song.overall_score,
                 grid_score: song.grid_score,
+                downbeat_score: song.downbeat_score,
+                bar_phase_score: song.bar_phase_score,
                 mean_bpm_abs_error: song.mean_bpm_abs_error,
             })
             .collect(),
