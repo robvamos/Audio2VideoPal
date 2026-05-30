@@ -11,6 +11,7 @@ use chrono::Local;
 use rusqlite::params;
 use serde::{Deserialize, Serialize};
 use std::fs;
+use std::path::{Path, PathBuf};
 use std::sync::{Mutex, OnceLock};
 
 #[derive(Default)]
@@ -70,10 +71,209 @@ impl Default for MapPuzzleViewState {
 const STRUCTURE_TUNING_PATH: &str = "data/learning_structure_tuning.json";
 const LEARNING_EVALUATIONS_PATH: &str = "data/learning_evaluations.json";
 const MAP_PUZZLE_STATE_PATH: &str = "data/map_puzzle_state.json";
+const BENCHMARK_SWEEP_DIR: &str = "runtime/benchmark-sweeps";
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct BenchmarkSweepCandidateSummary {
+    id: String,
+    plugin_mode: String,
+    onset_weight: f64,
+    low_band_weight: f64,
+    onset_band_label: String,
+    low_band_label: String,
+    onset_profile: String,
+    tonality_guard: bool,
+    overall_score: f64,
+    mean_grid_score: f64,
+    mean_bpm_error: f64,
+    mean_pause_score: f64,
+    distance_from_best: f64,
+    distance_from_worst: f64,
+    songs: Vec<BenchmarkSweepSongResult>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct BenchmarkSweepSongResult {
+    song_id: String,
+    overall_score: f64,
+    grid_score: f64,
+    mean_bpm_abs_error: f64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct BenchmarkSweepReportSummary {
+    report_id: String,
+    generated_at: String,
+    analysis_version: String,
+    candidate_count: usize,
+    recommended_candidate_id: String,
+    best_overall_score: f64,
+    worst_overall_score: f64,
+    spread_score: f64,
+    top_candidates: Vec<BenchmarkSweepCandidateSummary>,
+    bottom_candidates: Vec<BenchmarkSweepCandidateSummary>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct RawBenchmarkSweepCandidate {
+    id: String,
+    plugin_mode: String,
+    onset_weight: f64,
+    low_band_weight: f64,
+    onset_low_hz: i64,
+    onset_high_hz: i64,
+    low_band_low_hz: i64,
+    low_band_high_hz: i64,
+    onset_profile: String,
+    tonality_guard: bool,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct RawBenchmarkSweepSong {
+    song_id: String,
+    overall_score: f64,
+    grid_score: f64,
+    mean_bpm_abs_error: f64,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct RawBenchmarkSweepRankedCandidate {
+    candidate: RawBenchmarkSweepCandidate,
+    overall_score: f64,
+    mean_grid_score: f64,
+    mean_bpm_error: f64,
+    mean_pause_score: f64,
+    songs: Vec<RawBenchmarkSweepSong>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct RawBenchmarkSweepReport {
+    generated_at: String,
+    analysis_version: String,
+    ranked_candidates: Vec<RawBenchmarkSweepRankedCandidate>,
+    recommended_candidate: RawBenchmarkSweepRankedCandidate,
+}
 
 fn runtime_store() -> &'static Mutex<ListeningRuntimeStore> {
     static STORE: OnceLock<Mutex<ListeningRuntimeStore>> = OnceLock::new();
     STORE.get_or_init(|| Mutex::new(ListeningRuntimeStore::default()))
+}
+
+fn visual_music_root() -> PathBuf {
+    Path::new(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .unwrap_or_else(|| Path::new("."))
+        .to_path_buf()
+}
+
+fn benchmark_sweep_dir() -> PathBuf {
+    visual_music_root().join(BENCHMARK_SWEEP_DIR)
+}
+
+fn summarize_candidate(
+    raw: &RawBenchmarkSweepRankedCandidate,
+    best_overall: f64,
+    worst_overall: f64,
+) -> BenchmarkSweepCandidateSummary {
+    BenchmarkSweepCandidateSummary {
+        id: raw.candidate.id.clone(),
+        plugin_mode: raw.candidate.plugin_mode.clone(),
+        onset_weight: raw.candidate.onset_weight,
+        low_band_weight: raw.candidate.low_band_weight,
+        onset_band_label: format!(
+            "{}-{} Hz",
+            raw.candidate.onset_low_hz, raw.candidate.onset_high_hz
+        ),
+        low_band_label: format!(
+            "{}-{} Hz",
+            raw.candidate.low_band_low_hz, raw.candidate.low_band_high_hz
+        ),
+        onset_profile: raw.candidate.onset_profile.clone(),
+        tonality_guard: raw.candidate.tonality_guard,
+        overall_score: raw.overall_score,
+        mean_grid_score: raw.mean_grid_score,
+        mean_bpm_error: raw.mean_bpm_error,
+        mean_pause_score: raw.mean_pause_score,
+        distance_from_best: (best_overall - raw.overall_score).max(0.0),
+        distance_from_worst: (raw.overall_score - worst_overall).max(0.0),
+        songs: raw
+            .songs
+            .iter()
+            .map(|song| BenchmarkSweepSongResult {
+                song_id: song.song_id.clone(),
+                overall_score: song.overall_score,
+                grid_score: song.grid_score,
+                mean_bpm_abs_error: song.mean_bpm_abs_error,
+            })
+            .collect(),
+    }
+}
+
+fn load_benchmark_sweep_report_summaries() -> Vec<BenchmarkSweepReportSummary> {
+    let sweep_dir = benchmark_sweep_dir();
+    let Ok(entries) = fs::read_dir(sweep_dir) else {
+        return Vec::new();
+    };
+
+    let mut summaries = entries
+        .filter_map(Result::ok)
+        .filter_map(|entry| {
+            let path = entry.path();
+            let file_name = path.file_name()?.to_string_lossy();
+            if !file_name.ends_with(".benchmark-sweep.json") || file_name == "latest.benchmark-sweep.json" {
+                return None;
+            }
+
+            let report_id = path.file_stem()?.to_string_lossy().replace(".benchmark-sweep", "");
+            let content = fs::read_to_string(&path).ok()?;
+            let raw = serde_json::from_str::<RawBenchmarkSweepReport>(&content).ok()?;
+            if raw.ranked_candidates.is_empty() {
+                return None;
+            }
+
+            let best_overall = raw
+                .ranked_candidates
+                .iter()
+                .map(|candidate| candidate.overall_score)
+                .fold(f64::MIN, f64::max);
+            let worst_overall = raw
+                .ranked_candidates
+                .iter()
+                .map(|candidate| candidate.overall_score)
+                .fold(f64::MAX, f64::min);
+
+            let top_candidates = raw
+                .ranked_candidates
+                .iter()
+                .take(6)
+                .map(|candidate| summarize_candidate(candidate, best_overall, worst_overall))
+                .collect::<Vec<_>>();
+
+            let bottom_candidates = raw
+                .ranked_candidates
+                .iter()
+                .rev()
+                .take(4)
+                .map(|candidate| summarize_candidate(candidate, best_overall, worst_overall))
+                .collect::<Vec<_>>();
+
+            Some(BenchmarkSweepReportSummary {
+                report_id,
+                generated_at: raw.generated_at,
+                analysis_version: raw.analysis_version,
+                candidate_count: raw.ranked_candidates.len(),
+                recommended_candidate_id: raw.recommended_candidate.candidate.id,
+                best_overall_score: best_overall,
+                worst_overall_score: worst_overall,
+                spread_score: (best_overall - worst_overall).max(0.0),
+                top_candidates,
+                bottom_candidates,
+            })
+        })
+        .collect::<Vec<_>>();
+
+    summaries.sort_by(|left, right| right.generated_at.cmp(&left.generated_at));
+    summaries
 }
 
 fn load_structure_learning_tuning() -> StructureLearningTuning {
@@ -613,6 +813,11 @@ pub fn get_latest_telemetry() -> Result<String, String> {
         .lock()
         .map_err(|_| "Listening runtime is unavailable".to_string())?;
     serde_json::to_string(&runtime.latest_telemetry).map_err(|error| error.to_string())
+}
+
+#[tauri::command]
+pub fn load_benchmark_sweep_reports() -> Result<String, String> {
+    serde_json::to_string(&load_benchmark_sweep_report_summaries()).map_err(|error| error.to_string())
 }
 
 #[tauri::command]

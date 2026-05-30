@@ -1,5 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 import type {
+  BenchmarkSweepReportSummary,
   FlowProbeTelemetry,
   TestSongDefinition,
   ListeningFileSourceConfig,
@@ -16,6 +17,7 @@ const BROWSER_PREVIEW_MESSAGE =
 
 let previewTimingState: TimingState | null = null;
 let previewTelemetry: ListeningTelemetry | null = null;
+let previewBenchmarkSweepReports: BenchmarkSweepReportSummary[] | null = null;
 const MAP_PUZZLE_STATE_KEY = "visualmusic.mapPuzzleState";
 const FILE_SOURCE_STATE_KEY = "visualmusic.fileSourceState";
 
@@ -428,6 +430,109 @@ function ensurePreviewState(profile = "minimal_one_bar_grid", source = "syntheti
   }
 }
 
+function createPreviewBenchmarkSweepReports(): BenchmarkSweepReportSummary[] {
+  return [
+    {
+      report_id: "preview-band-aware-v3",
+      generated_at: "2026-05-30T01:58:10",
+      analysis_version: "band-aware-v3",
+      candidate_count: 22,
+      recommended_candidate_id: "blend_hfc_kick_fast_refine_07",
+      best_overall_score: 0.874,
+      worst_overall_score: 0.731,
+      spread_score: 0.143,
+      top_candidates: [
+        {
+          id: "blend_hfc_kick_fast_refine_07",
+          plugin_mode: "dual_weighted",
+          onset_weight: 0.66,
+          low_band_weight: 0.34,
+          onset_band_label: "1200-10000 Hz",
+          low_band_label: "45-180 Hz",
+          onset_profile: "hfc",
+          tonality_guard: false,
+          overall_score: 0.874,
+          mean_grid_score: 0.8201,
+          mean_bpm_error: 0.541,
+          mean_pause_score: 1,
+          distance_from_best: 0,
+          distance_from_worst: 0.143,
+          songs: [
+            { song_id: "phase_alignment_drill", overall_score: 0.9171, grid_score: 0.8292, mean_bpm_abs_error: 0.27 },
+            { song_id: "grid16_phrase_map", overall_score: 0.8452, grid_score: 0.8136, mean_bpm_abs_error: 0.789 },
+            { song_id: "tempo_transition_stress", overall_score: 0.8493, grid_score: 0.8166, mean_bpm_abs_error: 0.407 },
+          ],
+        },
+        {
+          id: "blend_hfc_kick_fast_refine_04",
+          plugin_mode: "dual_weighted",
+          onset_weight: 0.7,
+          low_band_weight: 0.3,
+          onset_band_label: "1200-11000 Hz",
+          low_band_label: "45-180 Hz",
+          onset_profile: "hfc",
+          tonality_guard: false,
+          overall_score: 0.874,
+          mean_grid_score: 0.8201,
+          mean_bpm_error: 0.541,
+          mean_pause_score: 1,
+          distance_from_best: 0.0001,
+          distance_from_worst: 0.1429,
+          songs: [
+            { song_id: "phase_alignment_drill", overall_score: 0.9207, grid_score: 0.8292, mean_bpm_abs_error: 0.27 },
+            { song_id: "grid16_phrase_map", overall_score: 0.8441, grid_score: 0.8136, mean_bpm_abs_error: 0.789 },
+            { song_id: "tempo_transition_stress", overall_score: 0.8487, grid_score: 0.8166, mean_bpm_abs_error: 0.407 },
+          ],
+        },
+        {
+          id: "blend_hfc_kick_fast",
+          plugin_mode: "dual_weighted",
+          onset_weight: 0.7,
+          low_band_weight: 0.3,
+          onset_band_label: "1200-10000 Hz",
+          low_band_label: "45-180 Hz",
+          onset_profile: "hfc",
+          tonality_guard: false,
+          overall_score: 0.8732,
+          mean_grid_score: 0.8185,
+          mean_bpm_error: 0.541,
+          mean_pause_score: 1,
+          distance_from_best: 0.0008,
+          distance_from_worst: 0.1422,
+          songs: [
+            { song_id: "phase_alignment_drill", overall_score: 0.9207, grid_score: 0.8292, mean_bpm_abs_error: 0.27 },
+            { song_id: "grid16_phrase_map", overall_score: 0.8436, grid_score: 0.8136, mean_bpm_abs_error: 0.789 },
+            { song_id: "tempo_transition_stress", overall_score: 0.8463, grid_score: 0.8087, mean_bpm_abs_error: 0.407 },
+          ],
+        },
+      ],
+      bottom_candidates: [
+        {
+          id: "blend_low_bias_safe",
+          plugin_mode: "dual_weighted",
+          onset_weight: 0.42,
+          low_band_weight: 0.58,
+          onset_band_label: "700-6500 Hz",
+          low_band_label: "45-140 Hz",
+          onset_profile: "flux",
+          tonality_guard: true,
+          overall_score: 0.731,
+          mean_grid_score: 0.702,
+          mean_bpm_error: 1.294,
+          mean_pause_score: 0.982,
+          distance_from_best: 0.143,
+          distance_from_worst: 0,
+          songs: [
+            { song_id: "phase_alignment_drill", overall_score: 0.772, grid_score: 0.711, mean_bpm_abs_error: 0.99 },
+            { song_id: "grid16_phrase_map", overall_score: 0.719, grid_score: 0.694, mean_bpm_abs_error: 1.42 },
+            { song_id: "tempo_transition_stress", overall_score: 0.706, grid_score: 0.688, mean_bpm_abs_error: 1.47 },
+          ],
+        },
+      ],
+    },
+  ];
+}
+
 function rebuildPreviewStructureComparison(
   telemetry: ListeningTelemetry,
   options?: { offsetDelta?: number; scaleDelta?: number; reset?: boolean },
@@ -516,6 +621,21 @@ export async function loadFileSourceConfig(): Promise<ListeningFileSourceConfig>
     ...DEFAULT_FILE_SOURCE_STATE,
     ...JSON.parse(result),
   };
+}
+
+export async function loadBenchmarkSweepReports(): Promise<BenchmarkSweepReportSummary[]> {
+  const result = await invokeDesktop<string>(
+    "load_benchmark_sweep_reports",
+    undefined,
+    async () => {
+      if (!previewBenchmarkSweepReports) {
+        previewBenchmarkSweepReports = createPreviewBenchmarkSweepReports();
+      }
+      return JSON.stringify(previewBenchmarkSweepReports);
+    },
+  );
+
+  return JSON.parse(result) as BenchmarkSweepReportSummary[];
 }
 
 export async function saveFileSourceConfig(state: ListeningFileSourceConfig): Promise<void> {

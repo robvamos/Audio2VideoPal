@@ -220,3 +220,41 @@ export interface PlaylistTrack {
   file: File;
   url: string;
 }
+
+export interface BenchmarkSweepSongResult {
+  song_id: string;
+  overall_score: number;
+  grid_score: number;
+  mean_bpm_abs_error: number;
+}
+
+export interface BenchmarkSweepCandidateSummary {
+  id: string;
+  plugin_mode: string;
+  onset_weight: number;
+  low_band_weight: number;
+  onset_band_label: string;
+  low_band_label: string;
+  onset_profile: string;
+  tonality_guard: boolean;
+  overall_score: number;
+  mean_grid_score: number;
+  mean_bpm_error: number;
+  mean_pause_score: number;
+  distance_from_best: number;
+  distance_from_worst: number;
+  songs: BenchmarkSweepSongResult[];
+}
+
+export interface BenchmarkSweepReportSummary {
+  report_id: string;
+  generated_at: string;
+  analysis_version: string;
+  candidate_count: number;
+  recommended_candidate_id: string;
+  best_overall_score: number;
+  worst_overall_score: number;
+  spread_score: number;
+  top_candidates: BenchmarkSweepCandidateSummary[];
+  bottom_candidates: BenchmarkSweepCandidateSummary[];
+}

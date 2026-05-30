@@ -2,6 +2,7 @@ import { startTransition, useEffect, useState } from "react";
 import { pipelineEngine } from "../engines/pipelineEngine";
 import { BROWSER_PREVIEW_MESSAGE, isDesktopRuntimeAvailable } from "../services/tauriApi";
 import type {
+  BenchmarkSweepReportSummary,
   ListeningFileSourceConfig,
   ListeningTelemetry,
   ListeningTimingSnapshot,
@@ -28,6 +29,7 @@ export function useListeningStudio({ onMessage }: UseListeningStudioOptions) {
   });
   const [timingState, setTimingState] = useState<TimingState | null>(null);
   const [telemetry, setTelemetry] = useState<ListeningTelemetry | null>(null);
+  const [benchmarkSweepReports, setBenchmarkSweepReports] = useState<BenchmarkSweepReportSummary[]>([]);
 
   function applySnapshot(snapshot: ListeningTimingSnapshot) {
     startTransition(() => {
@@ -119,6 +121,17 @@ export function useListeningStudio({ onMessage }: UseListeningStudioOptions) {
       });
     } catch (error) {
       onMessage(`Could not refresh listening state: ${error}`);
+    }
+  }
+
+  async function refreshBenchmarkSweepReports() {
+    try {
+      const reports = await pipelineEngine.listening.loadBenchmarkSweepReports();
+      startTransition(() => {
+        setBenchmarkSweepReports(reports);
+      });
+    } catch (error) {
+      onMessage(`Could not refresh benchmark reports: ${error}`);
     }
   }
 
@@ -265,7 +278,8 @@ export function useListeningStudio({ onMessage }: UseListeningStudioOptions) {
       onMessage(BROWSER_PREVIEW_MESSAGE);
     }
     void pipelineEngine.listening.loadFileSourceConfig().then(setFileSourceConfig);
-    refreshListeningState();
+    void refreshListeningState();
+    void refreshBenchmarkSweepReports();
   }, []);
 
   const appState = deriveAppStateSummary({
@@ -286,6 +300,7 @@ export function useListeningStudio({ onMessage }: UseListeningStudioOptions) {
     source,
     timingState,
     telemetry,
+    benchmarkSweepReports,
     setProfile,
     setSource,
     setFileSourceConfig,
@@ -300,5 +315,6 @@ export function useListeningStudio({ onMessage }: UseListeningStudioOptions) {
     saveFilterSetupEvaluation,
     bindBenchmarkSongToCurrentFile,
     loadBenchmarkIntoFileSource,
+    refreshBenchmarkSweepReports,
   };
 }

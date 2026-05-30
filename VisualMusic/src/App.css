@@ -162,6 +162,19 @@ h4 {
   font-weight: 600;
 }
 
+.action-button {
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background-color: var(--button-bg);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.action-button:hover {
+  background-color: var(--button-hover);
+}
+
 .overview-banner,
 .studio-hero {
   display: flex;
@@ -357,6 +370,113 @@ h4 {
 .studio-panel h3,
 .stage-card h3 {
   margin-top: 0;
+}
+
+.report-panel-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.report-actions {
+  display: flex;
+  align-items: center;
+}
+
+.report-summary-grid,
+.report-grid,
+.report-song-grid {
+  display: grid;
+  gap: 18px;
+}
+
+.report-summary-grid {
+  grid-template-columns: repeat(4, minmax(180px, 1fr));
+}
+
+.report-grid {
+  grid-template-columns: repeat(2, minmax(280px, 1fr));
+}
+
+.report-song-grid {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.report-summary-card span,
+.report-song-card span,
+.report-history-card span {
+  display: block;
+  color: var(--text-soft);
+}
+
+.report-summary-card strong {
+  font-size: 1.5rem;
+}
+
+.report-candidate-list,
+.report-history-list {
+  display: grid;
+  gap: 12px;
+}
+
+.report-candidate-card,
+.report-song-card,
+.report-history-card {
+  padding: 14px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background-color: var(--panel-muted);
+}
+
+.report-candidate-card.is-best {
+  border-color: color-mix(in srgb, var(--success) 55%, var(--border));
+}
+
+.report-candidate-card.is-worst {
+  border-color: color-mix(in srgb, var(--danger) 40%, var(--border));
+}
+
+.report-candidate-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: baseline;
+  margin-bottom: 8px;
+}
+
+.report-candidate-card p,
+.panel-note {
+  margin: 6px 0;
+  color: var(--text-muted);
+}
+
+.report-score-bar {
+  height: 10px;
+  border-radius: 999px;
+  background-color: color-mix(in srgb, var(--panel-strong) 50%, var(--panel-bg));
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.report-score-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent-2), var(--accent));
+}
+
+.report-metrics-inline {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  color: var(--text-soft);
+  font-size: 0.92rem;
+}
+
+@media (max-width: 980px) {
+  .report-summary-grid,
+  .report-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .overview-card p,

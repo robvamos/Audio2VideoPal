@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "./App.css";
+import BenchmarkReportsPanel from "./components/BenchmarkReportsPanel";
 import HomePanel from "./components/HomePanel";
 import LearningLabPanel from "./components/LearningLabPanel";
 import ListeningControlRoom from "./components/ListeningControlRoom";
@@ -24,6 +25,7 @@ const TABS = [
   { id: "map-lab", label: "Puzzle Mappa" },
   { id: "telemetry", label: "Telemetry" },
   { id: "learning", label: "Learning Lab" },
+  { id: "reports", label: "Reports" },
 ] as const;
 
 type TabId = (typeof TABS)[number]["id"];
@@ -115,6 +117,12 @@ function App() {
           onSaveFilterSetupEvaluation={listeningStudio.saveFilterSetupEvaluation}
           onBindBenchmarkSongToCurrentFile={listeningStudio.bindBenchmarkSongToCurrentFile}
           onLoadBenchmarkIntoFileSource={listeningStudio.loadBenchmarkIntoFileSource}
+        />
+      )}
+      {activeTab === "reports" && (
+        <BenchmarkReportsPanel
+          reports={listeningStudio.benchmarkSweepReports}
+          onRefresh={listeningStudio.refreshBenchmarkSweepReports}
         />
       )}
 
