@@ -27,15 +27,15 @@
   },
   "tracking_bpm_range": [
     80.0,
-    139.0
+    130.0
   ],
-  "analysis_version": "band-aware-v5-memory-realistic-bpm80-139",
+  "analysis_version": "band-aware-v6-memory-realistic-bpm80-130",
   "sweep_summary": {
-    "overall_score": 0.7458,
+    "overall_score": 0.7441,
     "mean_grid_score": 0.5408,
     "mean_musical_grid_score": 0.651,
     "mean_downbeat_score": 0.6059,
-    "mean_bpm_abs_error": 3.352,
+    "mean_bpm_abs_error": 3.351,
     "mean_pause_score": 1.0
   },
   "notes": [

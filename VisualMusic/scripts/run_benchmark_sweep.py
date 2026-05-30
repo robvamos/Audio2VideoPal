@@ -23,7 +23,7 @@ WINDOW_SAMPLES = 441
 FRAME_SIZE = 1024
 HOP_SIZE = WINDOW_SAMPLES
 MIN_TRACKING_BPM = 80.0
-MAX_TRACKING_BPM = 139.0
+MAX_TRACKING_BPM = 130.0
 
 
 @dataclass(frozen=True)
@@ -704,7 +704,7 @@ def rank_candidates(catalog: dict) -> dict:
 
     return {
         "generated_at": datetime.now().isoformat(timespec="seconds"),
-        "analysis_version": "band-aware-v5-memory-realistic-bpm80-139",
+        "analysis_version": "band-aware-v6-memory-realistic-bpm80-130",
         "suite_summary": catalog.get("suite_summary", {}),
         "tracking_bpm_range": [MIN_TRACKING_BPM, MAX_TRACKING_BPM],
         "coarse_recommended_candidate": coarse_best,
@@ -719,7 +719,7 @@ def rank_candidates(catalog: dict) -> dict:
             "A second local sweep is run around the first winner so the preset is refined instead of chosen from a single coarse grid.",
             "Short, medium and long memory windows are blended before beat decisions to reduce jitter without losing reactivity.",
             "Realistic arrangement tests and public BPM loops are weighted into the sweep so the winner is not chosen only on clean synthetic drills.",
-            "Current rhythm tracking is intentionally constrained to 80-139 BPM to keep lock decisions inside the project's present operating corridor.",
+            "Current rhythm tracking is intentionally constrained to 80-130 BPM to keep lock decisions inside the project's present operating corridor.",
         ],
     }
 

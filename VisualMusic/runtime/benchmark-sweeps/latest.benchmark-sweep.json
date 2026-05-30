@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-05-30T03:51:21",
-  "analysis_version": "band-aware-v5-memory-realistic-bpm80-139",
+  "generated_at": "2026-05-30T04:01:10",
+  "analysis_version": "band-aware-v6-memory-realistic-bpm80-130",
   "suite_summary": {
     "synthetic_deterministic": 5,
     "public_bpm_loop": 5,
@@ -8,7 +8,7 @@
   },
   "tracking_bpm_range": [
     80.0,
-    139.0
+    130.0
   ],
   "coarse_recommended_candidate": {
     "candidate": {
@@ -32,11 +32,11 @@
       "memory_medium_weight": 0.32,
       "memory_long_weight": 0.16
     },
-    "overall_score": 0.7458,
+    "overall_score": 0.7441,
     "mean_grid_score": 0.5408,
     "mean_musical_grid_score": 0.651,
     "mean_downbeat_score": 0.6059,
-    "mean_bpm_error": 3.352,
+    "mean_bpm_error": 3.351,
     "mean_pause_score": 1.0,
     "songs": [
       {
@@ -73,16 +73,16 @@
         "song_id": "tempo_transition_stress",
         "suite": "synthetic_deterministic",
         "evaluation_weight": 1.0,
-        "bpm_score": 0.9641,
+        "bpm_score": 0.9121,
         "phase_score": 0.9705,
         "relock_score": 1.0,
         "pause_score": 1.0,
         "downbeat_score": 1.0,
         "grid_score": 0.9464,
         "musical_grid_score": 0.9772,
-        "mean_bpm_abs_error": 0.407,
+        "mean_bpm_abs_error": 0.781,
         "peak_count": 95,
-        "overall_score": 0.9792
+        "overall_score": 0.9615
       },
       {
         "song_id": "generic_reference_sample",
@@ -178,16 +178,16 @@
         "song_id": "public_poly_dream_synth_loop_130_bpm",
         "suite": "public_bpm_loop",
         "evaluation_weight": 0.9,
-        "bpm_score": 0.8084,
+        "bpm_score": 0.7918,
         "phase_score": 0.7555,
         "relock_score": 1.0,
         "pause_score": 1.0,
         "downbeat_score": 0.838,
         "grid_score": 0.5554,
         "musical_grid_score": 0.7527,
-        "mean_bpm_abs_error": 0.435,
+        "mean_bpm_abs_error": 0.0,
         "peak_count": 39,
-        "overall_score": 0.841
+        "overall_score": 0.8354
       },
       {
         "song_id": "level_06_full_band_with_voice_120_bpm",
@@ -258,11 +258,11 @@
       "memory_medium_weight": 0.32,
       "memory_long_weight": 0.16
     },
-    "overall_score": 0.7458,
+    "overall_score": 0.7441,
     "mean_grid_score": 0.5408,
     "mean_musical_grid_score": 0.651,
     "mean_downbeat_score": 0.6059,
-    "mean_bpm_error": 3.352,
+    "mean_bpm_error": 3.351,
     "mean_pause_score": 1.0,
     "songs": [
       {
@@ -299,16 +299,16 @@
         "song_id": "tempo_transition_stress",
         "suite": "synthetic_deterministic",
         "evaluation_weight": 1.0,
-        "bpm_score": 0.9641,
+        "bpm_score": 0.9121,
         "phase_score": 0.9705,
         "relock_score": 1.0,
         "pause_score": 1.0,
         "downbeat_score": 1.0,
         "grid_score": 0.9464,
         "musical_grid_score": 0.9772,
-        "mean_bpm_abs_error": 0.407,
+        "mean_bpm_abs_error": 0.781,
         "peak_count": 95,
-        "overall_score": 0.9792
+        "overall_score": 0.9615
       },
       {
         "song_id": "generic_reference_sample",
@@ -404,16 +404,16 @@
         "song_id": "public_poly_dream_synth_loop_130_bpm",
         "suite": "public_bpm_loop",
         "evaluation_weight": 0.9,
-        "bpm_score": 0.8084,
+        "bpm_score": 0.7918,
         "phase_score": 0.7555,
         "relock_score": 1.0,
         "pause_score": 1.0,
         "downbeat_score": 0.838,
         "grid_score": 0.5554,
         "musical_grid_score": 0.7527,
-        "mean_bpm_abs_error": 0.435,
+        "mean_bpm_abs_error": 0.0,
         "peak_count": 39,
-        "overall_score": 0.841
+        "overall_score": 0.8354
       },
       {
         "song_id": "level_06_full_band_with_voice_120_bpm",
@@ -485,11 +485,11 @@
         "memory_medium_weight": 0.32,
         "memory_long_weight": 0.16
       },
-      "overall_score": 0.7458,
+      "overall_score": 0.7441,
       "mean_grid_score": 0.5408,
       "mean_musical_grid_score": 0.651,
       "mean_downbeat_score": 0.6059,
-      "mean_bpm_error": 3.352,
+      "mean_bpm_error": 3.351,
       "mean_pause_score": 1.0,
       "songs": [
         {
@@ -526,16 +526,16 @@
           "song_id": "tempo_transition_stress",
           "suite": "synthetic_deterministic",
           "evaluation_weight": 1.0,
-          "bpm_score": 0.9641,
+          "bpm_score": 0.9121,
           "phase_score": 0.9705,
           "relock_score": 1.0,
           "pause_score": 1.0,
           "downbeat_score": 1.0,
           "grid_score": 0.9464,
           "musical_grid_score": 0.9772,
-          "mean_bpm_abs_error": 0.407,
+          "mean_bpm_abs_error": 0.781,
           "peak_count": 95,
-          "overall_score": 0.9792
+          "overall_score": 0.9615
         },
         {
           "song_id": "generic_reference_sample",
@@ -631,16 +631,16 @@
           "song_id": "public_poly_dream_synth_loop_130_bpm",
           "suite": "public_bpm_loop",
           "evaluation_weight": 0.9,
-          "bpm_score": 0.8084,
+          "bpm_score": 0.7918,
           "phase_score": 0.7555,
           "relock_score": 1.0,
           "pause_score": 1.0,
           "downbeat_score": 0.838,
           "grid_score": 0.5554,
           "musical_grid_score": 0.7527,
-          "mean_bpm_abs_error": 0.435,
+          "mean_bpm_abs_error": 0.0,
           "peak_count": 39,
-          "overall_score": 0.841
+          "overall_score": 0.8354
         },
         {
           "song_id": "level_06_full_band_with_voice_120_bpm",
@@ -711,11 +711,11 @@
         "memory_medium_weight": 0.32,
         "memory_long_weight": 0.16
       },
-      "overall_score": 0.7474,
+      "overall_score": 0.7457,
       "mean_grid_score": 0.5467,
       "mean_musical_grid_score": 0.6314,
       "mean_downbeat_score": 0.5415,
-      "mean_bpm_error": 4.003,
+      "mean_bpm_error": 3.398,
       "mean_pause_score": 1.0,
       "songs": [
         {
@@ -752,16 +752,16 @@
           "song_id": "tempo_transition_stress",
           "suite": "synthetic_deterministic",
           "evaluation_weight": 1.0,
-          "bpm_score": 0.9629,
+          "bpm_score": 0.911,
           "phase_score": 0.97,
           "relock_score": 1.0,
           "pause_score": 1.0,
           "downbeat_score": 1.0,
           "grid_score": 0.9455,
           "musical_grid_score": 0.9768,
-          "mean_bpm_abs_error": 0.407,
+          "mean_bpm_abs_error": 0.781,
           "peak_count": 96,
-          "overall_score": 0.9787
+          "overall_score": 0.961
         },
         {
           "song_id": "generic_reference_sample",
@@ -819,7 +819,7 @@
           "downbeat_score": 0.3436,
           "grid_score": 0.1438,
           "musical_grid_score": 0.3998,
-          "mean_bpm_abs_error": 34.0,
+          "mean_bpm_abs_error": 25.0,
           "peak_count": 15,
           "overall_score": 0.4311
         },
@@ -857,16 +857,16 @@
           "song_id": "public_poly_dream_synth_loop_130_bpm",
           "suite": "public_bpm_loop",
           "evaluation_weight": 0.9,
-          "bpm_score": 0.8104,
+          "bpm_score": 0.7935,
           "phase_score": 0.7595,
           "relock_score": 1.0,
           "pause_score": 1.0,
           "downbeat_score": 0.6249,
           "grid_score": 0.5628,
           "musical_grid_score": 0.6792,
-          "mean_bpm_abs_error": 0.435,
+          "mean_bpm_abs_error": 0.0,
           "peak_count": 41,
-          "overall_score": 0.8131
+          "overall_score": 0.8073
         },
         {
           "song_id": "level_06_full_band_with_voice_120_bpm",
@@ -937,11 +937,11 @@
         "memory_medium_weight": 0.32,
         "memory_long_weight": 0.16
       },
-      "overall_score": 0.7443,
+      "overall_score": 0.7426,
       "mean_grid_score": 0.5428,
       "mean_musical_grid_score": 0.6304,
       "mean_downbeat_score": 0.5433,
-      "mean_bpm_error": 3.276,
+      "mean_bpm_error": 3.275,
       "mean_pause_score": 1.0,
       "songs": [
         {
@@ -978,16 +978,16 @@
           "song_id": "tempo_transition_stress",
           "suite": "synthetic_deterministic",
           "evaluation_weight": 1.0,
-          "bpm_score": 0.9629,
+          "bpm_score": 0.911,
           "phase_score": 0.97,
           "relock_score": 1.0,
           "pause_score": 1.0,
           "downbeat_score": 1.0,
           "grid_score": 0.9455,
           "musical_grid_score": 0.9768,
-          "mean_bpm_abs_error": 0.407,
+          "mean_bpm_abs_error": 0.781,
           "peak_count": 96,
-          "overall_score": 0.9787
+          "overall_score": 0.961
         },
         {
           "song_id": "generic_reference_sample",
@@ -1083,16 +1083,16 @@
           "song_id": "public_poly_dream_synth_loop_130_bpm",
           "suite": "public_bpm_loop",
           "evaluation_weight": 0.9,
-          "bpm_score": 0.8054,
+          "bpm_score": 0.7892,
           "phase_score": 0.7496,
           "relock_score": 1.0,
           "pause_score": 1.0,
           "downbeat_score": 0.5943,
           "grid_score": 0.5448,
           "musical_grid_score": 0.6605,
-          "mean_bpm_abs_error": 0.435,
+          "mean_bpm_abs_error": 0.0,
           "peak_count": 41,
-          "overall_score": 0.8042
+          "overall_score": 0.7987
         },
         {
           "song_id": "level_06_full_band_with_voice_120_bpm",
@@ -1163,11 +1163,11 @@
         "memory_medium_weight": 0.32,
         "memory_long_weight": 0.16
       },
-      "overall_score": 0.7282,
+      "overall_score": 0.7266,
       "mean_grid_score": 0.5475,
       "mean_musical_grid_score": 0.6294,
       "mean_downbeat_score": 0.5349,
-      "mean_bpm_error": 3.788,
+      "mean_bpm_error": 3.787,
       "mean_pause_score": 1.0,
       "songs": [
         {
@@ -1204,16 +1204,16 @@
           "song_id": "tempo_transition_stress",
           "suite": "synthetic_deterministic",
           "evaluation_weight": 1.0,
-          "bpm_score": 0.9294,
+          "bpm_score": 0.8774,
           "phase_score": 0.97,
           "relock_score": 1.0,
           "pause_score": 1.0,
           "downbeat_score": 1.0,
           "grid_score": 0.9455,
           "musical_grid_score": 0.9768,
-          "mean_bpm_abs_error": 0.562,
+          "mean_bpm_abs_error": 0.936,
           "peak_count": 105,
-          "overall_score": 0.9673
+          "overall_score": 0.9496
         },
         {
           "song_id": "generic_reference_sample",
@@ -1309,16 +1309,16 @@
           "song_id": "public_poly_dream_synth_loop_130_bpm",
           "suite": "public_bpm_loop",
           "evaluation_weight": 0.9,
-          "bpm_score": 0.8092,
+          "bpm_score": 0.7925,
           "phase_score": 0.7726,
           "relock_score": 1.0,
           "pause_score": 1.0,
           "downbeat_score": 0.6019,
           "grid_score": 0.5865,
           "musical_grid_score": 0.681,
-          "mean_bpm_abs_error": 0.435,
+          "mean_bpm_abs_error": 0.0,
           "peak_count": 41,
-          "overall_score": 0.8132
+          "overall_score": 0.8076
         },
         {
           "song_id": "level_06_full_band_with_voice_120_bpm",
@@ -1389,11 +1389,11 @@
         "memory_medium_weight": 0.32,
         "memory_long_weight": 0.16
       },
-      "overall_score": 0.7444,
+      "overall_score": 0.7427,
       "mean_grid_score": 0.538,
       "mean_musical_grid_score": 0.6274,
       "mean_downbeat_score": 0.5438,
-      "mean_bpm_error": 2.483,
+      "mean_bpm_error": 2.482,
       "mean_pause_score": 1.0,
       "songs": [
         {
@@ -1430,16 +1430,16 @@
           "song_id": "tempo_transition_stress",
           "suite": "synthetic_deterministic",
           "evaluation_weight": 1.0,
-          "bpm_score": 0.9629,
+          "bpm_score": 0.911,
           "phase_score": 0.97,
           "relock_score": 1.0,
           "pause_score": 1.0,
           "downbeat_score": 1.0,
           "grid_score": 0.9455,
           "musical_grid_score": 0.9768,
-          "mean_bpm_abs_error": 0.407,
+          "mean_bpm_abs_error": 0.781,
           "peak_count": 96,
-          "overall_score": 0.9787
+          "overall_score": 0.961
         },
         {
           "song_id": "generic_reference_sample",
@@ -1535,16 +1535,16 @@
           "song_id": "public_poly_dream_synth_loop_130_bpm",
           "suite": "public_bpm_loop",
           "evaluation_weight": 0.9,
-          "bpm_score": 0.8041,
+          "bpm_score": 0.788,
           "phase_score": 0.7414,
           "relock_score": 1.0,
           "pause_score": 1.0,
           "downbeat_score": 0.6377,
           "grid_score": 0.5297,
           "musical_grid_score": 0.6697,
-          "mean_bpm_abs_error": 0.435,
+          "mean_bpm_abs_error": 0.0,
           "peak_count": 40,
-          "overall_score": 0.8074
+          "overall_score": 0.802
         },
         {
           "song_id": "level_06_full_band_with_voice_120_bpm",
@@ -1615,11 +1615,11 @@
         "memory_medium_weight": 0.32,
         "memory_long_weight": 0.16
       },
-      "overall_score": 0.7365,
+      "overall_score": 0.7348,
       "mean_grid_score": 0.5432,
       "mean_musical_grid_score": 0.6271,
       "mean_downbeat_score": 0.5336,
-      "mean_bpm_error": 3.201,
+      "mean_bpm_error": 3.2,
       "mean_pause_score": 1.0,
       "songs": [
         {
@@ -1656,16 +1656,16 @@
           "song_id": "tempo_transition_stress",
           "suite": "synthetic_deterministic",
           "evaluation_weight": 1.0,
-          "bpm_score": 0.9307,
+          "bpm_score": 0.8787,
           "phase_score": 0.97,
           "relock_score": 1.0,
           "pause_score": 1.0,
           "downbeat_score": 1.0,
           "grid_score": 0.9455,
           "musical_grid_score": 0.9768,
-          "mean_bpm_abs_error": 0.562,
+          "mean_bpm_abs_error": 0.936,
           "peak_count": 104,
-          "overall_score": 0.9677
+          "overall_score": 0.95
         },
         {
           "song_id": "generic_reference_sample",
@@ -1761,16 +1761,16 @@
           "song_id": "public_poly_dream_synth_loop_130_bpm",
           "suite": "public_bpm_loop",
           "evaluation_weight": 0.9,
-          "bpm_score": 0.8127,
+          "bpm_score": 0.7955,
           "phase_score": 0.7594,
           "relock_score": 1.0,
           "pause_score": 1.0,
           "downbeat_score": 0.5868,
           "grid_score": 0.5625,
           "musical_grid_score": 0.6653,
-          "mean_bpm_abs_error": 0.435,
+          "mean_bpm_abs_error": 0.0,
           "peak_count": 44,
-          "overall_score": 0.8085
+          "overall_score": 0.8026
         },
         {
           "song_id": "level_06_full_band_with_voice_120_bpm",
@@ -1841,11 +1841,11 @@
         "memory_medium_weight": 0.32,
         "memory_long_weight": 0.16
       },
-      "overall_score": 0.7369,
+      "overall_score": 0.7352,
       "mean_grid_score": 0.5413,
       "mean_musical_grid_score": 0.627,
       "mean_downbeat_score": 0.5359,
-      "mean_bpm_error": 3.528,
+      "mean_bpm_error": 3.526,
       "mean_pause_score": 1.0,
       "songs": [
         {
@@ -1882,16 +1882,16 @@
           "song_id": "tempo_transition_stress",
           "suite": "synthetic_deterministic",
           "evaluation_weight": 1.0,
-          "bpm_score": 0.9629,
+          "bpm_score": 0.911,
           "phase_score": 0.97,
           "relock_score": 1.0,
           "pause_score": 1.0,
           "downbeat_score": 1.0,
           "grid_score": 0.9455,
           "musical_grid_score": 0.9768,
-          "mean_bpm_abs_error": 0.407,
+          "mean_bpm_abs_error": 0.781,
           "peak_count": 96,
-          "overall_score": 0.9787
+          "overall_score": 0.961
         },
         {
           "song_id": "generic_reference_sample",
@@ -1987,16 +1987,16 @@
           "song_id": "public_poly_dream_synth_loop_130_bpm",
           "suite": "public_bpm_loop",
           "evaluation_weight": 0.9,
-          "bpm_score": 0.8035,
+          "bpm_score": 0.7875,
           "phase_score": 0.7366,
           "relock_score": 1.0,
           "pause_score": 1.0,
           "downbeat_score": 0.6094,
           "grid_score": 0.521,
           "musical_grid_score": 0.6558,
-          "mean_bpm_abs_error": 0.435,
+          "mean_bpm_abs_error": 0.0,
           "peak_count": 39,
-          "overall_score": 0.8019
+          "overall_score": 0.7964
         },
         {
           "song_id": "level_06_full_band_with_voice_120_bpm",
@@ -2067,11 +2067,11 @@
         "memory_medium_weight": 0.32,
         "memory_long_weight": 0.16
       },
-      "overall_score": 0.7388,
+      "overall_score": 0.7371,
       "mean_grid_score": 0.5385,
       "mean_musical_grid_score": 0.6261,
       "mean_downbeat_score": 0.5365,
-      "mean_bpm_error": 4.239,
+      "mean_bpm_error": 3.633,
       "mean_pause_score": 1.0,
       "songs": [
         {
@@ -2108,16 +2108,16 @@
           "song_id": "tempo_transition_stress",
           "suite": "synthetic_deterministic",
           "evaluation_weight": 1.0,
-          "bpm_score": 0.9629,
+          "bpm_score": 0.911,
           "phase_score": 0.97,
           "relock_score": 1.0,
           "pause_score": 1.0,
           "downbeat_score": 1.0,
           "grid_score": 0.9455,
           "musical_grid_score": 0.9768,
-          "mean_bpm_abs_error": 0.407,
+          "mean_bpm_abs_error": 0.781,
           "peak_count": 96,
-          "overall_score": 0.9787
+          "overall_score": 0.961
         },
         {
           "song_id": "generic_reference_sample",
@@ -2175,7 +2175,7 @@
           "downbeat_score": 0.3294,
           "grid_score": 0.1471,
           "musical_grid_score": 0.3961,
-          "mean_bpm_abs_error": 34.0,
+          "mean_bpm_abs_error": 25.0,
           "peak_count": 15,
           "overall_score": 0.4297
         },
@@ -2213,16 +2213,16 @@
           "song_id": "public_poly_dream_synth_loop_130_bpm",
           "suite": "public_bpm_loop",
           "evaluation_weight": 0.9,
-          "bpm_score": 0.7948,
+          "bpm_score": 0.78,
           "phase_score": 0.7324,
           "relock_score": 1.0,
           "pause_score": 1.0,
           "downbeat_score": 0.6083,
           "grid_score": 0.5135,
           "musical_grid_score": 0.6522,
-          "mean_bpm_abs_error": 0.435,
+          "mean_bpm_abs_error": 0.0,
           "peak_count": 38,
-          "overall_score": 0.7976
+          "overall_score": 0.7925
         },
         {
           "song_id": "level_06_full_band_with_voice_120_bpm",
@@ -2293,11 +2293,11 @@
         "memory_medium_weight": 0.32,
         "memory_long_weight": 0.16
       },
-      "overall_score": 0.7472,
+      "overall_score": 0.7455,
       "mean_grid_score": 0.5367,
       "mean_musical_grid_score": 0.6245,
       "mean_downbeat_score": 0.5372,
-      "mean_bpm_error": 2.23,
+      "mean_bpm_error": 2.229,
       "mean_pause_score": 1.0,
       "songs": [
         {
@@ -2334,16 +2334,16 @@
           "song_id": "tempo_transition_stress",
           "suite": "synthetic_deterministic",
           "evaluation_weight": 1.0,
-          "bpm_score": 0.9293,
+          "bpm_score": 0.8774,
           "phase_score": 0.97,
           "relock_score": 1.0,
           "pause_score": 1.0,
           "downbeat_score": 1.0,
           "grid_score": 0.9455,
           "musical_grid_score": 0.9768,
-          "mean_bpm_abs_error": 0.562,
+          "mean_bpm_abs_error": 0.936,
           "peak_count": 105,
-          "overall_score": 0.9672
+          "overall_score": 0.9496
         },
         {
           "song_id": "generic_reference_sample",
@@ -2439,16 +2439,16 @@
           "song_id": "public_poly_dream_synth_loop_130_bpm",
           "suite": "public_bpm_loop",
           "evaluation_weight": 0.9,
-          "bpm_score": 0.8041,
+          "bpm_score": 0.788,
           "phase_score": 0.7414,
           "relock_score": 1.0,
           "pause_score": 1.0,
           "downbeat_score": 0.6077,
           "grid_score": 0.5297,
           "musical_grid_score": 0.6589,
-          "mean_bpm_abs_error": 0.435,
+          "mean_bpm_abs_error": 0.0,
           "peak_count": 40,
-          "overall_score": 0.8032
+          "overall_score": 0.7978
         },
         {
           "song_id": "level_06_full_band_with_voice_120_bpm",
@@ -2519,11 +2519,11 @@
         "memory_medium_weight": 0.32,
         "memory_long_weight": 0.16
       },
-      "overall_score": 0.7367,
+      "overall_score": 0.735,
       "mean_grid_score": 0.5385,
       "mean_musical_grid_score": 0.6237,
       "mean_downbeat_score": 0.53,
-      "mean_bpm_error": 3.266,
+      "mean_bpm_error": 3.265,
       "mean_pause_score": 1.0,
       "songs": [
         {
@@ -2560,16 +2560,16 @@
           "song_id": "tempo_transition_stress",
           "suite": "synthetic_deterministic",
           "evaluation_weight": 1.0,
-          "bpm_score": 0.9291,
+          "bpm_score": 0.8772,
           "phase_score": 0.97,
           "relock_score": 1.0,
           "pause_score": 1.0,
           "downbeat_score": 1.0,
           "grid_score": 0.9455,
           "musical_grid_score": 0.9768,
-          "mean_bpm_abs_error": 0.562,
+          "mean_bpm_abs_error": 0.936,
           "peak_count": 105,
-          "overall_score": 0.9672
+          "overall_score": 0.9495
         },
         {
           "song_id": "generic_reference_sample",
@@ -2665,16 +2665,16 @@
           "song_id": "public_poly_dream_synth_loop_130_bpm",
           "suite": "public_bpm_loop",
           "evaluation_weight": 0.9,
-          "bpm_score": 0.8014,
+          "bpm_score": 0.7857,
           "phase_score": 0.7509,
           "relock_score": 1.0,
           "pause_score": 1.0,
           "downbeat_score": 0.5714,
           "grid_score": 0.5472,
           "musical_grid_score": 0.6533,
-          "mean_bpm_abs_error": 0.435,
+          "mean_bpm_abs_error": 0.0,
           "peak_count": 41,
-          "overall_score": 0.8
+          "overall_score": 0.7947
         },
         {
           "song_id": "level_06_full_band_with_voice_120_bpm",
@@ -2745,11 +2745,11 @@
         "memory_medium_weight": 0.32,
         "memory_long_weight": 0.16
       },
-      "overall_score": 0.7303,
+      "overall_score": 0.7286,
       "mean_grid_score": 0.5366,
       "mean_musical_grid_score": 0.6236,
       "mean_downbeat_score": 0.5348,
-      "mean_bpm_error": 3.97,
+      "mean_bpm_error": 3.939,
       "mean_pause_score": 1.0,
       "songs": [
         {
@@ -2786,16 +2786,16 @@
           "song_id": "tempo_transition_stress",
           "suite": "synthetic_deterministic",
           "evaluation_weight": 1.0,
-          "bpm_score": 0.9284,
+          "bpm_score": 0.8764,
           "phase_score": 0.97,
           "relock_score": 1.0,
           "pause_score": 1.0,
           "downbeat_score": 1.0,
           "grid_score": 0.9455,
           "musical_grid_score": 0.9768,
-          "mean_bpm_abs_error": 0.562,
+          "mean_bpm_abs_error": 0.936,
           "peak_count": 106,
-          "overall_score": 0.9669
+          "overall_score": 0.9493
         },
         {
           "song_id": "generic_reference_sample",
@@ -2853,7 +2853,7 @@
           "downbeat_score": 0.3127,
           "grid_score": 0.0911,
           "musical_grid_score": 0.3663,
-          "mean_bpm_abs_error": 25.435,
+          "mean_bpm_abs_error": 25.0,
           "peak_count": 19,
           "overall_score": 0.4184
         },
@@ -2891,16 +2891,16 @@
           "song_id": "public_poly_dream_synth_loop_130_bpm",
           "suite": "public_bpm_loop",
           "evaluation_weight": 0.9,
-          "bpm_score": 0.8085,
+          "bpm_score": 0.7918,
           "phase_score": 0.7521,
           "relock_score": 1.0,
           "pause_score": 1.0,
           "downbeat_score": 0.5959,
           "grid_score": 0.5493,
           "musical_grid_score": 0.663,
-          "mean_bpm_abs_error": 0.435,
+          "mean_bpm_abs_error": 0.0,
           "peak_count": 41,
-          "overall_score": 0.8062
+          "overall_score": 0.8005
         },
         {
           "song_id": "level_06_full_band_with_voice_120_bpm",
@@ -2972,11 +2972,11 @@
       "memory_medium_weight": 0.32,
       "memory_long_weight": 0.16
     },
-    "overall_score": 0.7458,
+    "overall_score": 0.7441,
     "mean_grid_score": 0.5408,
     "mean_musical_grid_score": 0.651,
     "mean_downbeat_score": 0.6059,
-    "mean_bpm_error": 3.352,
+    "mean_bpm_error": 3.351,
     "mean_pause_score": 1.0,
     "songs": [
       {
@@ -3013,16 +3013,16 @@
         "song_id": "tempo_transition_stress",
         "suite": "synthetic_deterministic",
         "evaluation_weight": 1.0,
-        "bpm_score": 0.9641,
+        "bpm_score": 0.9121,
         "phase_score": 0.9705,
         "relock_score": 1.0,
         "pause_score": 1.0,
         "downbeat_score": 1.0,
         "grid_score": 0.9464,
         "musical_grid_score": 0.9772,
-        "mean_bpm_abs_error": 0.407,
+        "mean_bpm_abs_error": 0.781,
         "peak_count": 95,
-        "overall_score": 0.9792
+        "overall_score": 0.9615
       },
       {
         "song_id": "generic_reference_sample",
@@ -3118,16 +3118,16 @@
         "song_id": "public_poly_dream_synth_loop_130_bpm",
         "suite": "public_bpm_loop",
         "evaluation_weight": 0.9,
-        "bpm_score": 0.8084,
+        "bpm_score": 0.7918,
         "phase_score": 0.7555,
         "relock_score": 1.0,
         "pause_score": 1.0,
         "downbeat_score": 0.838,
         "grid_score": 0.5554,
         "musical_grid_score": 0.7527,
-        "mean_bpm_abs_error": 0.435,
+        "mean_bpm_abs_error": 0.0,
         "peak_count": 39,
-        "overall_score": 0.841
+        "overall_score": 0.8354
       },
       {
         "song_id": "level_06_full_band_with_voice_120_bpm",
@@ -3187,7 +3187,7 @@
     },
     "tempo_transition_stress": {
       "candidate_id": "onset_flux_mid_hi_norm",
-      "score": 0.9792
+      "score": 0.9615
     },
     "generic_reference_sample": {
       "candidate_id": "onset_flux_mid_hi_norm",
@@ -3215,7 +3215,7 @@
     },
     "public_poly_dream_synth_loop_130_bpm": {
       "candidate_id": "onset_flux_mid_hi_norm",
-      "score": 0.841
+      "score": 0.8354
     },
     "level_06_full_band_with_voice_120_bpm": {
       "candidate_id": "onset_flux_mid_hi_norm_refine_08",
@@ -3237,6 +3237,6 @@
     "A second local sweep is run around the first winner so the preset is refined instead of chosen from a single coarse grid.",
     "Short, medium and long memory windows are blended before beat decisions to reduce jitter without losing reactivity.",
     "Realistic arrangement tests and public BPM loops are weighted into the sweep so the winner is not chosen only on clean synthetic drills.",
-    "Current rhythm tracking is intentionally constrained to 80-139 BPM to keep lock decisions inside the project's present operating corridor."
+    "Current rhythm tracking is intentionally constrained to 80-130 BPM to keep lock decisions inside the project's present operating corridor."
   ]
 }
