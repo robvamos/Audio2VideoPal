@@ -369,10 +369,38 @@ def weighted_memory_trace(
     return normalize_np(combined)
 
 
+def harmonic_change_trace(log_magnitude: np.ndarray, freqs: np.ndarray) -> np.ndarray:
+    if log_magnitude.size == 0:
+        return np.zeros(0, dtype=np.float32)
+
+    harmonic_mask = (freqs >= 80.0) & (freqs <= 5000.0)
+    harmonic_freqs = freqs[harmonic_mask]
+    harmonic_mag = log_magnitude[:, harmonic_mask]
+    if harmonic_mag.size == 0:
+        return np.zeros(log_magnitude.shape[0], dtype=np.float32)
+
+    chroma = np.zeros((harmonic_mag.shape[0], 12), dtype=np.float32)
+    for bin_index, freq in enumerate(harmonic_freqs):
+        if freq <= 0.0:
+            continue
+        midi = 69.0 + (12.0 * math.log2(freq / 440.0))
+        pitch_class = int(round(midi)) % 12
+        chroma[:, pitch_class] += harmonic_mag[:, bin_index]
+
+    row_sums = np.sum(chroma, axis=1, keepdims=True)
+    row_sums[row_sums <= 1e-9] = 1.0
+    chroma = chroma / row_sums
+
+    padded = np.pad(chroma, ((1, 1), (0, 0)), mode="edge")
+    hcdf = np.linalg.norm(padded[2:] - padded[:-2], axis=1)
+    hcdf = normalize_np(hcdf.astype(np.float32))
+    return weighted_memory_trace(hcdf, 0.18, 0.42, 0.40)
+
+
 def analyze_frequency_bands(samples: list[float], candidate: CandidateConfig) -> dict[str, list[float]]:
     audio = np.asarray(samples, dtype=np.float32)
     if audio.size == 0:
-        return {"onset": [], "low_band": [], "combined": [], "baseline": []}
+        return {"onset": [], "low_band": [], "harmonic_change": [], "combined": [], "baseline": []}
 
     if candidate.normalize_input:
         peak = float(np.max(np.abs(audio)))
@@ -428,12 +456,17 @@ def analyze_frequency_bands(samples: list[float], candidate: CandidateConfig) ->
         min(0.58, candidate.memory_medium_weight + 0.06),
         min(0.34, candidate.memory_long_weight + 0.02),
     )
+    harmonic_component = harmonic_change_trace(log_magnitude, freqs)
 
     baseline = normalize_np(np.asarray(rms_envelope(samples), dtype=np.float32))
     if baseline.size < onset_component.size:
         baseline = np.pad(baseline, (0, onset_component.size - baseline.size))
     else:
         baseline = baseline[:onset_component.size]
+    if harmonic_component.size < onset_component.size:
+        harmonic_component = np.pad(harmonic_component, (0, onset_component.size - harmonic_component.size))
+    else:
+        harmonic_component = harmonic_component[:onset_component.size]
 
     if candidate.tonality_guard:
         spectral_flatness = np.exp(np.mean(np.log(magnitude + 1e-8), axis=1)) / (np.mean(magnitude + 1e-8, axis=1))
@@ -441,6 +474,7 @@ def analyze_frequency_bands(samples: list[float], candidate: CandidateConfig) ->
         guard = np.clip((spectral_flatness * (1.0 + candidate.guard_strength)) + 0.18, 0.15, 1.0)
         onset_component = onset_component * guard
         low_component = low_component * ((guard * 0.45) + (1.0 - candidate.guard_strength * 0.15))
+        harmonic_component = harmonic_component * ((1.0 - candidate.guard_strength * 0.10) + (guard * 0.10))
 
     combined = (candidate.onset_weight * onset_component) + (candidate.low_band_weight * low_component)
     if candidate.plugin_mode == "onset_only":
@@ -452,6 +486,7 @@ def analyze_frequency_bands(samples: list[float], candidate: CandidateConfig) ->
     return {
         "onset": onset_component.tolist(),
         "low_band": low_component.tolist(),
+        "harmonic_change": harmonic_component.tolist(),
         "combined": combined.tolist(),
         "baseline": baseline.tolist(),
     }
@@ -526,6 +561,15 @@ def nearest_peak_distance(time_sec: float, peaks: list[float], tolerance_sec: fl
     if nearest is None or nearest > tolerance_sec:
         return None
     return nearest
+
+
+def sample_signal_window(signal: list[float], time_sec: float, radius_frames: int = 1) -> float:
+    if not signal:
+        return 0.0
+    index = int(time_sec * 1000 / WINDOW_MS)
+    start = max(0, index - radius_frames)
+    end = min(len(signal), index + radius_frames + 1)
+    return max(signal[start:end]) if end > start else signal[min(len(signal) - 1, max(0, index))]
 
 
 def estimate_bpm_for_segment(segment: dict, peaks: list[float]) -> tuple[float | None, float]:
@@ -616,6 +660,38 @@ def compute_downbeat_score(song: dict, signal: list[float]) -> float:
     return max(0.0, min(1.0, (ratio - 0.7) / 0.9))
 
 
+def compute_harmonic_downbeat_score(song: dict, harmonic_signal: list[float]) -> float:
+    if not harmonic_signal:
+        return 0.5
+
+    downbeats = song["known_downbeats"]
+    if not downbeats:
+        return 0.5
+
+    anchor_strengths = []
+    regular_strengths = []
+    previous_section = None
+    for marker in downbeats:
+        strength = sample_signal_window(harmonic_signal, marker["time_sec"], radius_frames=2)
+        is_anchor = previous_section is None or marker["section"] != previous_section
+        if is_anchor:
+            anchor_strengths.append(strength)
+        else:
+            regular_strengths.append(strength)
+        previous_section = marker["section"]
+
+    if not anchor_strengths:
+        return 0.5
+
+    anchor_mean = statistics.fmean(anchor_strengths)
+    regular_mean = statistics.fmean(regular_strengths) if regular_strengths else statistics.fmean(harmonic_signal)
+    activity = float(np.max(harmonic_signal) - np.min(harmonic_signal))
+    if activity < 0.08:
+        return 0.5
+    ratio = anchor_mean / max(0.001, regular_mean)
+    return clamp01((ratio - 0.9) / 0.7)
+
+
 def compute_grid_alignment_score(song: dict, peaks: list[float]) -> float:
     markers = song["beat_markers"]
     if not markers:
@@ -658,7 +734,11 @@ def evaluate_song(song: dict, candidate: CandidateConfig) -> dict:
     bpm_score = statistics.fmean(segment_scores) if segment_scores else 0.0
     relock_score = compute_relock_score(song, peaks)
     pause_score = compute_pause_score(song, peaks)
-    downbeat_score = compute_downbeat_score(song, signal)
+    transient_downbeat_score = compute_downbeat_score(song, signal)
+    harmonic_downbeat_score = compute_harmonic_downbeat_score(song, band_analysis["harmonic_change"])
+    harmonic_weight = 0.18 if song.get("suite") == "realistic_alignment" else 0.10
+    harmonic_bonus = max(0.0, harmonic_downbeat_score - 0.5) * 2.0 * harmonic_weight
+    downbeat_score = clamp01(transient_downbeat_score + harmonic_bonus)
     grid_score = compute_grid_alignment_score(song, peaks)
     phase_score = max(0.0, min(1.0, (grid_score * 0.55) + (relock_score * 0.45)))
     musical_grid_score = (
@@ -683,6 +763,8 @@ def evaluate_song(song: dict, candidate: CandidateConfig) -> dict:
         "phase_score": round(phase_score, 4),
         "relock_score": round(relock_score, 4),
         "pause_score": round(pause_score, 4),
+        "transient_downbeat_score": round(transient_downbeat_score, 4),
+        "harmonic_downbeat_score": round(harmonic_downbeat_score, 4),
         "downbeat_score": round(downbeat_score, 4),
         "grid_score": round(grid_score, 4),
         "musical_grid_score": round(musical_grid_score, 4),
