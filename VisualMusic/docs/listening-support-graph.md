@@ -20,6 +20,7 @@ The graph keeps track of:
 - which failure modes suggest strategy changes
 - which preset is currently elected by the benchmark sweep
 - which quarter, bar-cycle, and section-phase patterns should become learnable memory
+- which genre-typical bar sequences are worth testing as prior structural memory
 
 ## Current reading
 
@@ -28,6 +29,34 @@ The graph keeps track of:
 - the current winner is a `0.66 / 0.34` weighted fusion
 - `hfc`-style bright onset emphasis is currently the strongest onset profile on the benchmark set
 - the graph is now ready to remember quarter roles, 2-bar and 4-bar repetition, and larger song phase
+- the graph now also stores common genre priors for blues, rock, pop, funk, and metal
+
+## Genre priors now encoded
+
+- `blues`
+  - 12-bar cycle memory
+  - tonic / subdominant / dominant tension flow
+  - turnaround expectation on bar 12
+
+- `rock`
+  - 2-bar and 4-bar riff logic
+  - verse / chorus / bridge organization
+  - solo break as common contrast area
+
+- `pop`
+  - verse / pre-chorus / chorus logic
+  - frequent 8-bar section framing
+  - common full-cycle section order from intro to final chorus
+
+- `funk`
+  - 1-bar vamp memory
+  - quarter-by-quarter meaning inside the bar, especially beat 1 as anchor
+  - accumulation from single-bar groove into 2-bar and 4-bar feel
+
+- `metal`
+  - repeated 2-bar riff cells
+  - syncopated weight and low-end persistence
+  - contrast sections such as breakdowns and solo breaks
 
 ## Intended use
 
@@ -38,6 +67,7 @@ Use this graph when:
 - explaining why a preset won
 - preparing UI panels that need compact expert guidance
 - reasoning about whether the system is aligned only to tempo or also to musical phase
+- asking which form prior should be tested before the system has enough song-specific memory
 
 ## Next extensions
 
@@ -45,3 +75,4 @@ Use this graph when:
 - attach real file families, not only synthetic benchmarks
 - let the app surface graph facts directly in `Learning Lab` and `Puzzle Mappa`
 - promote learned verse / chorus / refrain transitions into the graph as reusable section-memory facts
+- connect real detected section boundaries back into these genre priors so the graph can move from “common form” to “this song’s actual form”

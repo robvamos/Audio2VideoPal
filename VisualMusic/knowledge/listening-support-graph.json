@@ -4,6 +4,31 @@
   "scope": "Audio2VideoPal listening-only optimization support graph",
   "nodes": [
     {
+      "id": "genre.blues",
+      "type": "genre",
+      "label": "blues"
+    },
+    {
+      "id": "genre.rock",
+      "type": "genre",
+      "label": "rock"
+    },
+    {
+      "id": "genre.pop",
+      "type": "genre",
+      "label": "pop"
+    },
+    {
+      "id": "genre.funk",
+      "type": "genre",
+      "label": "funk"
+    },
+    {
+      "id": "genre.metal",
+      "type": "genre",
+      "label": "metal"
+    },
+    {
       "id": "plugin.onset_strength",
       "type": "plugin",
       "label": "onset_strength",
@@ -76,6 +101,54 @@
       "purpose": "capture phrase anchors and common musical repetition blocks"
     },
     {
+      "id": "pattern.twelve_bar_blues",
+      "type": "pattern",
+      "label": "12-bar blues cycle",
+      "purpose": "formal 12-bar harmonic and phrase loop"
+    },
+    {
+      "id": "pattern.verse_chorus_bridge",
+      "type": "pattern",
+      "label": "verse / chorus / bridge",
+      "purpose": "common repeating section architecture in pop and rock"
+    },
+    {
+      "id": "pattern.prechorus_lift",
+      "type": "pattern",
+      "label": "pre-chorus lift",
+      "purpose": "short transition that raises tension into the chorus"
+    },
+    {
+      "id": "pattern.one_bar_vamp",
+      "type": "pattern",
+      "label": "1-bar vamp",
+      "purpose": "single-bar groove loop often found in funk"
+    },
+    {
+      "id": "pattern.two_bar_riff",
+      "type": "pattern",
+      "label": "2-bar riff",
+      "purpose": "short riff loop common in rock and metal"
+    },
+    {
+      "id": "pattern.eight_bar_section",
+      "type": "pattern",
+      "label": "8-bar section",
+      "purpose": "common section length for verse or chorus blocks"
+    },
+    {
+      "id": "pattern.breakdown",
+      "type": "pattern",
+      "label": "breakdown",
+      "purpose": "contrasting heavy reduction section common in metal-derived forms"
+    },
+    {
+      "id": "pattern.solo_break",
+      "type": "pattern",
+      "label": "solo break",
+      "purpose": "instrumental release or development zone"
+    },
+    {
       "id": "structure.song_phase",
       "type": "structure",
       "label": "song phase",
@@ -117,6 +190,66 @@
       "from": "plugin.onset_strength",
       "to": "band.onset_bright",
       "relation": "prefers_band"
+    },
+    {
+      "from": "genre.blues",
+      "to": "pattern.twelve_bar_blues",
+      "relation": "commonly_uses"
+    },
+    {
+      "from": "genre.rock",
+      "to": "pattern.verse_chorus_bridge",
+      "relation": "commonly_uses"
+    },
+    {
+      "from": "genre.rock",
+      "to": "pattern.two_bar_riff",
+      "relation": "commonly_uses"
+    },
+    {
+      "from": "genre.rock",
+      "to": "pattern.solo_break",
+      "relation": "often_contains"
+    },
+    {
+      "from": "genre.pop",
+      "to": "pattern.verse_chorus_bridge",
+      "relation": "commonly_uses"
+    },
+    {
+      "from": "genre.pop",
+      "to": "pattern.prechorus_lift",
+      "relation": "often_contains"
+    },
+    {
+      "from": "genre.pop",
+      "to": "pattern.eight_bar_section",
+      "relation": "often_organizes_as"
+    },
+    {
+      "from": "genre.funk",
+      "to": "pattern.one_bar_vamp",
+      "relation": "commonly_uses"
+    },
+    {
+      "from": "genre.funk",
+      "to": "pattern.two_bar_riff",
+      "relation": "often_organizes_as"
+    },
+    {
+      "from": "genre.metal",
+      "to": "pattern.two_bar_riff",
+      "relation": "commonly_uses"
+    },
+    {
+      "from": "genre.metal",
+      "to": "pattern.breakdown",
+      "relation": "often_contains"
+    },
+    {
+      "from": "genre.metal",
+      "to": "pattern.solo_break",
+      "relation": "often_contains"
     },
     {
       "from": "plugin.low_band_pulse",
@@ -169,6 +302,46 @@
       "relation": "supports"
     },
     {
+      "from": "pattern.twelve_bar_blues",
+      "to": "pattern.four_bar_cycle",
+      "relation": "contains_subcycles"
+    },
+    {
+      "from": "pattern.verse_chorus_bridge",
+      "to": "structure.song_phase",
+      "relation": "maps_into"
+    },
+    {
+      "from": "pattern.prechorus_lift",
+      "to": "structure.song_phase",
+      "relation": "leads_into"
+    },
+    {
+      "from": "pattern.one_bar_vamp",
+      "to": "pattern.two_bar_cycle",
+      "relation": "can_accumulate_into"
+    },
+    {
+      "from": "pattern.two_bar_riff",
+      "to": "pattern.four_bar_cycle",
+      "relation": "can_accumulate_into"
+    },
+    {
+      "from": "pattern.eight_bar_section",
+      "to": "structure.song_phase",
+      "relation": "commonly_frames"
+    },
+    {
+      "from": "pattern.breakdown",
+      "to": "structure.song_phase",
+      "relation": "creates_contrast_in"
+    },
+    {
+      "from": "pattern.solo_break",
+      "to": "structure.song_phase",
+      "relation": "creates_release_in"
+    },
+    {
       "from": "structure.song_phase",
       "to": "metric.phase_alignment_score",
       "relation": "stabilizes"
@@ -211,12 +384,148 @@
       "value": 0.34
     }
   ],
+  "pattern_sequences": [
+    {
+      "id": "sequence.blues_12_bar_standard",
+      "genre": "blues",
+      "pattern": "pattern.twelve_bar_blues",
+      "bars": [
+        { "bar": 1, "role": "tonic statement", "harmony_hint": "I" },
+        { "bar": 2, "role": "tonic continuation", "harmony_hint": "I" },
+        { "bar": 3, "role": "tonic continuation", "harmony_hint": "I" },
+        { "bar": 4, "role": "tonic cadence / end of first phrase", "harmony_hint": "I" },
+        { "bar": 5, "role": "subdominant lift", "harmony_hint": "IV" },
+        { "bar": 6, "role": "subdominant continuation", "harmony_hint": "IV" },
+        { "bar": 7, "role": "return to tonic", "harmony_hint": "I" },
+        { "bar": 8, "role": "tonic reset", "harmony_hint": "I" },
+        { "bar": 9, "role": "dominant tension", "harmony_hint": "V" },
+        { "bar": 10, "role": "subdominant answer", "harmony_hint": "IV" },
+        { "bar": 11, "role": "tonic resolution", "harmony_hint": "I" },
+        { "bar": 12, "role": "turnaround / next cycle handoff", "harmony_hint": "V or I" }
+      ]
+    },
+    {
+      "id": "sequence.rock_4_bar_riff",
+      "genre": "rock",
+      "pattern": "pattern.two_bar_riff",
+      "bars": [
+        { "bar": 1, "role": "riff anchor" },
+        { "bar": 2, "role": "riff answer or extension" },
+        { "bar": 3, "role": "repeat with push or fill" },
+        { "bar": 4, "role": "turnaround, crash, or pickup to next phrase" }
+      ]
+    },
+    {
+      "id": "sequence.pop_8_bar_verse",
+      "genre": "pop",
+      "pattern": "pattern.eight_bar_section",
+      "bars": [
+        { "bar": 1, "role": "motif entry" },
+        { "bar": 2, "role": "motif continuation" },
+        { "bar": 3, "role": "lyric detail / support" },
+        { "bar": 4, "role": "first mini cadence" },
+        { "bar": 5, "role": "second phrase restart" },
+        { "bar": 6, "role": "development or lift" },
+        { "bar": 7, "role": "tension toward next section" },
+        { "bar": 8, "role": "handoff to pre-chorus or chorus" }
+      ]
+    },
+    {
+      "id": "sequence.pop_8_bar_chorus",
+      "genre": "pop",
+      "pattern": "pattern.eight_bar_section",
+      "bars": [
+        { "bar": 1, "role": "hook launch" },
+        { "bar": 2, "role": "hook reinforcement" },
+        { "bar": 3, "role": "continuation" },
+        { "bar": 4, "role": "first cadence" },
+        { "bar": 5, "role": "hook return" },
+        { "bar": 6, "role": "energy sustain" },
+        { "bar": 7, "role": "final lift or repetition" },
+        { "bar": 8, "role": "tag or release" }
+      ]
+    },
+    {
+      "id": "sequence.funk_1_bar_vamp",
+      "genre": "funk",
+      "pattern": "pattern.one_bar_vamp",
+      "quarters": [
+        { "quarter": 1, "role": "the one / main anchor" },
+        { "quarter": 2, "role": "pocket response" },
+        { "quarter": 3, "role": "syncopated variation or ghost movement" },
+        { "quarter": 4, "role": "anticipation or reset into next bar" }
+      ]
+    },
+    {
+      "id": "sequence.metal_2_bar_riff",
+      "genre": "metal",
+      "pattern": "pattern.two_bar_riff",
+      "bars": [
+        { "bar": 1, "role": "riff motif statement" },
+        { "bar": 2, "role": "accent displacement, resolution, or chug extension" }
+      ]
+    },
+    {
+      "id": "sequence.common_song_phase_cycle",
+      "genre": "cross_genre",
+      "pattern": "pattern.verse_chorus_bridge",
+      "sections": [
+        "intro",
+        "verse",
+        "pre-chorus",
+        "chorus",
+        "verse",
+        "pre-chorus",
+        "chorus",
+        "bridge / solo / breakdown",
+        "final chorus",
+        "outro"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "topic": "12-bar blues cycle and AA'B phrase logic",
+      "url": "https://en.wikipedia.org/wiki/Twelve-bar_blues"
+    },
+    {
+      "topic": "Verse-chorus form and common ABAB / bridge variations in pop",
+      "url": "https://www.masterclass.com/articles/what-is-verse-chorus-form-examples-of-verse-chorus-form-in-pop-folk-and-hip-hop"
+    },
+    {
+      "topic": "Common song structure parts including intro, verse, chorus, bridge, coda and 32-bar form",
+      "url": "https://www.masterclass.com/articles/music-101-what-is-song-structure/"
+    },
+    {
+      "topic": "Funk pulse on beat one and syncopated groove identity",
+      "url": "https://www.britannica.com/question/Who-established-the-funk-beat"
+    },
+    {
+      "topic": "Syncopation and backbeat/offbeat emphasis across rock and funk contexts",
+      "url": "https://www.masterclass.com/articles/syncopation-guide"
+    },
+    {
+      "topic": "Funk sixteenth-note groove development and groove energy",
+      "url": "https://online.berklee.edu/takenote/singers-heres-how-to-talk-to-your-band-about-grooves/"
+    },
+    {
+      "topic": "Heavy metal built from repeated rhythm guitar riffs and contrasting sections",
+      "url": "https://www.masterclass.com/articles/heavy-metal-music-guide"
+    },
+    {
+      "topic": "Groove metal as syncopated repeated riff-based heavy form",
+      "url": "https://www.masterclass.com/articles/groove-metal-guide"
+    }
+  ],
   "queries": [
     "Which plugin mainly drives grid reconstruction?",
     "Which band currently supports kick stabilization?",
     "Which failure mode suggests re-enabling tonal guard?",
     "Which preset currently wins the benchmark sweep?",
     "Which pattern helps distinguish the four quarter positions inside one bar?",
-    "How should two-bar and four-bar repetition support section phase learning?"
+    "How should two-bar and four-bar repetition support section phase learning?",
+    "Which genre commonly starts from a 12-bar cycle instead of verse-chorus repetition?",
+    "How should a one-bar funk vamp be annotated quarter by quarter?",
+    "Which common section order should be expected in verse / chorus based songs?"
   ]
 }
