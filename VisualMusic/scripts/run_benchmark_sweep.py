@@ -49,6 +49,58 @@ class CandidateConfig:
     memory_long_weight: float
 
 
+def candidate_memory_weights(candidate: CandidateConfig | dict) -> dict[str, float]:
+    return {
+        "short": candidate["memory_short_weight"] if isinstance(candidate, dict) else candidate.memory_short_weight,
+        "medium": candidate["memory_medium_weight"] if isinstance(candidate, dict) else candidate.memory_medium_weight,
+        "long": candidate["memory_long_weight"] if isinstance(candidate, dict) else candidate.memory_long_weight,
+    }
+
+
+def build_candidate(
+    candidate_id: str,
+    plugin_mode: str,
+    onset_weight: float,
+    low_band_weight: float,
+    normalize_input: bool,
+    tonality_guard: bool,
+    transient_boost: float,
+    low_smoothing_ms: int,
+    threshold_bias: float,
+    onset_low_hz: int,
+    onset_high_hz: int,
+    low_band_low_hz: int,
+    low_band_high_hz: int,
+    onset_profile: str,
+    low_band_mix: float,
+    guard_strength: float,
+    memory_short_weight: float,
+    memory_medium_weight: float,
+    memory_long_weight: float,
+) -> CandidateConfig:
+    return CandidateConfig(
+        id=candidate_id,
+        plugin_mode=plugin_mode,
+        onset_weight=onset_weight,
+        low_band_weight=low_band_weight,
+        normalize_input=normalize_input,
+        tonality_guard=tonality_guard,
+        transient_boost=transient_boost,
+        low_smoothing_ms=low_smoothing_ms,
+        threshold_bias=threshold_bias,
+        onset_low_hz=onset_low_hz,
+        onset_high_hz=onset_high_hz,
+        low_band_low_hz=low_band_low_hz,
+        low_band_high_hz=low_band_high_hz,
+        onset_profile=onset_profile,
+        low_band_mix=low_band_mix,
+        guard_strength=guard_strength,
+        memory_short_weight=memory_short_weight,
+        memory_medium_weight=memory_medium_weight,
+        memory_long_weight=memory_long_weight,
+    )
+
+
 def build_constant_song(
     *,
     song_id: str,
@@ -597,18 +649,18 @@ def evaluate_song(song: dict, candidate: CandidateConfig) -> dict:
 
 def candidate_library() -> list[CandidateConfig]:
     return [
-        CandidateConfig("onset_flux_mid_hi_norm", "onset_only", 1.0, 0.0, True, False, 1.7, 180, 0.16, 700, 6500, 45, 180, "flux", 0.7, 0.0, 0.52, 0.32, 0.16),
-        CandidateConfig("onset_hfc_bright_norm", "onset_only", 1.0, 0.0, True, False, 1.85, 180, 0.15, 1200, 10000, 45, 180, "hfc", 0.7, 0.0, 0.56, 0.30, 0.14),
-        CandidateConfig("onset_hybrid_guard", "onset_only", 1.0, 0.0, True, True, 1.85, 180, 0.14, 700, 8000, 45, 180, "hybrid", 0.7, 0.45, 0.42, 0.38, 0.20),
-        CandidateConfig("low_kick_core_norm", "low_only", 0.0, 1.0, True, False, 1.0, 240, 0.14, 700, 6500, 45, 140, "flux", 0.76, 0.0, 0.30, 0.42, 0.28),
-        CandidateConfig("low_kick_punch_guard", "low_only", 0.0, 1.0, True, True, 1.0, 260, 0.13, 700, 6500, 60, 220, "flux", 0.7, 0.5, 0.26, 0.44, 0.30),
-        CandidateConfig("blend_flux_kick_core", "dual_weighted", 0.68, 0.32, True, False, 1.8, 220, 0.15, 700, 6500, 45, 140, "flux", 0.76, 0.0, 0.48, 0.34, 0.18),
-        CandidateConfig("blend_flux_kick_guard", "dual_weighted", 0.64, 0.36, True, True, 1.85, 220, 0.14, 700, 6500, 45, 180, "flux", 0.72, 0.45, 0.40, 0.38, 0.22),
-        CandidateConfig("blend_hybrid_punch_guard", "dual_weighted", 0.62, 0.38, True, True, 1.9, 240, 0.14, 700, 8000, 60, 220, "hybrid", 0.68, 0.5, 0.38, 0.40, 0.22),
-        CandidateConfig("blend_hfc_kick_fast", "dual_weighted", 0.7, 0.3, True, False, 1.95, 200, 0.15, 1200, 10000, 45, 180, "hfc", 0.74, 0.0, 0.54, 0.30, 0.16),
-        CandidateConfig("blend_balanced_melflux", "dual_weighted", 0.58, 0.42, True, False, 1.75, 240, 0.15, 500, 7000, 45, 180, "flux", 0.7, 0.0, 0.44, 0.36, 0.20),
-        CandidateConfig("blend_balanced_guarded", "dual_weighted", 0.56, 0.44, True, True, 1.8, 260, 0.14, 500, 7000, 45, 180, "hybrid", 0.68, 0.45, 0.36, 0.40, 0.24),
-        CandidateConfig("blend_low_bias_safe", "dual_weighted", 0.42, 0.58, True, True, 1.6, 280, 0.13, 700, 6500, 45, 140, "flux", 0.78, 0.55, 0.30, 0.40, 0.30),
+        build_candidate("onset_flux_mid_hi_norm", "onset_only", 1.0, 0.0, True, False, 1.7, 180, 0.16, 700, 6500, 45, 180, "flux", 0.7, 0.0, 0.52, 0.32, 0.16),
+        build_candidate("onset_hfc_bright_norm", "onset_only", 1.0, 0.0, True, False, 1.85, 180, 0.15, 1200, 10000, 45, 180, "hfc", 0.7, 0.0, 0.56, 0.30, 0.14),
+        build_candidate("onset_hybrid_guard", "onset_only", 1.0, 0.0, True, True, 1.85, 180, 0.14, 700, 8000, 45, 180, "hybrid", 0.7, 0.45, 0.42, 0.38, 0.20),
+        build_candidate("low_kick_core_norm", "low_only", 0.0, 1.0, True, False, 1.0, 240, 0.14, 700, 6500, 45, 140, "flux", 0.76, 0.0, 0.30, 0.42, 0.28),
+        build_candidate("low_kick_punch_guard", "low_only", 0.0, 1.0, True, True, 1.0, 260, 0.13, 700, 6500, 60, 220, "flux", 0.7, 0.5, 0.26, 0.44, 0.30),
+        build_candidate("blend_flux_kick_core", "dual_weighted", 0.68, 0.32, True, False, 1.8, 220, 0.15, 700, 6500, 45, 140, "flux", 0.76, 0.0, 0.48, 0.34, 0.18),
+        build_candidate("blend_flux_kick_guard", "dual_weighted", 0.64, 0.36, True, True, 1.85, 220, 0.14, 700, 6500, 45, 180, "flux", 0.72, 0.45, 0.40, 0.38, 0.22),
+        build_candidate("blend_hybrid_punch_guard", "dual_weighted", 0.62, 0.38, True, True, 1.9, 240, 0.14, 700, 8000, 60, 220, "hybrid", 0.68, 0.5, 0.38, 0.40, 0.22),
+        build_candidate("blend_hfc_kick_fast", "dual_weighted", 0.7, 0.3, True, False, 1.95, 200, 0.15, 1200, 10000, 45, 180, "hfc", 0.74, 0.0, 0.54, 0.30, 0.16),
+        build_candidate("blend_balanced_melflux", "dual_weighted", 0.58, 0.42, True, False, 1.75, 240, 0.15, 500, 7000, 45, 180, "flux", 0.7, 0.0, 0.44, 0.36, 0.20),
+        build_candidate("blend_balanced_guarded", "dual_weighted", 0.56, 0.44, True, True, 1.8, 260, 0.14, 500, 7000, 45, 180, "hybrid", 0.68, 0.45, 0.36, 0.40, 0.24),
+        build_candidate("blend_low_bias_safe", "dual_weighted", 0.42, 0.58, True, True, 1.6, 280, 0.13, 700, 6500, 45, 140, "flux", 0.78, 0.55, 0.30, 0.40, 0.30),
     ]
 
 
@@ -657,26 +709,26 @@ def refine_candidate_library(seed: CandidateConfig) -> list[CandidateConfig]:
     for index, refinement in enumerate(refinements, start=1):
         onset_weight = refinement["onset_weight"]
         candidates.append(
-            CandidateConfig(
-                id=f"{seed.id}_refine_{index:02d}",
-                plugin_mode="dual_weighted",
-                onset_weight=onset_weight,
-                low_band_weight=round(1.0 - onset_weight, 2),
-                normalize_input=True,
-                tonality_guard=seed.tonality_guard,
-                transient_boost=refinement["transient_boost"],
-                low_smoothing_ms=seed.low_smoothing_ms,
-                threshold_bias=refinement["threshold_bias"],
-                onset_low_hz=refinement["onset_low_hz"],
-                onset_high_hz=refinement["onset_high_hz"],
-                low_band_low_hz=seed.low_band_low_hz,
-                low_band_high_hz=refinement["low_band_high_hz"],
-                onset_profile=seed.onset_profile,
-                low_band_mix=refinement["low_band_mix"],
-                guard_strength=seed.guard_strength,
-                memory_short_weight=seed.memory_short_weight,
-                memory_medium_weight=seed.memory_medium_weight,
-                memory_long_weight=seed.memory_long_weight,
+            build_candidate(
+                f"{seed.id}_refine_{index:02d}",
+                "dual_weighted",
+                onset_weight,
+                round(1.0 - onset_weight, 2),
+                True,
+                seed.tonality_guard,
+                refinement["transient_boost"],
+                seed.low_smoothing_ms,
+                refinement["threshold_bias"],
+                refinement["onset_low_hz"],
+                refinement["onset_high_hz"],
+                seed.low_band_low_hz,
+                refinement["low_band_high_hz"],
+                seed.onset_profile,
+                refinement["low_band_mix"],
+                seed.guard_strength,
+                seed.memory_short_weight,
+                seed.memory_medium_weight,
+                seed.memory_long_weight,
             )
         )
     return candidates
@@ -724,6 +776,50 @@ def rank_candidates(catalog: dict) -> dict:
     }
 
 
+def top_song_ids(result: dict) -> list[str]:
+    return [song["song_id"] for song in result["songs"]]
+
+
+def recommended_candidate_lines(payload: dict, candidate: dict) -> list[str]:
+    recommended = payload["recommended_candidate"]
+    memory = candidate_memory_weights(candidate)
+    return [
+        f"- id: `{candidate['id']}`",
+        f"- mode: `{candidate['plugin_mode']}`",
+        f"- onset / low-band weights: `{candidate['onset_weight']:.2f} / {candidate['low_band_weight']:.2f}`",
+        f"- listening memory weights: `{memory['short']:.2f} / {memory['medium']:.2f} / {memory['long']:.2f}`",
+        f"- onset band: `{candidate['onset_low_hz']}-{candidate['onset_high_hz']} Hz`",
+        f"- low band: `{candidate['low_band_low_hz']}-{candidate['low_band_high_hz']} Hz`",
+        f"- onset profile: `{candidate['onset_profile']}`",
+        f"- normalize: `{candidate['normalize_input']}`",
+        f"- tonality guard: `{candidate['tonality_guard']}`",
+        f"- overall score: `{recommended['overall_score']:.3f}`",
+        f"- mean grid score: `{recommended['mean_grid_score']:.3f}`",
+        f"- mean musical grid score: `{recommended['mean_musical_grid_score']:.3f}`",
+        f"- mean downbeat score: `{recommended['mean_downbeat_score']:.3f}`",
+        f"- mean BPM abs error: `{recommended['mean_bpm_error']:.3f}`",
+    ]
+
+
+def candidate_table_row(item: dict) -> str:
+    candidate = item["candidate"]
+    memory = candidate_memory_weights(candidate)
+    return (
+        f"| `{candidate['id']}` | `{candidate['plugin_mode']}` | "
+        f"`{candidate['onset_low_hz']}-{candidate['onset_high_hz']}` | "
+        f"`{candidate['low_band_low_hz']}-{candidate['low_band_high_hz']}` | "
+        f"`{candidate['onset_profile']}` | "
+        f"`{memory['short']:.2f}/{memory['medium']:.2f}/{memory['long']:.2f}` | "
+        f"`{candidate['onset_weight']:.2f}/{candidate['low_band_weight']:.2f}` | "
+        f"`{candidate['tonality_guard']}` | "
+        f"{item['mean_musical_grid_score']:.3f} | "
+        f"{item['mean_downbeat_score']:.3f} | "
+        f"{item['overall_score']:.3f} | "
+        f"{item['mean_bpm_error']:.3f} | "
+        f"{item['mean_grid_score']:.3f} |"
+    )
+
+
 def write_recommended_preset(payload: dict) -> None:
     recommended = payload["recommended_candidate"]
     candidate = recommended["candidate"]
@@ -743,11 +839,7 @@ def write_recommended_preset(payload: dict) -> None:
         "onset_profile": candidate["onset_profile"],
         "low_band_mix": candidate["low_band_mix"],
         "guard_strength": candidate["guard_strength"],
-        "listening_memory_weights": {
-            "short": candidate["memory_short_weight"],
-            "medium": candidate["memory_medium_weight"],
-            "long": candidate["memory_long_weight"],
-        },
+        "listening_memory_weights": candidate_memory_weights(candidate),
         "tracking_bpm_range": [MIN_TRACKING_BPM, MAX_TRACKING_BPM],
         "analysis_version": payload["analysis_version"],
         "sweep_summary": {
@@ -788,7 +880,7 @@ def write_graph_observation(payload: dict) -> None:
             "mean_downbeat_score": recommended["mean_downbeat_score"],
             "mean_grid_score": recommended["mean_grid_score"],
             "mean_bpm_abs_error": recommended["mean_bpm_error"],
-            "top_song_ids": [song["song_id"] for song in recommended["songs"]],
+            "top_song_ids": top_song_ids(recommended),
             "failure_hints": [
                 "dense high-frequency content may still over-trigger onset-led candidates",
                 "downbeat confidence remains more fragile than BPM on section-like material",
@@ -826,20 +918,7 @@ def write_report(payload: dict) -> None:
         "",
         "## Recommended candidate",
         "",
-        f"- id: `{recommended['id']}`",
-        f"- mode: `{recommended['plugin_mode']}`",
-        f"- onset / low-band weights: `{recommended['onset_weight']:.2f} / {recommended['low_band_weight']:.2f}`",
-        f"- listening memory weights: `{recommended['memory_short_weight']:.2f} / {recommended['memory_medium_weight']:.2f} / {recommended['memory_long_weight']:.2f}`",
-        f"- onset band: `{recommended['onset_low_hz']}-{recommended['onset_high_hz']} Hz`",
-        f"- low band: `{recommended['low_band_low_hz']}-{recommended['low_band_high_hz']} Hz`",
-        f"- onset profile: `{recommended['onset_profile']}`",
-        f"- normalize: `{recommended['normalize_input']}`",
-        f"- tonality guard: `{recommended['tonality_guard']}`",
-        f"- overall score: `{payload['recommended_candidate']['overall_score']:.3f}`",
-        f"- mean grid score: `{payload['recommended_candidate']['mean_grid_score']:.3f}`",
-        f"- mean musical grid score: `{payload['recommended_candidate']['mean_musical_grid_score']:.3f}`",
-        f"- mean downbeat score: `{payload['recommended_candidate']['mean_downbeat_score']:.3f}`",
-        f"- mean BPM abs error: `{payload['recommended_candidate']['mean_bpm_error']:.3f}`",
+        *recommended_candidate_lines(payload, recommended),
         "",
         "## Top candidates",
         "",
@@ -847,10 +926,7 @@ def write_report(payload: dict) -> None:
         "|---|---|---|---|---|---|---|---|---:|---:|---:|---:|---:|",
     ]
     for item in top:
-        candidate = item["candidate"]
-        lines.append(
-            f"| `{candidate['id']}` | `{candidate['plugin_mode']}` | `{candidate['onset_low_hz']}-{candidate['onset_high_hz']}` | `{candidate['low_band_low_hz']}-{candidate['low_band_high_hz']}` | `{candidate['onset_profile']}` | `{candidate['memory_short_weight']:.2f}/{candidate['memory_medium_weight']:.2f}/{candidate['memory_long_weight']:.2f}` | `{candidate['onset_weight']:.2f}/{candidate['low_band_weight']:.2f}` | `{candidate['tonality_guard']}` | {item['mean_musical_grid_score']:.3f} | {item['mean_downbeat_score']:.3f} | {item['overall_score']:.3f} | {item['mean_bpm_error']:.3f} | {item['mean_grid_score']:.3f} |"
-        )
+        lines.append(candidate_table_row(item))
 
     lines.extend(["", "## Best per song", ""])
     for song_id, entry in payload["best_per_song"].items():

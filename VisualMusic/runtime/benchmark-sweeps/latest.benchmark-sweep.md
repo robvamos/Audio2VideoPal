@@ -1,6 +1,6 @@
 # Benchmark Sweep
 
-Generated: `2026-05-30T04:01:10`
+Generated: `2026-05-30T04:12:41`
 Analysis version: `band-aware-v6-memory-realistic-bpm80-130`
 Evaluation suites: `{'synthetic_deterministic': 5, 'public_bpm_loop': 5, 'realistic_alignment': 3}`
 Tracking BPM range: `80-130`
