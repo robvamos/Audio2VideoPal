@@ -58,6 +58,35 @@
       "label": "Pause score"
     },
     {
+      "id": "pattern.quarter_positions",
+      "type": "pattern",
+      "label": "quarter positions in bar",
+      "purpose": "distinguish beat 1, 2, 3 and 4 inside the bar"
+    },
+    {
+      "id": "pattern.two_bar_cycle",
+      "type": "pattern",
+      "label": "2-bar cycle",
+      "purpose": "capture motifs or emphasis repeating every two bars"
+    },
+    {
+      "id": "pattern.four_bar_cycle",
+      "type": "pattern",
+      "label": "4-bar cycle",
+      "purpose": "capture phrase anchors and common musical repetition blocks"
+    },
+    {
+      "id": "structure.song_phase",
+      "type": "structure",
+      "label": "song phase",
+      "purpose": "track verse, chorus, refrain and section return logic"
+    },
+    {
+      "id": "metric.phase_alignment_score",
+      "type": "metric",
+      "label": "Phase alignment score"
+    },
+    {
       "id": "failure.tonal_masking",
       "type": "failure_mode",
       "label": "tonal masking"
@@ -101,6 +130,11 @@
     },
     {
       "from": "plugin.onset_strength",
+      "to": "pattern.quarter_positions",
+      "relation": "helps_resolve"
+    },
+    {
+      "from": "plugin.onset_strength",
       "to": "metric.relock_score",
       "relation": "drives"
     },
@@ -113,6 +147,31 @@
       "from": "plugin.low_band_pulse",
       "to": "metric.downbeat_score",
       "relation": "reinforces"
+    },
+    {
+      "from": "plugin.low_band_pulse",
+      "to": "pattern.two_bar_cycle",
+      "relation": "reinforces"
+    },
+    {
+      "from": "pattern.quarter_positions",
+      "to": "metric.phase_alignment_score",
+      "relation": "supports"
+    },
+    {
+      "from": "pattern.two_bar_cycle",
+      "to": "pattern.four_bar_cycle",
+      "relation": "builds_into"
+    },
+    {
+      "from": "pattern.four_bar_cycle",
+      "to": "structure.song_phase",
+      "relation": "supports"
+    },
+    {
+      "from": "structure.song_phase",
+      "to": "metric.phase_alignment_score",
+      "relation": "stabilizes"
     },
     {
       "from": "profile.hfc",
@@ -156,6 +215,8 @@
     "Which plugin mainly drives grid reconstruction?",
     "Which band currently supports kick stabilization?",
     "Which failure mode suggests re-enabling tonal guard?",
-    "Which preset currently wins the benchmark sweep?"
+    "Which preset currently wins the benchmark sweep?",
+    "Which pattern helps distinguish the four quarter positions inside one bar?",
+    "How should two-bar and four-bar repetition support section phase learning?"
   ]
 }
