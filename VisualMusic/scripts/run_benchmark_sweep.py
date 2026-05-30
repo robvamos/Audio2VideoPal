@@ -338,6 +338,10 @@ def weighted_mean(values: list[float], weights: list[float]) -> float:
     return sum(value * weight for value, weight in zip(values, weights)) / total_weight
 
 
+def clamp01(value: float) -> float:
+    return max(0.0, min(1.0, value))
+
+
 def moving_average_np(values: np.ndarray, window_size: int) -> np.ndarray:
     if values.size == 0 or window_size <= 1:
         return values.copy()
@@ -716,6 +720,19 @@ def evaluate_candidates(catalog: dict, candidates: list[CandidateConfig]) -> lis
             suite_weights = [item["evaluation_weight"] for item in suite_items]
             suite_scores[suite_name] = round(weighted_mean([item["overall_score"] for item in suite_items], suite_weights), 4)
         overall_score = weighted_mean([item["overall_score"] for item in per_song], weights)
+        song_scores = [item["overall_score"] for item in per_song]
+        score_floor = min(song_scores)
+        score_spread = max(song_scores) - score_floor
+        robust_count = sum(1 for score in song_scores if score >= 0.65)
+        robust_ratio = robust_count / max(1, len(song_scores))
+        suite_floor = min(suite_scores.values()) if suite_scores else 0.0
+        consistency_score = clamp01(1.0 - score_spread)
+        robustness_score = (
+            overall_score * 0.28
+            + suite_floor * 0.30
+            + score_floor * 0.22
+            + robust_ratio * 0.20
+        )
         results.append(
             {
                 "candidate": asdict(candidate),
@@ -725,6 +742,13 @@ def evaluate_candidates(catalog: dict, candidates: list[CandidateConfig]) -> lis
                 "mean_downbeat_score": round(weighted_mean([item["downbeat_score"] for item in per_song], weights), 4),
                 "mean_bpm_error": round(weighted_mean([item["mean_bpm_abs_error"] for item in per_song], weights), 3),
                 "mean_pause_score": round(weighted_mean([item["pause_score"] for item in per_song], weights), 4),
+                "score_floor": round(score_floor, 4),
+                "score_spread": round(score_spread, 4),
+                "robust_song_count": robust_count,
+                "robust_song_ratio": round(robust_ratio, 4),
+                "suite_floor": round(suite_floor, 4),
+                "consistency_score": round(consistency_score, 4),
+                "robustness_score": round(robustness_score, 4),
                 "suite_scores": suite_scores,
                 "songs": per_song,
             }
@@ -732,8 +756,11 @@ def evaluate_candidates(catalog: dict, candidates: list[CandidateConfig]) -> lis
     return sorted(
         results,
         key=lambda item: (
-            -item["mean_musical_grid_score"],
+            -item["robustness_score"],
+            -item["suite_floor"],
+            -item["score_floor"],
             -item["overall_score"],
+            -item["mean_musical_grid_score"],
             item["mean_bpm_error"],
         ),
     )
@@ -840,6 +867,10 @@ def recommended_candidate_lines(payload: dict, candidate: dict) -> list[str]:
         f"- normalize: `{candidate['normalize_input']}`",
         f"- tonality guard: `{candidate['tonality_guard']}`",
         f"- overall score: `{recommended['overall_score']:.3f}`",
+        f"- robustness score: `{recommended['robustness_score']:.3f}`",
+        f"- suite floor: `{recommended['suite_floor']:.3f}`",
+        f"- song floor: `{recommended['score_floor']:.3f}`",
+        f"- robust songs >= 0.65: `{recommended['robust_song_count']}` / `{len(recommended['songs'])}`",
         f"- mean grid score: `{recommended['mean_grid_score']:.3f}`",
         f"- mean musical grid score: `{recommended['mean_musical_grid_score']:.3f}`",
         f"- mean downbeat score: `{recommended['mean_downbeat_score']:.3f}`",
@@ -858,6 +889,8 @@ def candidate_table_row(item: dict) -> str:
         f"`{memory['short']:.2f}/{memory['medium']:.2f}/{memory['long']:.2f}` | "
         f"`{candidate['onset_weight']:.2f}/{candidate['low_band_weight']:.2f}` | "
         f"`{candidate['tonality_guard']}` | "
+        f"{item['robustness_score']:.3f} | "
+        f"{item['suite_floor']:.3f} | "
         f"{item['mean_musical_grid_score']:.3f} | "
         f"{item['mean_downbeat_score']:.3f} | "
         f"{item['overall_score']:.3f} | "
@@ -904,6 +937,10 @@ def write_recommended_preset(payload: dict) -> None:
         "analysis_version": payload["analysis_version"],
         "sweep_summary": {
             "overall_score": recommended["overall_score"],
+            "robustness_score": recommended["robustness_score"],
+            "suite_floor": recommended["suite_floor"],
+            "score_floor": recommended["score_floor"],
+            "robust_song_count": recommended["robust_song_count"],
             "mean_grid_score": recommended["mean_grid_score"],
             "mean_musical_grid_score": recommended["mean_musical_grid_score"],
             "mean_downbeat_score": recommended["mean_downbeat_score"],
@@ -940,6 +977,10 @@ def write_graph_observation(payload: dict) -> None:
             "mean_downbeat_score": recommended["mean_downbeat_score"],
             "mean_grid_score": recommended["mean_grid_score"],
             "mean_bpm_abs_error": recommended["mean_bpm_error"],
+            "robustness_score": recommended["robustness_score"],
+            "suite_floor": recommended["suite_floor"],
+            "score_floor": recommended["score_floor"],
+            "robust_song_count": recommended["robust_song_count"],
             "top_song_ids": top_song_ids(recommended),
             "failure_hints": [
                 "dense high-frequency content may still over-trigger onset-led candidates",
@@ -982,8 +1023,8 @@ def write_report(payload: dict) -> None:
         "",
         "## Top candidates",
         "",
-        "| candidate | mode | onset band | low band | profile | listen mem | weights | guard | musical | downbeat | overall | bpm err | grid |",
-        "|---|---|---|---|---|---|---|---|---:|---:|---:|---:|---:|",
+        "| candidate | mode | onset band | low band | profile | listen mem | weights | guard | robust | suite floor | musical | downbeat | overall | bpm err | grid |",
+        "|---|---|---|---|---|---|---|---|---:|---:|---:|---:|---:|---:|---:|",
     ]
     for item in top:
         lines.append(candidate_table_row(item))

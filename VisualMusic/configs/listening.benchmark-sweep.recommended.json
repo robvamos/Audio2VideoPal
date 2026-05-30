@@ -1,29 +1,29 @@
 {
-  "preset_id": "onset_flux_mid_hi_norm",
+  "preset_id": "onset_hybrid_guard",
   "purpose": "Internet-informed second-pass sweep winner for listening-only BPM tracking and one-bar grid reconstruction.",
   "plugin_mode": "onset_only",
   "onset_weight": 1.0,
   "low_band_weight": 0.0,
   "normalize_input": true,
-  "tonality_guard": false,
-  "transient_boost": 1.7,
+  "tonality_guard": true,
+  "transient_boost": 1.85,
   "low_smoothing_ms": 180,
-  "threshold_bias": 0.16,
+  "threshold_bias": 0.14,
   "onset_band_hz": [
     700,
-    6500
+    8000
   ],
   "low_band_hz": [
     45,
     180
   ],
-  "onset_profile": "flux",
+  "onset_profile": "hybrid",
   "low_band_mix": 0.7,
-  "guard_strength": 0.0,
+  "guard_strength": 0.45,
   "listening_memory_weights": {
-    "short": 0.52,
-    "medium": 0.32,
-    "long": 0.16
+    "short": 0.42,
+    "medium": 0.38,
+    "long": 0.2
   },
   "tracking_bpm_range": [
     80.0,
@@ -31,11 +31,15 @@
   ],
   "analysis_version": "band-aware-v6-memory-realistic-bpm80-130",
   "sweep_summary": {
-    "overall_score": 0.7441,
-    "mean_grid_score": 0.5408,
-    "mean_musical_grid_score": 0.651,
-    "mean_downbeat_score": 0.6059,
-    "mean_bpm_abs_error": 3.351,
+    "overall_score": 0.725,
+    "robustness_score": 0.6609,
+    "suite_floor": 0.5886,
+    "score_floor": 0.5094,
+    "robust_song_count": 11,
+    "mean_grid_score": 0.3769,
+    "mean_musical_grid_score": 0.579,
+    "mean_downbeat_score": 0.6495,
+    "mean_bpm_abs_error": 1.589,
     "mean_pause_score": 1.0
   },
   "notes": [
