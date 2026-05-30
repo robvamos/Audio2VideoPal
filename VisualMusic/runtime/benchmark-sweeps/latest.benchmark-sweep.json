@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-30T04:12:41",
+  "generated_at": "2026-05-30T04:25:31",
   "analysis_version": "band-aware-v6-memory-realistic-bpm80-130",
   "suite_summary": {
     "synthetic_deterministic": 5,
@@ -38,6 +38,11 @@
     "mean_downbeat_score": 0.6059,
     "mean_bpm_error": 3.351,
     "mean_pause_score": 1.0,
+    "suite_scores": {
+      "realistic_alignment": 0.5366,
+      "public_bpm_loop": 0.6722,
+      "synthetic_deterministic": 0.9707
+    },
     "songs": [
       {
         "song_id": "phase_alignment_drill",
@@ -264,6 +269,11 @@
     "mean_downbeat_score": 0.6059,
     "mean_bpm_error": 3.351,
     "mean_pause_score": 1.0,
+    "suite_scores": {
+      "realistic_alignment": 0.5366,
+      "public_bpm_loop": 0.6722,
+      "synthetic_deterministic": 0.9707
+    },
     "songs": [
       {
         "song_id": "phase_alignment_drill",
@@ -491,6 +501,11 @@
       "mean_downbeat_score": 0.6059,
       "mean_bpm_error": 3.351,
       "mean_pause_score": 1.0,
+      "suite_scores": {
+        "realistic_alignment": 0.5366,
+        "public_bpm_loop": 0.6722,
+        "synthetic_deterministic": 0.9707
+      },
       "songs": [
         {
           "song_id": "phase_alignment_drill",
@@ -717,6 +732,11 @@
       "mean_downbeat_score": 0.5415,
       "mean_bpm_error": 3.398,
       "mean_pause_score": 1.0,
+      "suite_scores": {
+        "realistic_alignment": 0.5542,
+        "public_bpm_loop": 0.6651,
+        "synthetic_deterministic": 0.9676
+      },
       "songs": [
         {
           "song_id": "phase_alignment_drill",
@@ -943,6 +963,11 @@
       "mean_downbeat_score": 0.5433,
       "mean_bpm_error": 3.275,
       "mean_pause_score": 1.0,
+      "suite_scores": {
+        "realistic_alignment": 0.5484,
+        "public_bpm_loop": 0.6626,
+        "synthetic_deterministic": 0.9661
+      },
       "songs": [
         {
           "song_id": "phase_alignment_drill",
@@ -1169,6 +1194,11 @@
       "mean_downbeat_score": 0.5349,
       "mean_bpm_error": 3.787,
       "mean_pause_score": 1.0,
+      "suite_scores": {
+        "realistic_alignment": 0.5409,
+        "public_bpm_loop": 0.6251,
+        "synthetic_deterministic": 0.9627
+      },
       "songs": [
         {
           "song_id": "phase_alignment_drill",
@@ -1395,6 +1425,11 @@
       "mean_downbeat_score": 0.5438,
       "mean_bpm_error": 2.482,
       "mean_pause_score": 1.0,
+      "suite_scores": {
+        "realistic_alignment": 0.5296,
+        "public_bpm_loop": 0.6792,
+        "synthetic_deterministic": 0.9661
+      },
       "songs": [
         {
           "song_id": "phase_alignment_drill",
@@ -1621,6 +1656,11 @@
       "mean_downbeat_score": 0.5336,
       "mean_bpm_error": 3.2,
       "mean_pause_score": 1.0,
+      "suite_scores": {
+        "realistic_alignment": 0.5442,
+        "public_bpm_loop": 0.6467,
+        "synthetic_deterministic": 0.9628
+      },
       "songs": [
         {
           "song_id": "phase_alignment_drill",
@@ -1847,6 +1887,11 @@
       "mean_downbeat_score": 0.5359,
       "mean_bpm_error": 3.526,
       "mean_pause_score": 1.0,
+      "suite_scores": {
+        "realistic_alignment": 0.5448,
+        "public_bpm_loop": 0.6432,
+        "synthetic_deterministic": 0.9665
+      },
       "songs": [
         {
           "song_id": "phase_alignment_drill",
@@ -2073,6 +2118,11 @@
       "mean_downbeat_score": 0.5365,
       "mean_bpm_error": 3.633,
       "mean_pause_score": 1.0,
+      "suite_scores": {
+        "realistic_alignment": 0.5547,
+        "public_bpm_loop": 0.6409,
+        "synthetic_deterministic": 0.966
+      },
       "songs": [
         {
           "song_id": "phase_alignment_drill",
@@ -2273,6 +2323,237 @@
     },
     {
       "candidate": {
+        "id": "onset_flux_mid_hi_norm_refine_11",
+        "plugin_mode": "dual_weighted",
+        "onset_weight": 0.7,
+        "low_band_weight": 0.3,
+        "normalize_input": true,
+        "tonality_guard": false,
+        "transient_boost": 1.92,
+        "low_smoothing_ms": 180,
+        "threshold_bias": 0.14,
+        "onset_low_hz": 1100,
+        "onset_high_hz": 10000,
+        "low_band_low_hz": 45,
+        "low_band_high_hz": 180,
+        "onset_profile": "flux",
+        "low_band_mix": 0.78,
+        "guard_strength": 0.0,
+        "memory_short_weight": 0.4,
+        "memory_medium_weight": 0.38,
+        "memory_long_weight": 0.22
+      },
+      "overall_score": 0.7328,
+      "mean_grid_score": 0.5367,
+      "mean_musical_grid_score": 0.6253,
+      "mean_downbeat_score": 0.5363,
+      "mean_bpm_error": 3.444,
+      "mean_pause_score": 1.0,
+      "suite_scores": {
+        "realistic_alignment": 0.5439,
+        "public_bpm_loop": 0.6411,
+        "synthetic_deterministic": 0.9627
+      },
+      "songs": [
+        {
+          "song_id": "phase_alignment_drill",
+          "suite": "synthetic_deterministic",
+          "evaluation_weight": 1.0,
+          "bpm_score": 0.9347,
+          "phase_score": 0.979,
+          "relock_score": 1.0,
+          "pause_score": 1.0,
+          "downbeat_score": 1.0,
+          "grid_score": 0.9619,
+          "musical_grid_score": 0.9838,
+          "mean_bpm_abs_error": 0.464,
+          "peak_count": 104,
+          "overall_score": 0.9717
+        },
+        {
+          "song_id": "grid16_phrase_map",
+          "suite": "synthetic_deterministic",
+          "evaluation_weight": 1.0,
+          "bpm_score": 0.8872,
+          "phase_score": 0.9706,
+          "relock_score": 1.0,
+          "pause_score": 1.0,
+          "downbeat_score": 1.0,
+          "grid_score": 0.9466,
+          "musical_grid_score": 0.9773,
+          "mean_bpm_abs_error": 0.985,
+          "peak_count": 122,
+          "overall_score": 0.9531
+        },
+        {
+          "song_id": "tempo_transition_stress",
+          "suite": "synthetic_deterministic",
+          "evaluation_weight": 1.0,
+          "bpm_score": 0.8792,
+          "phase_score": 0.97,
+          "relock_score": 1.0,
+          "pause_score": 1.0,
+          "downbeat_score": 1.0,
+          "grid_score": 0.9455,
+          "musical_grid_score": 0.9768,
+          "mean_bpm_abs_error": 0.936,
+          "peak_count": 103,
+          "overall_score": 0.9502
+        },
+        {
+          "song_id": "generic_reference_sample",
+          "suite": "synthetic_deterministic",
+          "evaluation_weight": 1.0,
+          "bpm_score": 0.8996,
+          "phase_score": 0.9696,
+          "relock_score": 1.0,
+          "pause_score": 1.0,
+          "downbeat_score": 1.0,
+          "grid_score": 0.9447,
+          "musical_grid_score": 0.9765,
+          "mean_bpm_abs_error": 0.938,
+          "peak_count": 95,
+          "overall_score": 0.957
+        },
+        {
+          "song_id": "reference_live_calibration",
+          "suite": "synthetic_deterministic",
+          "evaluation_weight": 1.0,
+          "bpm_score": 0.9636,
+          "phase_score": 0.9797,
+          "relock_score": 1.0,
+          "pause_score": 1.0,
+          "downbeat_score": 1.0,
+          "grid_score": 0.963,
+          "musical_grid_score": 0.9843,
+          "mean_bpm_abs_error": 0.404,
+          "peak_count": 80,
+          "overall_score": 0.9817
+        },
+        {
+          "song_id": "public_free_chill_loop_95_bpm",
+          "suite": "public_bpm_loop",
+          "evaluation_weight": 0.9,
+          "bpm_score": 0.8066,
+          "phase_score": 0.7523,
+          "relock_score": 1.0,
+          "pause_score": 1.0,
+          "downbeat_score": 0.0,
+          "grid_score": 0.5496,
+          "musical_grid_score": 0.4486,
+          "mean_bpm_abs_error": 1.25,
+          "peak_count": 29,
+          "overall_score": 0.7222
+        },
+        {
+          "song_id": "public_ambient_piano_loop_105_bpm",
+          "suite": "public_bpm_loop",
+          "evaluation_weight": 0.9,
+          "bpm_score": 0.0,
+          "phase_score": 0.5192,
+          "relock_score": 1.0,
+          "pause_score": 1.0,
+          "downbeat_score": 0.3486,
+          "grid_score": 0.1257,
+          "musical_grid_score": 0.3939,
+          "mean_bpm_abs_error": 20.0,
+          "peak_count": 18,
+          "overall_score": 0.4289
+        },
+        {
+          "song_id": "public_music_loop_polaris_110_bpm",
+          "suite": "public_bpm_loop",
+          "evaluation_weight": 0.9,
+          "bpm_score": 0.1427,
+          "phase_score": 0.7193,
+          "relock_score": 1.0,
+          "pause_score": 1.0,
+          "downbeat_score": 0.8803,
+          "grid_score": 0.4896,
+          "musical_grid_score": 0.74,
+          "mean_bpm_abs_error": 10.0,
+          "peak_count": 38,
+          "overall_score": 0.6101
+        },
+        {
+          "song_id": "public_synth_movement_music_loop_120_bpm",
+          "suite": "public_bpm_loop",
+          "evaluation_weight": 0.9,
+          "bpm_score": 0.7253,
+          "phase_score": 0.503,
+          "relock_score": 1.0,
+          "pause_score": 1.0,
+          "downbeat_score": 0.1922,
+          "grid_score": 0.0964,
+          "musical_grid_score": 0.3252,
+          "mean_bpm_abs_error": 0.0,
+          "peak_count": 16,
+          "overall_score": 0.6489
+        },
+        {
+          "song_id": "public_poly_dream_synth_loop_130_bpm",
+          "suite": "public_bpm_loop",
+          "evaluation_weight": 0.9,
+          "bpm_score": 0.7873,
+          "phase_score": 0.7414,
+          "relock_score": 1.0,
+          "pause_score": 1.0,
+          "downbeat_score": 0.5925,
+          "grid_score": 0.5297,
+          "musical_grid_score": 0.6534,
+          "mean_bpm_abs_error": 0.0,
+          "peak_count": 39,
+          "overall_score": 0.7954
+        },
+        {
+          "song_id": "level_06_full_band_with_voice_120_bpm",
+          "suite": "realistic_alignment",
+          "evaluation_weight": 1.3,
+          "bpm_score": 0.5459,
+          "phase_score": 0.2477,
+          "relock_score": 0.5,
+          "pause_score": 1.0,
+          "downbeat_score": 0.1598,
+          "grid_score": 0.0412,
+          "musical_grid_score": 0.2226,
+          "mean_bpm_abs_error": 3.136,
+          "peak_count": 50,
+          "overall_score": 0.4646
+        },
+        {
+          "song_id": "level_07_full_song_sections_122_bpm",
+          "suite": "realistic_alignment",
+          "evaluation_weight": 1.3,
+          "bpm_score": 0.4019,
+          "phase_score": 0.5482,
+          "relock_score": 0.6667,
+          "pause_score": 1.0,
+          "downbeat_score": 0.0242,
+          "grid_score": 0.4513,
+          "musical_grid_score": 0.3705,
+          "mean_bpm_abs_error": 6.615,
+          "peak_count": 156,
+          "overall_score": 0.4989
+        },
+        {
+          "song_id": "level_10_ambiguous_half_double_time_95_bpm",
+          "suite": "realistic_alignment",
+          "evaluation_weight": 1.3,
+          "bpm_score": 0.7991,
+          "phase_score": 0.5252,
+          "relock_score": 1.0,
+          "pause_score": 1.0,
+          "downbeat_score": 0.104,
+          "grid_score": 0.1367,
+          "musical_grid_score": 0.3105,
+          "mean_bpm_abs_error": 1.25,
+          "peak_count": 112,
+          "overall_score": 0.6681
+        }
+      ]
+    },
+    {
+      "candidate": {
         "id": "onset_flux_mid_hi_norm_refine_01",
         "plugin_mode": "dual_weighted",
         "onset_weight": 0.68,
@@ -2299,6 +2580,11 @@
       "mean_downbeat_score": 0.5372,
       "mean_bpm_error": 2.229,
       "mean_pause_score": 1.0,
+      "suite_scores": {
+        "realistic_alignment": 0.5303,
+        "public_bpm_loop": 0.6907,
+        "synthetic_deterministic": 0.9627
+      },
       "songs": [
         {
           "song_id": "phase_alignment_drill",
@@ -2525,6 +2811,11 @@
       "mean_downbeat_score": 0.53,
       "mean_bpm_error": 3.265,
       "mean_pause_score": 1.0,
+      "suite_scores": {
+        "realistic_alignment": 0.5547,
+        "public_bpm_loop": 0.6382,
+        "synthetic_deterministic": 0.9627
+      },
       "songs": [
         {
           "song_id": "phase_alignment_drill",
@@ -2751,6 +3042,11 @@
       "mean_downbeat_score": 0.5348,
       "mean_bpm_error": 3.939,
       "mean_pause_score": 1.0,
+      "suite_scores": {
+        "realistic_alignment": 0.5366,
+        "public_bpm_loop": 0.6353,
+        "synthetic_deterministic": 0.9622
+      },
       "songs": [
         {
           "song_id": "phase_alignment_drill",
@@ -2948,6 +3244,699 @@
           "overall_score": 0.6761
         }
       ]
+    },
+    {
+      "candidate": {
+        "id": "onset_flux_mid_hi_norm_refine_12",
+        "plugin_mode": "dual_weighted",
+        "onset_weight": 0.68,
+        "low_band_weight": 0.32,
+        "normalize_input": true,
+        "tonality_guard": false,
+        "transient_boost": 1.9,
+        "low_smoothing_ms": 180,
+        "threshold_bias": 0.14,
+        "onset_low_hz": 1000,
+        "onset_high_hz": 9000,
+        "low_band_low_hz": 45,
+        "low_band_high_hz": 180,
+        "onset_profile": "flux",
+        "low_band_mix": 0.8,
+        "guard_strength": 0.0,
+        "memory_short_weight": 0.32,
+        "memory_medium_weight": 0.44,
+        "memory_long_weight": 0.24
+      },
+      "overall_score": 0.7265,
+      "mean_grid_score": 0.5228,
+      "mean_musical_grid_score": 0.6171,
+      "mean_downbeat_score": 0.5332,
+      "mean_bpm_error": 3.831,
+      "mean_pause_score": 1.0,
+      "suite_scores": {
+        "realistic_alignment": 0.5317,
+        "public_bpm_loop": 0.6331,
+        "synthetic_deterministic": 0.9625
+      },
+      "songs": [
+        {
+          "song_id": "phase_alignment_drill",
+          "suite": "synthetic_deterministic",
+          "evaluation_weight": 1.0,
+          "bpm_score": 0.9331,
+          "phase_score": 0.979,
+          "relock_score": 1.0,
+          "pause_score": 1.0,
+          "downbeat_score": 1.0,
+          "grid_score": 0.9619,
+          "musical_grid_score": 0.9838,
+          "mean_bpm_abs_error": 0.464,
+          "peak_count": 105,
+          "overall_score": 0.9712
+        },
+        {
+          "song_id": "grid16_phrase_map",
+          "suite": "synthetic_deterministic",
+          "evaluation_weight": 1.0,
+          "bpm_score": 0.8872,
+          "phase_score": 0.9703,
+          "relock_score": 1.0,
+          "pause_score": 1.0,
+          "downbeat_score": 1.0,
+          "grid_score": 0.946,
+          "musical_grid_score": 0.977,
+          "mean_bpm_abs_error": 0.985,
+          "peak_count": 122,
+          "overall_score": 0.953
+        },
+        {
+          "song_id": "tempo_transition_stress",
+          "suite": "synthetic_deterministic",
+          "evaluation_weight": 1.0,
+          "bpm_score": 0.8774,
+          "phase_score": 0.97,
+          "relock_score": 1.0,
+          "pause_score": 1.0,
+          "downbeat_score": 1.0,
+          "grid_score": 0.9455,
+          "musical_grid_score": 0.9768,
+          "mean_bpm_abs_error": 0.936,
+          "peak_count": 105,
+          "overall_score": 0.9496
+        },
+        {
+          "song_id": "generic_reference_sample",
+          "suite": "synthetic_deterministic",
+          "evaluation_weight": 1.0,
+          "bpm_score": 0.8995,
+          "phase_score": 0.9696,
+          "relock_score": 1.0,
+          "pause_score": 1.0,
+          "downbeat_score": 1.0,
+          "grid_score": 0.9447,
+          "musical_grid_score": 0.9765,
+          "mean_bpm_abs_error": 0.938,
+          "peak_count": 95,
+          "overall_score": 0.957
+        },
+        {
+          "song_id": "reference_live_calibration",
+          "suite": "synthetic_deterministic",
+          "evaluation_weight": 1.0,
+          "bpm_score": 0.9636,
+          "phase_score": 0.9797,
+          "relock_score": 1.0,
+          "pause_score": 1.0,
+          "downbeat_score": 1.0,
+          "grid_score": 0.963,
+          "musical_grid_score": 0.9843,
+          "mean_bpm_abs_error": 0.404,
+          "peak_count": 80,
+          "overall_score": 0.9817
+        },
+        {
+          "song_id": "public_free_chill_loop_95_bpm",
+          "suite": "public_bpm_loop",
+          "evaluation_weight": 0.9,
+          "bpm_score": 0.7993,
+          "phase_score": 0.7408,
+          "relock_score": 1.0,
+          "pause_score": 1.0,
+          "downbeat_score": 0.0,
+          "grid_score": 0.5288,
+          "musical_grid_score": 0.4397,
+          "mean_bpm_abs_error": 1.25,
+          "peak_count": 27,
+          "overall_score": 0.7164
+        },
+        {
+          "song_id": "public_ambient_piano_loop_105_bpm",
+          "suite": "public_bpm_loop",
+          "evaluation_weight": 0.9,
+          "bpm_score": 0.0,
+          "phase_score": 0.494,
+          "relock_score": 1.0,
+          "pause_score": 1.0,
+          "downbeat_score": 0.3753,
+          "grid_score": 0.08,
+          "musical_grid_score": 0.3841,
+          "mean_bpm_abs_error": 25.0,
+          "peak_count": 18,
+          "overall_score": 0.4253
+        },
+        {
+          "song_id": "public_music_loop_polaris_110_bpm",
+          "suite": "public_bpm_loop",
+          "evaluation_weight": 0.9,
+          "bpm_score": 0.1407,
+          "phase_score": 0.6998,
+          "relock_score": 1.0,
+          "pause_score": 1.0,
+          "downbeat_score": 0.8026,
+          "grid_score": 0.4542,
+          "musical_grid_score": 0.6969,
+          "mean_bpm_abs_error": 10.0,
+          "peak_count": 34,
+          "overall_score": 0.5929
+        },
+        {
+          "song_id": "public_synth_movement_music_loop_120_bpm",
+          "suite": "public_bpm_loop",
+          "evaluation_weight": 0.9,
+          "bpm_score": 0.7252,
+          "phase_score": 0.4987,
+          "relock_score": 1.0,
+          "pause_score": 1.0,
+          "downbeat_score": 0.2225,
+          "grid_score": 0.0885,
+          "musical_grid_score": 0.3327,
+          "mean_bpm_abs_error": 0.0,
+          "peak_count": 16,
+          "overall_score": 0.6519
+        },
+        {
+          "song_id": "public_poly_dream_synth_loop_130_bpm",
+          "suite": "public_bpm_loop",
+          "evaluation_weight": 0.9,
+          "bpm_score": 0.7834,
+          "phase_score": 0.7007,
+          "relock_score": 1.0,
+          "pause_score": 1.0,
+          "downbeat_score": 0.568,
+          "grid_score": 0.4558,
+          "musical_grid_score": 0.6132,
+          "mean_bpm_abs_error": 0.0,
+          "peak_count": 38,
+          "overall_score": 0.7788
+        },
+        {
+          "song_id": "level_06_full_band_with_voice_120_bpm",
+          "suite": "realistic_alignment",
+          "evaluation_weight": 1.3,
+          "bpm_score": 0.514,
+          "phase_score": 0.2166,
+          "relock_score": 0.4167,
+          "pause_score": 1.0,
+          "downbeat_score": 0.1796,
+          "grid_score": 0.053,
+          "musical_grid_score": 0.2234,
+          "mean_bpm_abs_error": 3.661,
+          "peak_count": 51,
+          "overall_score": 0.44
+        },
+        {
+          "song_id": "level_07_full_song_sections_122_bpm",
+          "suite": "realistic_alignment",
+          "evaluation_weight": 1.3,
+          "bpm_score": 0.4019,
+          "phase_score": 0.5488,
+          "relock_score": 0.6667,
+          "pause_score": 1.0,
+          "downbeat_score": 0.0149,
+          "grid_score": 0.4525,
+          "musical_grid_score": 0.3677,
+          "mean_bpm_abs_error": 6.615,
+          "peak_count": 156,
+          "overall_score": 0.4978
+        },
+        {
+          "song_id": "level_10_ambiguous_half_double_time_95_bpm",
+          "suite": "realistic_alignment",
+          "evaluation_weight": 1.3,
+          "bpm_score": 0.7853,
+          "phase_score": 0.5095,
+          "relock_score": 1.0,
+          "pause_score": 1.0,
+          "downbeat_score": 0.093,
+          "grid_score": 0.1082,
+          "musical_grid_score": 0.2945,
+          "mean_bpm_abs_error": 1.25,
+          "peak_count": 105,
+          "overall_score": 0.6573
+        }
+      ]
+    },
+    {
+      "candidate": {
+        "id": "onset_flux_mid_hi_norm_refine_14",
+        "plugin_mode": "dual_weighted",
+        "onset_weight": 0.62,
+        "low_band_weight": 0.38,
+        "normalize_input": true,
+        "tonality_guard": false,
+        "transient_boost": 1.9,
+        "low_smoothing_ms": 180,
+        "threshold_bias": 0.14,
+        "onset_low_hz": 1200,
+        "onset_high_hz": 9000,
+        "low_band_low_hz": 45,
+        "low_band_high_hz": 160,
+        "onset_profile": "flux",
+        "low_band_mix": 0.82,
+        "guard_strength": 0.0,
+        "memory_short_weight": 0.3,
+        "memory_medium_weight": 0.46,
+        "memory_long_weight": 0.24
+      },
+      "overall_score": 0.7089,
+      "mean_grid_score": 0.5138,
+      "mean_musical_grid_score": 0.6076,
+      "mean_downbeat_score": 0.5172,
+      "mean_bpm_error": 3.807,
+      "mean_pause_score": 1.0,
+      "suite_scores": {
+        "realistic_alignment": 0.5342,
+        "public_bpm_loop": 0.5918,
+        "synthetic_deterministic": 0.9505
+      },
+      "songs": [
+        {
+          "song_id": "phase_alignment_drill",
+          "suite": "synthetic_deterministic",
+          "evaluation_weight": 1.0,
+          "bpm_score": 0.9023,
+          "phase_score": 0.979,
+          "relock_score": 1.0,
+          "pause_score": 1.0,
+          "downbeat_score": 1.0,
+          "grid_score": 0.9619,
+          "musical_grid_score": 0.9838,
+          "mean_bpm_abs_error": 0.464,
+          "peak_count": 113,
+          "overall_score": 0.9607
+        },
+        {
+          "song_id": "grid16_phrase_map",
+          "suite": "synthetic_deterministic",
+          "evaluation_weight": 1.0,
+          "bpm_score": 0.8597,
+          "phase_score": 0.9713,
+          "relock_score": 1.0,
+          "pause_score": 1.0,
+          "downbeat_score": 1.0,
+          "grid_score": 0.9478,
+          "musical_grid_score": 0.9778,
+          "mean_bpm_abs_error": 1.163,
+          "peak_count": 125,
+          "overall_score": 0.944
+        },
+        {
+          "song_id": "tempo_transition_stress",
+          "suite": "synthetic_deterministic",
+          "evaluation_weight": 1.0,
+          "bpm_score": 0.847,
+          "phase_score": 0.97,
+          "relock_score": 1.0,
+          "pause_score": 1.0,
+          "downbeat_score": 1.0,
+          "grid_score": 0.9455,
+          "musical_grid_score": 0.9768,
+          "mean_bpm_abs_error": 1.028,
+          "peak_count": 116,
+          "overall_score": 0.9393
+        },
+        {
+          "song_id": "generic_reference_sample",
+          "suite": "synthetic_deterministic",
+          "evaluation_weight": 1.0,
+          "bpm_score": 0.8544,
+          "phase_score": 0.9696,
+          "relock_score": 1.0,
+          "pause_score": 1.0,
+          "downbeat_score": 1.0,
+          "grid_score": 0.9447,
+          "musical_grid_score": 0.9765,
+          "mean_bpm_abs_error": 1.187,
+          "peak_count": 103,
+          "overall_score": 0.9417
+        },
+        {
+          "song_id": "reference_live_calibration",
+          "suite": "synthetic_deterministic",
+          "evaluation_weight": 1.0,
+          "bpm_score": 0.9201,
+          "phase_score": 0.9797,
+          "relock_score": 1.0,
+          "pause_score": 1.0,
+          "downbeat_score": 1.0,
+          "grid_score": 0.963,
+          "musical_grid_score": 0.9843,
+          "mean_bpm_abs_error": 0.662,
+          "peak_count": 88,
+          "overall_score": 0.9669
+        },
+        {
+          "song_id": "public_free_chill_loop_95_bpm",
+          "suite": "public_bpm_loop",
+          "evaluation_weight": 0.9,
+          "bpm_score": 0.6709,
+          "phase_score": 0.6881,
+          "relock_score": 1.0,
+          "pause_score": 1.0,
+          "downbeat_score": 0.0,
+          "grid_score": 0.433,
+          "musical_grid_score": 0.399,
+          "mean_bpm_abs_error": 2.692,
+          "peak_count": 23,
+          "overall_score": 0.6574
+        },
+        {
+          "song_id": "public_ambient_piano_loop_105_bpm",
+          "suite": "public_bpm_loop",
+          "evaluation_weight": 0.9,
+          "bpm_score": 0.0,
+          "phase_score": 0.5293,
+          "relock_score": 1.0,
+          "pause_score": 1.0,
+          "downbeat_score": 0.282,
+          "grid_score": 0.1442,
+          "musical_grid_score": 0.3778,
+          "mean_bpm_abs_error": 18.043,
+          "peak_count": 17,
+          "overall_score": 0.4226
+        },
+        {
+          "song_id": "public_music_loop_polaris_110_bpm",
+          "suite": "public_bpm_loop",
+          "evaluation_weight": 0.9,
+          "bpm_score": 0.1396,
+          "phase_score": 0.6882,
+          "relock_score": 1.0,
+          "pause_score": 1.0,
+          "downbeat_score": 0.7199,
+          "grid_score": 0.4331,
+          "musical_grid_score": 0.6582,
+          "mean_bpm_abs_error": 10.0,
+          "peak_count": 33,
+          "overall_score": 0.5776
+        },
+        {
+          "song_id": "public_synth_movement_music_loop_120_bpm",
+          "suite": "public_bpm_loop",
+          "evaluation_weight": 0.9,
+          "bpm_score": 0.7254,
+          "phase_score": 0.4987,
+          "relock_score": 1.0,
+          "pause_score": 1.0,
+          "downbeat_score": 0.1766,
+          "grid_score": 0.0885,
+          "musical_grid_score": 0.3162,
+          "mean_bpm_abs_error": 0.0,
+          "peak_count": 16,
+          "overall_score": 0.6455
+        },
+        {
+          "song_id": "public_poly_dream_synth_loop_130_bpm",
+          "suite": "public_bpm_loop",
+          "evaluation_weight": 0.9,
+          "bpm_score": 0.4782,
+          "phase_score": 0.6673,
+          "relock_score": 1.0,
+          "pause_score": 1.0,
+          "downbeat_score": 0.5024,
+          "grid_score": 0.3951,
+          "musical_grid_score": 0.5638,
+          "mean_bpm_abs_error": 5.0,
+          "peak_count": 35,
+          "overall_score": 0.6561
+        },
+        {
+          "song_id": "level_06_full_band_with_voice_120_bpm",
+          "suite": "realistic_alignment",
+          "evaluation_weight": 1.3,
+          "bpm_score": 0.5425,
+          "phase_score": 0.2102,
+          "relock_score": 0.4167,
+          "pause_score": 1.0,
+          "downbeat_score": 0.164,
+          "grid_score": 0.0412,
+          "musical_grid_score": 0.2128,
+          "mean_bpm_abs_error": 3.171,
+          "peak_count": 50,
+          "overall_score": 0.4457
+        },
+        {
+          "song_id": "level_07_full_song_sections_122_bpm",
+          "suite": "realistic_alignment",
+          "evaluation_weight": 1.3,
+          "bpm_score": 0.4019,
+          "phase_score": 0.5495,
+          "relock_score": 0.6667,
+          "pause_score": 1.0,
+          "downbeat_score": 0.0063,
+          "grid_score": 0.4536,
+          "musical_grid_score": 0.365,
+          "mean_bpm_abs_error": 6.615,
+          "peak_count": 156,
+          "overall_score": 0.4968
+        },
+        {
+          "song_id": "level_10_ambiguous_half_double_time_95_bpm",
+          "suite": "realistic_alignment",
+          "evaluation_weight": 1.3,
+          "bpm_score": 0.7721,
+          "phase_score": 0.5068,
+          "relock_score": 1.0,
+          "pause_score": 1.0,
+          "downbeat_score": 0.1514,
+          "grid_score": 0.1033,
+          "musical_grid_score": 0.3134,
+          "mean_bpm_abs_error": 1.25,
+          "peak_count": 93,
+          "overall_score": 0.6602
+        }
+      ]
+    },
+    {
+      "candidate": {
+        "id": "onset_flux_mid_hi_norm_refine_13",
+        "plugin_mode": "dual_weighted",
+        "onset_weight": 0.66,
+        "low_band_weight": 0.34,
+        "normalize_input": true,
+        "tonality_guard": true,
+        "transient_boost": 1.88,
+        "low_smoothing_ms": 180,
+        "threshold_bias": 0.13,
+        "onset_low_hz": 900,
+        "onset_high_hz": 9000,
+        "low_band_low_hz": 45,
+        "low_band_high_hz": 200,
+        "onset_profile": "hybrid",
+        "low_band_mix": 0.78,
+        "guard_strength": 0.35,
+        "memory_short_weight": 0.34,
+        "memory_medium_weight": 0.42,
+        "memory_long_weight": 0.24
+      },
+      "overall_score": 0.6889,
+      "mean_grid_score": 0.3971,
+      "mean_musical_grid_score": 0.5534,
+      "mean_downbeat_score": 0.5046,
+      "mean_bpm_error": 4.044,
+      "mean_pause_score": 1.0,
+      "suite_scores": {
+        "realistic_alignment": 0.5479,
+        "public_bpm_loop": 0.5815,
+        "synthetic_deterministic": 0.8955
+      },
+      "songs": [
+        {
+          "song_id": "phase_alignment_drill",
+          "suite": "synthetic_deterministic",
+          "evaluation_weight": 1.0,
+          "bpm_score": 0.8844,
+          "phase_score": 0.8168,
+          "relock_score": 1.0,
+          "pause_score": 1.0,
+          "downbeat_score": 0.9199,
+          "grid_score": 0.6669,
+          "musical_grid_score": 0.8296,
+          "mean_bpm_abs_error": 0.643,
+          "peak_count": 117,
+          "overall_score": 0.8962
+        },
+        {
+          "song_id": "grid16_phrase_map",
+          "suite": "synthetic_deterministic",
+          "evaluation_weight": 1.0,
+          "bpm_score": 0.8584,
+          "phase_score": 0.8085,
+          "relock_score": 1.0,
+          "pause_score": 1.0,
+          "downbeat_score": 1.0,
+          "grid_score": 0.6519,
+          "musical_grid_score": 0.852,
+          "mean_bpm_abs_error": 1.163,
+          "peak_count": 127,
+          "overall_score": 0.8962
+        },
+        {
+          "song_id": "tempo_transition_stress",
+          "suite": "synthetic_deterministic",
+          "evaluation_weight": 1.0,
+          "bpm_score": 0.8356,
+          "phase_score": 0.8259,
+          "relock_score": 1.0,
+          "pause_score": 1.0,
+          "downbeat_score": 1.0,
+          "grid_score": 0.6835,
+          "musical_grid_score": 0.8655,
+          "mean_bpm_abs_error": 1.17,
+          "peak_count": 116,
+          "overall_score": 0.8935
+        },
+        {
+          "song_id": "generic_reference_sample",
+          "suite": "synthetic_deterministic",
+          "evaluation_weight": 1.0,
+          "bpm_score": 0.8526,
+          "phase_score": 0.8173,
+          "relock_score": 1.0,
+          "pause_score": 1.0,
+          "downbeat_score": 1.0,
+          "grid_score": 0.6677,
+          "musical_grid_score": 0.8588,
+          "mean_bpm_abs_error": 1.187,
+          "peak_count": 104,
+          "overall_score": 0.8967
+        },
+        {
+          "song_id": "reference_live_calibration",
+          "suite": "synthetic_deterministic",
+          "evaluation_weight": 1.0,
+          "bpm_score": 0.8996,
+          "phase_score": 0.81,
+          "relock_score": 1.0,
+          "pause_score": 1.0,
+          "downbeat_score": 0.8867,
+          "grid_score": 0.6545,
+          "musical_grid_score": 0.8124,
+          "mean_bpm_abs_error": 0.662,
+          "peak_count": 93,
+          "overall_score": 0.8947
+        },
+        {
+          "song_id": "public_free_chill_loop_95_bpm",
+          "suite": "public_bpm_loop",
+          "evaluation_weight": 0.9,
+          "bpm_score": 0.5847,
+          "phase_score": 0.6893,
+          "relock_score": 1.0,
+          "pause_score": 1.0,
+          "downbeat_score": 0.24,
+          "grid_score": 0.4352,
+          "musical_grid_score": 0.4863,
+          "mean_bpm_abs_error": 4.091,
+          "peak_count": 25,
+          "overall_score": 0.662
+        },
+        {
+          "song_id": "public_ambient_piano_loop_105_bpm",
+          "suite": "public_bpm_loop",
+          "evaluation_weight": 0.9,
+          "bpm_score": 0.0,
+          "phase_score": 0.5009,
+          "relock_score": 1.0,
+          "pause_score": 1.0,
+          "downbeat_score": 0.3963,
+          "grid_score": 0.0926,
+          "musical_grid_score": 0.397,
+          "mean_bpm_abs_error": 17.449,
+          "peak_count": 23,
+          "overall_score": 0.4303
+        },
+        {
+          "song_id": "public_music_loop_polaris_110_bpm",
+          "suite": "public_bpm_loop",
+          "evaluation_weight": 0.9,
+          "bpm_score": 0.6373,
+          "phase_score": 0.6952,
+          "relock_score": 1.0,
+          "pause_score": 1.0,
+          "downbeat_score": 0.6421,
+          "grid_score": 0.4459,
+          "musical_grid_score": 0.6357,
+          "mean_bpm_abs_error": 2.857,
+          "peak_count": 34,
+          "overall_score": 0.7379
+        },
+        {
+          "song_id": "public_synth_movement_music_loop_120_bpm",
+          "suite": "public_bpm_loop",
+          "evaluation_weight": 0.9,
+          "bpm_score": 0.7256,
+          "phase_score": 0.4901,
+          "relock_score": 1.0,
+          "pause_score": 1.0,
+          "downbeat_score": 0.2478,
+          "grid_score": 0.0729,
+          "musical_grid_score": 0.3352,
+          "mean_bpm_abs_error": 0.0,
+          "peak_count": 16,
+          "overall_score": 0.6531
+        },
+        {
+          "song_id": "public_poly_dream_synth_loop_130_bpm",
+          "suite": "public_bpm_loop",
+          "evaluation_weight": 0.9,
+          "bpm_score": 0.0,
+          "phase_score": 0.6254,
+          "relock_score": 1.0,
+          "pause_score": 1.0,
+          "downbeat_score": 0.0924,
+          "grid_score": 0.3189,
+          "musical_grid_score": 0.3838,
+          "mean_bpm_abs_error": 14.615,
+          "peak_count": 33,
+          "overall_score": 0.424
+        },
+        {
+          "song_id": "level_06_full_band_with_voice_120_bpm",
+          "suite": "realistic_alignment",
+          "evaluation_weight": 1.3,
+          "bpm_score": 0.5841,
+          "phase_score": 0.252,
+          "relock_score": 0.5,
+          "pause_score": 1.0,
+          "downbeat_score": 0.2238,
+          "grid_score": 0.049,
+          "musical_grid_score": 0.2489,
+          "mean_bpm_abs_error": 2.455,
+          "peak_count": 51,
+          "overall_score": 0.4878
+        },
+        {
+          "song_id": "level_07_full_song_sections_122_bpm",
+          "suite": "realistic_alignment",
+          "evaluation_weight": 1.3,
+          "bpm_score": 0.4241,
+          "phase_score": 0.4756,
+          "relock_score": 0.5833,
+          "pause_score": 1.0,
+          "downbeat_score": 0.0,
+          "grid_score": 0.3875,
+          "musical_grid_score": 0.3235,
+          "mean_bpm_abs_error": 7.264,
+          "peak_count": 156,
+          "overall_score": 0.4745
+        },
+        {
+          "song_id": "level_10_ambiguous_half_double_time_95_bpm",
+          "suite": "realistic_alignment",
+          "evaluation_weight": 1.3,
+          "bpm_score": 0.807,
+          "phase_score": 0.5349,
+          "relock_score": 1.0,
+          "pause_score": 1.0,
+          "downbeat_score": 0.1594,
+          "grid_score": 0.1544,
+          "musical_grid_score": 0.338,
+          "mean_bpm_abs_error": 1.25,
+          "peak_count": 121,
+          "overall_score": 0.6814
+        }
+      ]
     }
   ],
   "recommended_candidate": {
@@ -2978,6 +3967,11 @@
     "mean_downbeat_score": 0.6059,
     "mean_bpm_error": 3.351,
     "mean_pause_score": 1.0,
+    "suite_scores": {
+      "realistic_alignment": 0.5366,
+      "public_bpm_loop": 0.6722,
+      "synthetic_deterministic": 0.9707
+    },
     "songs": [
       {
         "song_id": "phase_alignment_drill",
@@ -3206,12 +4200,12 @@
       "score": 0.6366
     },
     "public_music_loop_polaris_110_bpm": {
-      "candidate_id": "onset_flux_mid_hi_norm",
-      "score": 0.7196
+      "candidate_id": "onset_flux_mid_hi_norm_refine_13",
+      "score": 0.7379
     },
     "public_synth_movement_music_loop_120_bpm": {
-      "candidate_id": "onset_flux_mid_hi_norm_refine_01",
-      "score": 0.6518
+      "candidate_id": "onset_flux_mid_hi_norm_refine_13",
+      "score": 0.6531
     },
     "public_poly_dream_synth_loop_130_bpm": {
       "candidate_id": "onset_flux_mid_hi_norm",
@@ -3226,8 +4220,8 @@
       "score": 0.5412
     },
     "level_10_ambiguous_half_double_time_95_bpm": {
-      "candidate_id": "onset_flux_mid_hi_norm_refine_05",
-      "score": 0.6788
+      "candidate_id": "onset_flux_mid_hi_norm_refine_13",
+      "score": 0.6814
     }
   },
   "selection_rationale": [

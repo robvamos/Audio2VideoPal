@@ -101,6 +101,47 @@ def build_candidate(
     )
 
 
+def build_refined_candidate(
+    seed: CandidateConfig,
+    candidate_id: str,
+    *,
+    onset_weight: float,
+    transient_boost: float,
+    threshold_bias: float,
+    onset_low_hz: int,
+    onset_high_hz: int,
+    low_band_high_hz: int,
+    low_band_mix: float,
+    onset_profile: str | None = None,
+    tonality_guard: bool | None = None,
+    guard_strength: float | None = None,
+    memory_short_weight: float | None = None,
+    memory_medium_weight: float | None = None,
+    memory_long_weight: float | None = None,
+) -> CandidateConfig:
+    return build_candidate(
+        candidate_id,
+        "dual_weighted",
+        onset_weight,
+        round(1.0 - onset_weight, 2),
+        True,
+        seed.tonality_guard if tonality_guard is None else tonality_guard,
+        transient_boost,
+        seed.low_smoothing_ms,
+        threshold_bias,
+        onset_low_hz,
+        onset_high_hz,
+        seed.low_band_low_hz,
+        low_band_high_hz,
+        seed.onset_profile if onset_profile is None else onset_profile,
+        low_band_mix,
+        seed.guard_strength if guard_strength is None else guard_strength,
+        seed.memory_short_weight if memory_short_weight is None else memory_short_weight,
+        seed.memory_medium_weight if memory_medium_weight is None else memory_medium_weight,
+        seed.memory_long_weight if memory_long_weight is None else memory_long_weight,
+    )
+
+
 def build_constant_song(
     *,
     song_id: str,
@@ -669,6 +710,11 @@ def evaluate_candidates(catalog: dict, candidates: list[CandidateConfig]) -> lis
     for candidate in candidates:
         per_song = [evaluate_song(song, candidate) for song in catalog["songs"]]
         weights = [item["evaluation_weight"] for item in per_song]
+        suite_scores: dict[str, float] = {}
+        for suite_name in {item["suite"] for item in per_song}:
+            suite_items = [item for item in per_song if item["suite"] == suite_name]
+            suite_weights = [item["evaluation_weight"] for item in suite_items]
+            suite_scores[suite_name] = round(weighted_mean([item["overall_score"] for item in suite_items], suite_weights), 4)
         overall_score = weighted_mean([item["overall_score"] for item in per_song], weights)
         results.append(
             {
@@ -679,6 +725,7 @@ def evaluate_candidates(catalog: dict, candidates: list[CandidateConfig]) -> lis
                 "mean_downbeat_score": round(weighted_mean([item["downbeat_score"] for item in per_song], weights), 4),
                 "mean_bpm_error": round(weighted_mean([item["mean_bpm_abs_error"] for item in per_song], weights), 3),
                 "mean_pause_score": round(weighted_mean([item["pause_score"] for item in per_song], weights), 4),
+                "suite_scores": suite_scores,
                 "songs": per_song,
             }
         )
@@ -704,31 +751,30 @@ def refine_candidate_library(seed: CandidateConfig) -> list[CandidateConfig]:
         {"onset_weight": 0.74, "onset_low_hz": 1200, "onset_high_hz": 10000, "low_band_high_hz": 180, "threshold_bias": 0.15, "low_band_mix": 0.7, "transient_boost": 2.0},
         {"onset_weight": 0.68, "onset_low_hz": 900, "onset_high_hz": 9000, "low_band_high_hz": 200, "threshold_bias": 0.14, "low_band_mix": 0.72, "transient_boost": 1.9},
         {"onset_weight": 0.72, "onset_low_hz": 1400, "onset_high_hz": 11000, "low_band_high_hz": 160, "threshold_bias": 0.16, "low_band_mix": 0.72, "transient_boost": 2.0},
+        {"onset_weight": 0.7, "onset_low_hz": 1100, "onset_high_hz": 10000, "low_band_high_hz": 180, "threshold_bias": 0.14, "low_band_mix": 0.78, "transient_boost": 1.92, "memory_short_weight": 0.40, "memory_medium_weight": 0.38, "memory_long_weight": 0.22},
+        {"onset_weight": 0.68, "onset_low_hz": 1000, "onset_high_hz": 9000, "low_band_high_hz": 180, "threshold_bias": 0.14, "low_band_mix": 0.8, "transient_boost": 1.9, "memory_short_weight": 0.32, "memory_medium_weight": 0.44, "memory_long_weight": 0.24},
+        {"onset_weight": 0.66, "onset_low_hz": 900, "onset_high_hz": 9000, "low_band_high_hz": 200, "threshold_bias": 0.13, "low_band_mix": 0.78, "transient_boost": 1.88, "memory_short_weight": 0.34, "memory_medium_weight": 0.42, "memory_long_weight": 0.24, "onset_profile": "hybrid", "tonality_guard": True, "guard_strength": 0.35},
+        {"onset_weight": 0.62, "onset_low_hz": 1200, "onset_high_hz": 9000, "low_band_high_hz": 160, "threshold_bias": 0.14, "low_band_mix": 0.82, "transient_boost": 1.9, "memory_short_weight": 0.30, "memory_medium_weight": 0.46, "memory_long_weight": 0.24},
     ]
     candidates = []
     for index, refinement in enumerate(refinements, start=1):
-        onset_weight = refinement["onset_weight"]
         candidates.append(
-            build_candidate(
+            build_refined_candidate(
+                seed,
                 f"{seed.id}_refine_{index:02d}",
-                "dual_weighted",
-                onset_weight,
-                round(1.0 - onset_weight, 2),
-                True,
-                seed.tonality_guard,
-                refinement["transient_boost"],
-                seed.low_smoothing_ms,
-                refinement["threshold_bias"],
-                refinement["onset_low_hz"],
-                refinement["onset_high_hz"],
-                seed.low_band_low_hz,
-                refinement["low_band_high_hz"],
-                seed.onset_profile,
-                refinement["low_band_mix"],
-                seed.guard_strength,
-                seed.memory_short_weight,
-                seed.memory_medium_weight,
-                seed.memory_long_weight,
+                onset_weight=refinement["onset_weight"],
+                transient_boost=refinement["transient_boost"],
+                threshold_bias=refinement["threshold_bias"],
+                onset_low_hz=refinement["onset_low_hz"],
+                onset_high_hz=refinement["onset_high_hz"],
+                low_band_high_hz=refinement["low_band_high_hz"],
+                low_band_mix=refinement["low_band_mix"],
+                onset_profile=refinement.get("onset_profile"),
+                tonality_guard=refinement.get("tonality_guard"),
+                guard_strength=refinement.get("guard_strength"),
+                memory_short_weight=refinement.get("memory_short_weight"),
+                memory_medium_weight=refinement.get("memory_medium_weight"),
+                memory_long_weight=refinement.get("memory_long_weight"),
             )
         )
     return candidates
@@ -818,6 +864,20 @@ def candidate_table_row(item: dict) -> str:
         f"{item['mean_bpm_error']:.3f} | "
         f"{item['mean_grid_score']:.3f} |"
     )
+
+
+def suite_leader_lines(payload: dict) -> list[str]:
+    leaders = []
+    ranked = payload["ranked_candidates"]
+    for suite_name in payload.get("suite_summary", {}).keys():
+        leader = max(
+            ranked,
+            key=lambda item: item.get("suite_scores", {}).get(suite_name, 0.0),
+        )
+        leaders.append(
+            f"- `{suite_name}` -> `{leader['candidate']['id']}` score `{leader['suite_scores'][suite_name]:.3f}`"
+        )
+    return leaders
 
 
 def write_recommended_preset(payload: dict) -> None:
@@ -931,6 +991,9 @@ def write_report(payload: dict) -> None:
     lines.extend(["", "## Best per song", ""])
     for song_id, entry in payload["best_per_song"].items():
         lines.append(f"- `{song_id}` -> `{entry['candidate_id']}` score `{entry['score']:.3f}`")
+
+    lines.extend(["", "## Suite Leaders", ""])
+    lines.extend(suite_leader_lines(payload))
 
     md_text = "\n".join(lines) + "\n"
     md_path.write_text(md_text, encoding="utf-8")

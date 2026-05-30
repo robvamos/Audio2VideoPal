@@ -1,6 +1,6 @@
 # Benchmark Sweep
 
-Generated: `2026-05-30T04:12:41`
+Generated: `2026-05-30T04:25:31`
 Analysis version: `band-aware-v6-memory-realistic-bpm80-130`
 Evaluation suites: `{'synthetic_deterministic': 5, 'public_bpm_loop': 5, 'realistic_alignment': 3}`
 Tracking BPM range: `80-130`
@@ -42,9 +42,15 @@ Tracking BPM range: `80-130`
 - `reference_live_calibration` -> `onset_flux_mid_hi_norm_refine_08` score `0.982`
 - `public_free_chill_loop_95_bpm` -> `onset_flux_mid_hi_norm_refine_05` score `0.748`
 - `public_ambient_piano_loop_105_bpm` -> `onset_flux_mid_hi_norm_refine_02` score `0.637`
-- `public_music_loop_polaris_110_bpm` -> `onset_flux_mid_hi_norm` score `0.720`
-- `public_synth_movement_music_loop_120_bpm` -> `onset_flux_mid_hi_norm_refine_01` score `0.652`
+- `public_music_loop_polaris_110_bpm` -> `onset_flux_mid_hi_norm_refine_13` score `0.738`
+- `public_synth_movement_music_loop_120_bpm` -> `onset_flux_mid_hi_norm_refine_13` score `0.653`
 - `public_poly_dream_synth_loop_130_bpm` -> `onset_flux_mid_hi_norm` score `0.835`
 - `level_06_full_band_with_voice_120_bpm` -> `onset_flux_mid_hi_norm_refine_08` score `0.492`
 - `level_07_full_song_sections_122_bpm` -> `onset_flux_mid_hi_norm` score `0.541`
-- `level_10_ambiguous_half_double_time_95_bpm` -> `onset_flux_mid_hi_norm_refine_05` score `0.679`
+- `level_10_ambiguous_half_double_time_95_bpm` -> `onset_flux_mid_hi_norm_refine_13` score `0.681`
+
+## Suite Leaders
+
+- `synthetic_deterministic` -> `onset_flux_mid_hi_norm` score `0.971`
+- `public_bpm_loop` -> `onset_flux_mid_hi_norm_refine_01` score `0.691`
+- `realistic_alignment` -> `onset_flux_mid_hi_norm_refine_04` score `0.555`
