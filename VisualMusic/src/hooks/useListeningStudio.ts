@@ -62,6 +62,51 @@ export function useListeningStudio({ onMessage }: UseListeningStudioOptions) {
     }
   }
 
+  async function syncFileSourceIfNeeded() {
+    if (source !== "file") {
+      return;
+    }
+    await pipelineEngine.listening.saveFileSourceConfig(fileSourceConfig);
+  }
+
+  function mergeLearningSongsIntoTelemetry(songs: TestSongDefinition[]) {
+    startTransition(() => {
+      setTelemetry((current) =>
+        current
+          ? {
+              ...current,
+              learning: {
+                ...current.learning,
+                test_songs: songs,
+              },
+            }
+          : current,
+      );
+    });
+  }
+
+  function toFileSourceConfig(song: TestSongDefinition): ListeningFileSourceConfig {
+    return {
+      filePath: song.file_path ?? "",
+      bpmHint: song.bpm_hint ?? null,
+      meterHint: song.meter_hint ?? "4/4",
+      durationHintSec: song.duration_hint_sec ?? null,
+    };
+  }
+
+  async function runListeningAction(
+    action: () => Promise<void>,
+    formatError: (error: unknown) => string,
+  ) {
+    await runBusyAction(async () => {
+      try {
+        await action();
+      } catch (error) {
+        onMessage(formatError(error));
+      }
+    });
+  }
+
   async function refreshListeningState() {
     try {
       const [latestTimingState, latestTelemetry] = await Promise.all([
@@ -78,41 +123,35 @@ export function useListeningStudio({ onMessage }: UseListeningStudioOptions) {
   }
 
   async function startListening() {
-    await runBusyAction(async () => {
-      try {
-        if (source === "file") {
-          await pipelineEngine.listening.saveFileSourceConfig(fileSourceConfig);
-        }
+    await runListeningAction(
+      async () => {
+        await syncFileSourceIfNeeded();
         const result = await pipelineEngine.listening.start(profile, source);
         setAudioActive(true);
         await refreshListeningState();
         onMessage(result);
-      } catch (error) {
-        onMessage(`Error: ${error}`);
-      }
-    });
+      },
+      (error) => `Error: ${error}`,
+    );
   }
 
   async function stopListening() {
-    await runBusyAction(async () => {
-      try {
+    await runListeningAction(
+      async () => {
         const result = await pipelineEngine.listening.stop();
         setAudioActive(false);
         setVideoActive(false);
         clearSnapshot();
         onMessage(result);
-      } catch (error) {
-        onMessage(`Error: ${error}`);
-      }
-    });
+      },
+      (error) => `Error: ${error}`,
+    );
   }
 
   async function runListeningTest() {
-    await runBusyAction(async () => {
-      try {
-        if (source === "file") {
-          await pipelineEngine.listening.saveFileSourceConfig(fileSourceConfig);
-        }
+    await runListeningAction(
+      async () => {
+        await syncFileSourceIfNeeded();
         const result = await pipelineEngine.listening.runTest(profile, source);
         setAudioActive(true);
         applySnapshot({
@@ -122,15 +161,14 @@ export function useListeningStudio({ onMessage }: UseListeningStudioOptions) {
         onMessage(
           `Listening test completed: ${result.telemetry.fused_bpm.toFixed(1)} BPM, ${result.telemetry.sync_state}, grid ${result.one_bar_grid.one_bar_grid_score.toFixed(2)}.`,
         );
-      } catch (error) {
-        onMessage(`Listening test failed: ${error}`);
-      }
-    });
+      },
+      (error) => `Listening test failed: ${error}`,
+    );
   }
 
   async function runBenchmarkListeningTest(songId: string) {
-    await runBusyAction(async () => {
-      try {
+    await runListeningAction(
+      async () => {
         const config = await pipelineEngine.listening.loadBenchmarkSongFileSource(songId);
         setSource("file");
         setFileSourceConfig(config);
@@ -143,63 +181,58 @@ export function useListeningStudio({ onMessage }: UseListeningStudioOptions) {
         onMessage(
           `Benchmark test completed: ${songId}, ${result.telemetry.fused_bpm.toFixed(1)} BPM, grid ${result.one_bar_grid.one_bar_grid_score.toFixed(2)}.`,
         );
-      } catch (error) {
-        onMessage(`Benchmark test failed: ${error}`);
-      }
-    });
+      },
+      (error) => `Benchmark test failed: ${error}`,
+    );
   }
 
   async function toggleVideo() {
-    await runBusyAction(async () => {
-      try {
+    await runListeningAction(
+      async () => {
         const result = videoActive ? await pipelineEngine.output.stop() : await pipelineEngine.output.start();
         setVideoActive((currentValue) => !currentValue);
         onMessage(result);
-      } catch (error) {
-        onMessage(`Error: ${error}`);
-      }
-    });
+      },
+      (error) => `Error: ${error}`,
+    );
   }
 
   async function adjustStructureLearning(action: string) {
-    await runBusyAction(async () => {
-      try {
+    await runListeningAction(
+      async () => {
         const updatedTelemetry = await pipelineEngine.listening.adjustStructureLearning(action);
         updateTelemetry(updatedTelemetry);
         onMessage(`Structure learning updated: ${action.split("_").join(" ")}`);
-      } catch (error) {
-        onMessage(`Structure learning update failed: ${error}`);
-      }
-    });
+      },
+      (error) => `Structure learning update failed: ${error}`,
+    );
   }
 
   async function saveLearningEvaluation(songId: string, rating: string, note: string) {
-    await runBusyAction(async () => {
-      try {
+    await runListeningAction(
+      async () => {
         const updatedTelemetry = await pipelineEngine.listening.saveLearningEvaluation(songId, rating, note);
         updateTelemetry(updatedTelemetry);
         onMessage(`Evaluation saved: ${rating}`);
-      } catch (error) {
-        onMessage(`Could not save evaluation: ${error}`);
-      }
-    });
+      },
+      (error) => `Could not save evaluation: ${error}`,
+    );
   }
 
   async function saveFilterSetupEvaluation(setupId: string, rating: string, note: string) {
-    await runBusyAction(async () => {
-      try {
+    await runListeningAction(
+      async () => {
         const updatedTelemetry = await pipelineEngine.listening.saveFilterSetupEvaluation(setupId, rating, note);
         updateTelemetry(updatedTelemetry);
         onMessage(`Setup evaluation saved: ${rating}`);
-      } catch (error) {
-        onMessage(`Could not save setup evaluation: ${error}`);
-      }
-    });
+      },
+      (error) => `Could not save setup evaluation: ${error}`,
+    );
   }
 
   async function bindBenchmarkSongToCurrentFile(songId: string) {
-    await runBusyAction(async () => {
-      try {
+    await runListeningAction(
+      async () => {
         const songs = await pipelineEngine.listening.bindBenchmarkSongFile(
           songId,
           fileSourceConfig.filePath,
@@ -207,24 +240,11 @@ export function useListeningStudio({ onMessage }: UseListeningStudioOptions) {
           fileSourceConfig.meterHint || null,
           fileSourceConfig.durationHintSec,
         );
-        startTransition(() => {
-          setTelemetry((current) =>
-            current
-              ? {
-                  ...current,
-                  learning: {
-                    ...current.learning,
-                    test_songs: songs,
-                  },
-                }
-              : current,
-          );
-        });
+        mergeLearningSongsIntoTelemetry(songs);
         onMessage(`Benchmark linked to file source: ${songId}`);
-      } catch (error) {
-        onMessage(`Could not bind benchmark file: ${error}`);
-      }
-    });
+      },
+      (error) => `Could not bind benchmark file: ${error}`,
+    );
   }
 
   function loadBenchmarkIntoFileSource(song: TestSongDefinition) {
@@ -235,12 +255,7 @@ export function useListeningStudio({ onMessage }: UseListeningStudioOptions) {
 
     startTransition(() => {
       setSource("file");
-      setFileSourceConfig({
-        filePath: song.file_path ?? "",
-        bpmHint: song.bpm_hint ?? null,
-        meterHint: song.meter_hint ?? "4/4",
-        durationHintSec: song.duration_hint_sec ?? null,
-      });
+      setFileSourceConfig(toFileSourceConfig(song));
     });
     onMessage(`Benchmark file loaded into file source: ${song.id}`);
   }
